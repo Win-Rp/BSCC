@@ -1,0 +1,282 @@
+{
+  "data": [
+    {
+      "id": "page-upload-workbench",
+      "title": "上传工作台",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/upload-workbench.html",
+        "interactions": [
+          {
+            "domId": "cta-progress",
+            "targetPageId": "page-task-progress"
+          },
+          {
+            "domId": "nav-progress",
+            "targetPageId": "page-task-progress",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-compare",
+            "targetPageId": "page-compare-evidence",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-recover",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-admin",
+            "targetPageId": "page-admin-console",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-task-progress",
+      "title": "任务进度",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 620,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-progress.html",
+        "interactions": [
+          {
+            "domId": "cta-results",
+            "targetPageId": "page-results-overview"
+          },
+          {
+            "domId": "nav-upload",
+            "targetPageId": "page-upload-workbench",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-compare",
+            "targetPageId": "page-compare-evidence",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-recover",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-admin",
+            "targetPageId": "page-admin-console",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-results-overview",
+      "title": "结果总览",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 1240,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/results-overview.html",
+        "interactions": [
+          {
+            "domId": "cta-compare",
+            "targetPageId": "page-compare-evidence"
+          },
+          {
+            "domId": "nav-upload",
+            "targetPageId": "page-upload-workbench",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-progress",
+            "targetPageId": "page-task-progress",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-compare",
+            "targetPageId": "page-compare-evidence",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-recover",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-admin",
+            "targetPageId": "page-admin-console",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-compare-evidence",
+      "title": "对比证据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 1860,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/compare-evidence.html",
+        "interactions": [
+          {
+            "domId": "cta-recover",
+            "targetPageId": "page-task-recovery"
+          },
+          {
+            "domId": "nav-upload",
+            "targetPageId": "page-upload-workbench",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-progress",
+            "targetPageId": "page-task-progress",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-recover",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-admin",
+            "targetPageId": "page-admin-console",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-task-recovery",
+      "title": "任务恢复",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 2480,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-recovery.html",
+        "interactions": [
+          {
+            "domId": "cta-admin",
+            "targetPageId": "page-admin-console"
+          },
+          {
+            "domId": "nav-upload",
+            "targetPageId": "page-upload-workbench",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-progress",
+            "targetPageId": "page-task-progress",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-compare",
+            "targetPageId": "page-compare-evidence",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-admin",
+            "targetPageId": "page-admin-console",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-admin-console",
+      "title": "运营后台",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782442300000,
+      "canvasData": {
+        "x": 3100,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/admin-console.html",
+        "interactions": [
+          {
+            "domId": "nav-upload",
+            "targetPageId": "page-upload-workbench",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-progress",
+            "targetPageId": "page-task-progress",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-compare",
+            "targetPageId": "page-compare-evidence",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-recover",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "BSCC 前端画布版",
+    "showEdge": false
+  }
+}

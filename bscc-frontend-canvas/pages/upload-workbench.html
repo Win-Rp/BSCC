@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传工作台</title>
+    <style id="theme-vars">
+:root {
+  --bscc-background: #f5f5f3;
+  --bscc-surface: #ffffff;
+  --bscc-surface-muted: #f0f0ec;
+  --bscc-surface-strong: #e6e6df;
+  --bscc-text: #191919;
+  --bscc-text-muted: #5c5c56;
+  --bscc-text-subtle: #7c7c74;
+  --bscc-border: #d9d9d2;
+  --bscc-border-strong: #b9b9b0;
+  --bscc-primary: #191919;
+  --bscc-primary-soft: #2a2a2a;
+  --bscc-primary-tint: #ececea;
+  --bscc-state-success: #2f6b45;
+  --bscc-state-warning: #9a6a11;
+  --bscc-state-error: #8f3333;
+  --bscc-state-info: #385b87;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --shadow-static: 0 1px 2px rgba(25, 25, 25, 0.04);
+  --shadow-float: 0 18px 42px rgba(25, 25, 25, 0.12);
+  --page-max-width: 1440px;
+  --content-max-width: 1280px;
+}
+
+.dark {
+  --bscc-background: #131313;
+  --bscc-surface: #1b1b1b;
+  --bscc-surface-muted: #202020;
+  --bscc-surface-strong: #2b2b2b;
+  --bscc-text: #f4f4ee;
+  --bscc-text-muted: #c2c2b8;
+  --bscc-text-subtle: #9d9d93;
+  --bscc-border: #33332f;
+  --bscc-border-strong: #4b4b45;
+  --bscc-primary: #f4f4ee;
+  --bscc-primary-soft: #e3e3dc;
+  --bscc-primary-tint: #262623;
+  --shadow-static: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.bscc-display {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.bscc-h1 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.bscc-h2 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.bscc-h3 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.bscc-label {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Consolas", "SFMono-Regular", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--bscc-background);
+    --color-primary: var(--bscc-primary);
+    --color-border: var(--bscc-border);
+  }
+  @layer base {
+    body { background: var(--bscc-background); color: var(--bscc-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+  <div data-shell="project-shell" class="min-h-screen bg-[var(--bscc-background)] text-[var(--bscc-text)] antialiased">
+    <header class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+      <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-6 py-6 lg:px-8">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div class="min-w-0 space-y-2">
+            <h1 class="max-w-[22ch] text-[clamp(24px,2.4vw,32px)] font-semibold leading-[1.2] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+              BSCC 画布后台
+            </h1>
+            
+          </div>
+          
+        </div>
+      </div>
+    </header>
+
+    <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+      <div class="mx-auto w-full max-w-[1280px] px-6 py-4 lg:px-8">
+        <nav aria-label="全局导航" class="flex flex-wrap items-center gap-2 lg:gap-3">
+          <button type="button" data-nav-key="upload-workbench" data-active="true" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            上传工作台
+          </button>
+          <button type="button" data-nav-key="task-progress" data-dom-id="nav-progress" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            任务进度
+          </button>
+          <button type="button" data-nav-key="results-overview" data-dom-id="nav-results" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            结果总览
+          </button>
+          <button type="button" data-nav-key="compare-evidence" data-dom-id="nav-compare" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            对比证据
+          </button>
+          <button type="button" data-nav-key="task-recovery" data-dom-id="nav-recover" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            任务恢复
+          </button>
+          <button type="button" data-nav-key="admin-console" data-dom-id="nav-admin" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+            运营后台
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <main class="mx-auto w-full max-w-[1280px] px-6 py-8 lg:px-8 lg:py-10">
+      <section class="overflow-hidden rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+        <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-6 py-5 lg:px-8">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div class="min-w-0 space-y-2">
+              <p data-shell-field="page-kicker" class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]"></p>
+              <h2 data-shell-field="page-title" class="max-w-[18ch] text-[clamp(22px,2vw,28px)] font-semibold leading-[1.22] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+                上传工作台
+              </h2>
+            </div>
+            
+          </div>
+        </div>
+
+        <div class="bg-[var(--bscc-surface)] px-6 py-6 lg:px-8 lg:py-8">
+          <div data-slot="page-main-content" aria-label="主内容插槽" class="grid gap-6">
+            <section aria-label="任务摘要" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)]">
+              <div class="grid gap-3 px-5 py-4 lg:grid-cols-4">
+                <div class="min-w-0 space-y-1">
+                  <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">任务号</p>
+                  <p class="truncate font-mono text-[13px] font-medium leading-6 text-[var(--bscc-text)]">BSCC-2026-0626-014</p>
+                </div>
+                <div class="min-w-0 space-y-1">
+                  <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">当前阶段</p>
+                  <div class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-surface)]">
+                    待提交
+                  </div>
+                </div>
+                <div class="min-w-0 space-y-1">
+                  <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">检测范围</p>
+                  <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">A 标书主文件 / B 标书候选文件</p>
+                </div>
+                <div class="min-w-0 space-y-1">
+                  <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">保留周期</p>
+                  <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">结果保留 7 天，原文件保留 72 小时</p>
+                </div>
+              </div>
+            </section>
+
+            <div class="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
+              <div class="grid gap-6">
+                <section aria-labelledby="panel-upload" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                    <div class="flex items-center justify-between gap-3">
+                      <h3 id="panel-upload" class="truncate text-[18px] font-semibold leading-7 text-[var(--bscc-text)]">上传材料</h3>
+                      <div class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-text)]">
+                        支持 doc / docx / pdf
+                      </div>
+                    </div>
+                  </div>
+                  <div class="grid gap-5 px-5 py-5">
+                    <article class="grid gap-4 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-4 py-4">
+                      <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0 space-y-1">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] text-[var(--bscc-text)]">
+                              <i data-lucide="file-text" class="h-4 w-4"></i>
+                            </span>
+                            <h4 class="truncate text-[16px] font-semibold leading-6 text-[var(--bscc-text)]">A 文件</h4>
+                          </div>
+                          <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+                            上传本次投标主文件，系统将默认以该文件作为主比对源并抽取目录层级。
+                          </p>
+                        </div>
+                        <div class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-state-success)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-surface)]">
+                          已上传
+                        </div>
+                      </div>
+                      <div class="grid gap-3 rounded-[8px] border border-dashed border-[var(--bscc-border)] px-4 py-4">
+                        <div class="flex items-start gap-3">
+                          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] text-[var(--bscc-text)]">
+                            <i data-lucide="upload" class="h-4 w-4"></i>
+                          </span>
+                          <div class="min-w-0 space-y-1">
+                            <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">投标方案终版_A包_0626.pdf</p>
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">24.8 MB / 页数 186 / SHA1 5A09-19C4-7E21</p>
+                          </div>
+                        </div>
+                        <div class="grid gap-2 lg:grid-cols-3">
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">目录识别</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">已完成 14 级节点</p>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">附录状态</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">含报价单与资质页</p>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">格式校验</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">通过</p>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="grid gap-4 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-4 py-4">
+                      <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0 space-y-1">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] text-[var(--bscc-text)]">
+                              <i data-lucide="folder-open" class="h-4 w-4"></i>
+                            </span>
+                            <h4 class="truncate text-[16px] font-semibold leading-6 text-[var(--bscc-text)]">B 文件</h4>
+                          </div>
+                          <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+                            上传待比较文件，可追加同批次附件。系统将按正文、目录与报价附件分别匹配。
+                          </p>
+                        </div>
+                        <div class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-state-warning)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-surface)]">
+                          待补齐
+                        </div>
+                      </div>
+                      <div class="grid gap-3 rounded-[8px] border border-dashed border-[var(--bscc-border)] px-4 py-4">
+                        <div class="flex items-start gap-3">
+                          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] text-[var(--bscc-text)]">
+                            <i data-lucide="upload" class="h-4 w-4"></i>
+                          </span>
+                          <div class="min-w-0 space-y-1">
+                            <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">投标方案对照_B包_0626.docx</p>
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">18.2 MB / 页数 172 / SHA1 9F42-10BD-71C0</p>
+                          </div>
+                        </div>
+                        <div class="grid gap-2 lg:grid-cols-3">
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">目录识别</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">缺失 2 个报价节点</p>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">正文结构</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">已提取 163 页正文</p>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">校验提示</p>
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-state-warning)]">建议补传报价附件</p>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section aria-labelledby="panel-file-list" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                    <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                      <h3 id="panel-file-list" class="truncate text-[18px] font-semibold leading-7 text-[var(--bscc-text)]">文件清单</h3>
+                      <p class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">共 4 个文件，超出 30 MB 将转入离线校验</p>
+                    </div>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full table-fixed border-collapse">
+                      <thead>
+                        <tr class="border-b border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] text-left">
+                          <th class="min-w-[92px] px-4 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">类型</th>
+                          <th class="min-w-[220px] px-4 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">文件名</th>
+                          <th class="min-w-[88px] px-4 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">大小</th>
+                          <th class="min-w-[120px] px-4 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">用途</th>
+                          <th class="min-w-[180px] px-4 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">说明</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="border-b border-[var(--bscc-border)]">
+                          <td class="px-4 py-3 align-top">
+                            <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-text)]">A 主文件</span>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">投标方案终版_A包_0626.pdf</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text)]">24.8 MB</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">正文比对</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">作为本次查重基准文档，已完成目录抽取。</p>
+                          </td>
+                        </tr>
+                        <tr class="border-b border-[var(--bscc-border)]">
+                          <td class="px-4 py-3 align-top">
+                            <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-text)]">B 对照</span>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">投标方案对照_B包_0626.docx</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text)]">18.2 MB</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">正文比对</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">缺少报价附件，将按正文先行出预检结果。</p>
+                          </td>
+                        </tr>
+                        <tr class="border-b border-[var(--bscc-border)]">
+                          <td class="px-4 py-3 align-top">
+                            <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-text)]">附件</span>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">报价明细_附件A.xlsx</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text)]">1.9 MB</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">价格比对</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">用于识别报价模板结构，不计入正文重复率。</p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-4 py-3 align-top">
+                            <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-text)]">附件</span>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">授权书_盖章页.pdf</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text)]">0.7 MB</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="truncate text-[14px] leading-6 text-[var(--bscc-text)]">佐证留档</p>
+                          </td>
+                          <td class="px-4 py-3 align-top">
+                            <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">仅保留哈希指纹，用于后续任务恢复核验。</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section aria-labelledby="panel-keywords" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                    <h3 id="panel-keywords" class="truncate text-[18px] font-semibold leading-7 text-[var(--bscc-text)]">关键字</h3>
+                  </div>
+                  <div class="grid gap-4 px-5 py-5">
+                    <label class="grid gap-2">
+                      <span class="text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">优先检索词</span>
+                      <textarea rows="4" class="w-full rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-3 text-[14px] leading-6 text-[var(--bscc-text)] outline-none transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:border-[var(--bscc-primary)] focus-visible:border-[var(--bscc-primary)] focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]" placeholder="例如：项目经理、履约方案、应急响应、报价清单">项目经理；实施进度；安全保障；报价清单；履约承诺</textarea>
+                    </label>
+                    <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                      <div class="grid gap-2">
+                        <p class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">已识别候选词</p>
+                        <div class="flex flex-wrap gap-2">
+                          <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-3 py-1 text-[12px] leading-5 text-[var(--bscc-text)]">实施方案</span>
+                          <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-3 py-1 text-[12px] leading-5 text-[var(--bscc-text)]">技术偏离</span>
+                          <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-3 py-1 text-[12px] leading-5 text-[var(--bscc-text)]">应急预案</span>
+                          <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-3 py-1 text-[12px] leading-5 text-[var(--bscc-text)]">授权委托</span>
+                        </div>
+                      </div>
+                      <p class="font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">5 / 20 项</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="inline-flex items-center justify-center whitespace-nowrap rounded-[8px] bg-[var(--bscc-state-info)] px-3 py-1 text-[12px] font-medium leading-5 text-[var(--bscc-surface)]">字段提示</span>
+                      <p class="text-[14px] leading-6 text-[var(--bscc-text-muted)]">关键字将影响预检排序，不改变正式重复率结果。</p>
+                    </div>
+                  </div>
+                </section>
+
+                <section aria-labelledby="panel-rule" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                    <h3 id="panel-rule" class="truncate text-[18px] font-semibold leading-7 text-[var(--bscc-text)]">规则说明</h3>
+                  </div>
+                  <div class="grid gap-4 px-5 py-5">
+                    <label class="grid gap-2">
+                      <span class="text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">比对备注</span>
+                      <textarea rows="5" class="w-full rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-3 text-[14px] leading-6 text-[var(--bscc-text)] outline-none transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:border-[var(--bscc-primary)] focus-visible:border-[var(--bscc-primary)] focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]" placeholder="填写本次任务的特殊说明">请优先比对技术方案、履约承诺和报价附件；若目录级别不一致，按章节标题相似度合并；封面、目录、骑缝页不计入高亮证据。</textarea>
+                    </label>
+                    <div class="grid gap-3 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-4 py-4">
+                      <div class="flex items-start gap-3">
+                        <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] text-[var(--bscc-text)]">
+                          <i data-lucide="shield" class="h-4 w-4"></i>
+                        </span>
+                        <div class="grid gap-2">
+                          <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">提交前校验</p>
+                          <ul class="grid gap-2">
+                            <li class="flex items-start gap-2">
+                              <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-text)]"></span>
+                              <span class="text-[14px] leading-6 text-[var(--bscc-text-muted)]">正文页与附件页分开建模，避免报价模板误入正文重复率。</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                              <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-text)]"></span>
+                              <span class="text-[14px] leading-6 text-[var(--bscc-text-muted)]">若 B 文件缺少目录，系统仍可提交，但会在结果页提示结构偏差。</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                              <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-text)]"></span>
+                              <span class="text-[14px] leading-6 text-[var(--bscc-text-muted)]">任务提交后 10 分钟内可撤回，撤回后原文件立即清理。</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section aria-labelledby="panel-submit" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                    <h3 id="panel-submit" class="truncate text-[18px] font-semibold leading-7 text-[var(--bscc-text)]">提交任务</h3>
+                  </div>
+                  <div class="flex flex-col gap-4 px-5 py-5 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="min-w-0 space-y-1">
+                      <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">已完成上传、关键字与规则备注，可进入任务进度。</p>
+                      <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">提交后将锁定本次文件版本，并生成可恢复的任务号。若存在结构缺失，系统会先给出预检提示。</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                      <button type="button" class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-2 text-[14px] font-medium leading-none text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)]">
+                        保存草稿
+                      </button>
+                      <button type="button" data-dom-id="cta-progress" class="group inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-[8px] border border-[var(--bscc-primary)] bg-[var(--bscc-primary)] px-4 py-2 text-[14px] font-medium leading-none text-[var(--bscc-surface)] transition-[transform,background-color,border-color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:-translate-y-px hover:bg-[var(--bscc-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)] active:translate-y-0">
+                        开始查重
+                        <i data-lucide="arrow-right" class="h-4 w-4 transition-transform duration-150 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-0.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+      <div class="mx-auto grid w-full max-w-[1280px] gap-4 px-6 py-6 lg:grid-cols-3 lg:px-8">
+        <div class="min-w-0">
+          <p class="truncate text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">适用范围</p>
+          <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text)]">适用于投标团队与运营人员发起正文、附件与报价类查重任务。</p>
+        </div>
+        <div class="min-w-0">
+          <p class="truncate text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">保留边界</p>
+          <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text)]">页面仅展示静态画布内容，最终保留周期以实际运营配置与订单规则为准。</p>
+        </div>
+        <div class="min-w-0">
+          <p class="truncate text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">值守时间</p>
+          <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text)]">运营值守工作日 09:00-18:00，异常任务进入人工复核后将补发结果通知。</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

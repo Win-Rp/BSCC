@@ -1,0 +1,75 @@
+<div data-shell="project-shell" class="min-h-screen bg-[var(--bscc-background)] text-[var(--bscc-text)] antialiased">
+  <header class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+    <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-6 py-6 lg:px-8">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="min-w-0 space-y-2">
+          <h1 class="max-w-[22ch] text-[clamp(24px,2.4vw,32px)] font-semibold leading-[1.2] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+            BSCC 画布后台
+          </h1>
+          <p class="max-w-[72ch] text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+            统一承接上传、进度、结果、对比、恢复与运营场景的审计型工作台外壳。
+          </p>
+        </div>
+        <div class="grid shrink-0 gap-1 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-3 text-right">
+          <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">风格基线</span>
+          <span class="font-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">黑白灰 / 细边框 / 高可读</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+    <div class="mx-auto w-full max-w-[1280px] px-6 py-4 lg:px-8">
+      <!-- SLOT: activeNavItem -->
+      <nav aria-label="全局导航" class="flex flex-wrap items-center gap-2 lg:gap-3">
+        <button type="button" data-nav-key="upload-workbench" data-active="true" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          上传工作台
+        </button>
+        <button type="button" data-nav-key="task-progress" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          任务进度
+        </button>
+        <button type="button" data-nav-key="results-overview" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          结果总览
+        </button>
+        <button type="button" data-nav-key="compare-evidence" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          对比证据
+        </button>
+        <button type="button" data-nav-key="task-recovery" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          任务恢复
+        </button>
+        <button type="button" data-nav-key="admin-console" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+          运营后台
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <main class="mx-auto w-full max-w-[1280px] px-6 py-8 lg:px-8 lg:py-10">
+    <section class="overflow-hidden rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+      <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-6 py-5 lg:px-8">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div class="min-w-0 space-y-2">
+            <!-- SLOT: pageKicker -->
+            <p data-shell-field="page-kicker" class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">
+              当前模块
+            </p>
+            <!-- SLOT: pageTitle -->
+            <h2 data-shell-field="page-title" class="max-w-[18ch] text-[clamp(22px,2vw,28px)] font-semibold leading-[1.22] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+              页面标题
+            </h2>
+          </div>
+          <div class="grid shrink-0 gap-1 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3 text-right">
+            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">内容约定</span>
+            <span class="font-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">主容器 / 左对齐 / 可继承</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--bscc-surface)] px-6 py-6 lg:px-8 lg:py-8">
+        <div data-slot="page-main-content" aria-label="主内容插槽" class="grid min-h-[360px] gap-6">
+          <!-- SLOT: mainContent -->
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

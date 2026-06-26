@@ -1,0 +1,95 @@
+:root {
+  --bscc-background: #f5f5f3;
+  --bscc-surface: #ffffff;
+  --bscc-surface-muted: #f0f0ec;
+  --bscc-surface-strong: #e6e6df;
+  --bscc-text: #191919;
+  --bscc-text-muted: #5c5c56;
+  --bscc-text-subtle: #7c7c74;
+  --bscc-border: #d9d9d2;
+  --bscc-border-strong: #b9b9b0;
+  --bscc-primary: #191919;
+  --bscc-primary-soft: #2a2a2a;
+  --bscc-primary-tint: #ececea;
+  --bscc-state-success: #2f6b45;
+  --bscc-state-warning: #9a6a11;
+  --bscc-state-error: #8f3333;
+  --bscc-state-info: #385b87;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --shadow-static: 0 1px 2px rgba(25, 25, 25, 0.04);
+  --shadow-float: 0 18px 42px rgba(25, 25, 25, 0.12);
+  --page-max-width: 1440px;
+  --content-max-width: 1280px;
+}
+
+.dark {
+  --bscc-background: #131313;
+  --bscc-surface: #1b1b1b;
+  --bscc-surface-muted: #202020;
+  --bscc-surface-strong: #2b2b2b;
+  --bscc-text: #f4f4ee;
+  --bscc-text-muted: #c2c2b8;
+  --bscc-text-subtle: #9d9d93;
+  --bscc-border: #33332f;
+  --bscc-border-strong: #4b4b45;
+  --bscc-primary: #f4f4ee;
+  --bscc-primary-soft: #e3e3dc;
+  --bscc-primary-tint: #262623;
+  --shadow-static: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.bscc-display {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.bscc-h1 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.bscc-h2 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.bscc-h3 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.bscc-label {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Consolas", "SFMono-Regular", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}

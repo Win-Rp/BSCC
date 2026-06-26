@@ -1,0 +1,807 @@
+{
+  "project": {
+    "name": "BSCC 前端画布版",
+    "path": "d:\\Office\\Rp\\Dev\\BSCC\\bscc-frontend-canvas",
+    "operation": "create",
+    "deviceType": "desktop",
+    "language": "zh-CN",
+    "dashboardMode": false,
+    "replicationMode": null,
+    "sourceUrl": null,
+    "visualSpecExcerpt": null,
+    "styleDefinitionBrief": "标书查重平台画布版，采用黑白灰主导的极简审计风，强调流程、证据与运营可读性，方便后续在画布中继续调整。",
+    "designRead": "标书查重工作台 / 投标团队与运营人员 / 克制审计感 / 中高密度 / 避免花哨渐变和营销化装饰",
+    "designDials": {
+      "layoutVariance": 2,
+      "motionIntensity": 1,
+      "visualDensity": 4
+    },
+    "styleContinuityAnchors": {
+      "colorSystem": "以黑白灰单主色体系为核心，主按钮与选中态使用炭黑色，风险信息仅通过语义状态色表达，不使用额外品牌强调色。",
+      "shapeSystem": "卡片、表格、输入框统一使用 4/8/12px 的克制圆角，边框细而清晰，不使用夸张软圆角。",
+      "typographySystem": "中文界面统一使用无衬线字体层级，标题偏紧凑，正文高可读，编号与任务号使用等宽风格强化审计感。",
+      "spacingSystem": "页面采用宽边距与规则栅格，模块内 12/16/24 的递进间距，信息密集区优先通过分区而非装饰区分。",
+      "componentLanguage": "优先使用标题条、指标卡、规则说明、数据表、状态条、左右对照区等运营与审计型组件语言。",
+      "surfaceAndDepth": "静态模块以白底、浅灰底与细边框分层，普通卡片阴影极弱，仅弹窗类浮层可使用更深阴影。",
+      "imageryAndIconography": "本项目以信息界面为主，不依赖图片，图形语言采用线性图标、流程编号、风险标签和表格。",
+      "interactionTone": "交互反馈直接、稳定、克制，以选中边框、背景明度变化和进度状态为主，不使用炫技动效。"
+    },
+    "specsConstraints": null,
+    "sharedProjectShellContract": {
+      "navigationShell": "所有页面共享顶部标题区与横向导航，导航项使用统一的细边框胶囊形态，当前页通过深色底反白显示。",
+      "primaryColorSystem": "单一主色为炭黑，辅助通过浅灰底与边框层级表达，不引入 secondary 或 accent 品牌色。",
+      "typographySystem": "标题使用统一中文无衬线层级，正文 14px 为主，标签 12px，关键编号和任务号使用等宽字体。",
+      "radiusScale": "共享 4/8/12px 圆角体系，最大不超过 12px。",
+      "surfaceDepthModel": "白底卡片+浅灰分区+细边框为主，普通卡片阴影 alpha <= 0.04。",
+      "ctaStyle": "主按钮为深色实底浅字，次按钮为白底描边，尺寸统一紧凑。",
+      "alignmentRules": "页面主栅格以左对齐为主，表格和指标行采用严格基线对齐，避免视觉漂移。"
+    },
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "pageIds": [
+          "page-upload-workbench",
+          "page-task-progress",
+          "page-results-overview",
+          "page-compare-evidence",
+          "page-task-recovery",
+          "page-admin-console"
+        ],
+        "output": "partials/project-shell.html",
+        "sharedRegions": [
+          "page frame",
+          "top header",
+          "global navigation",
+          "section title area"
+        ],
+        "privateRegions": [],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": [
+          {
+            "nodeId": "gen-page-upload-workbench",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-upload-workbench"
+            ],
+            "output": "pages/upload-workbench.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "upload workbench body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-task-progress",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-task-progress"
+            ],
+            "output": "pages/task-progress.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "task progress body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-results-overview",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-results-overview"
+            ],
+            "output": "pages/results-overview.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "results overview body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-compare-evidence",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-compare-evidence"
+            ],
+            "output": "pages/compare-evidence.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "compare evidence body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-task-recovery",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-task-recovery"
+            ],
+            "output": "pages/task-recovery.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "task recovery body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-admin-console",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-admin-console"
+            ],
+            "output": "pages/admin-console.html",
+            "sharedRegions": [],
+            "privateRegions": [
+              "admin console body"
+            ],
+            "mutableSlots": [
+              "activeNavItem",
+              "pageTitle",
+              "pageKicker"
+            ],
+            "status": "generated",
+            "children": []
+          }
+        ]
+      }
+    }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "libraryIdentity": {
+      "name": null,
+      "id": null,
+      "version": null,
+      "scope": null,
+      "path": null,
+      "versionSource": null
+    },
+    "cssFilePath": "d:\\Office\\Rp\\Dev\\BSCC\\bscc-frontend-canvas\\colors_and_type.css",
+    "brandPrefix": "bscc",
+    "themeMode": "light",
+    "designDecisionSummary": "采用黑白灰极简审计风，将现有标书查重前端转换为更适合在画布中继续调整的专业工作台页面。",
+    "componentContractKind": "compact-json",
+    "forbiddenInventedComponents": [],
+    "allowedComponents": [],
+    "styleConstraints": {
+      "radiusMax": 12,
+      "spacingBase": 4,
+      "fontSizeBody": 14,
+      "fontSizeMin": 12,
+      "controlHeightDefault": 40,
+      "controlHeightLarge": 48,
+      "staticShadowAlphaMax": 0.04
+    },
+    "productContext": {
+      "kitType": "operations-workbench",
+      "productType": "标书查重与运营后台"
+    },
+    "actualTokenNameReference": [
+      {
+        "semanticPurpose": "页面背景",
+        "tokenName": "bscc-background"
+      },
+      {
+        "semanticPurpose": "主卡片背景",
+        "tokenName": "bscc-surface"
+      },
+      {
+        "semanticPurpose": "浅色分区背景",
+        "tokenName": "bscc-surface-muted"
+      },
+      {
+        "semanticPurpose": "主文字",
+        "tokenName": "bscc-text"
+      },
+      {
+        "semanticPurpose": "辅助文字",
+        "tokenName": "bscc-text-muted"
+      },
+      {
+        "semanticPurpose": "边框",
+        "tokenName": "bscc-border"
+      },
+      {
+        "semanticPurpose": "主操作色",
+        "tokenName": "bscc-primary"
+      },
+      {
+        "semanticPurpose": "主操作浅底",
+        "tokenName": "bscc-primary-tint"
+      },
+      {
+        "semanticPurpose": "成功状态",
+        "tokenName": "bscc-state-success"
+      },
+      {
+        "semanticPurpose": "警告状态",
+        "tokenName": "bscc-state-warning"
+      },
+      {
+        "semanticPurpose": "错误状态",
+        "tokenName": "bscc-state-error"
+      },
+      {
+        "semanticPurpose": "信息状态",
+        "tokenName": "bscc-state-info"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "nodeId": "page-upload-workbench",
+      "slug": "upload-workbench",
+      "title": "上传工作台",
+      "htmlSrc": "pages/upload-workbench.html",
+      "pageIndex": 1,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "businessScenario": "创建查重任务，配置 A/B 标书、关键字与规则说明。",
+      "visualNorthStar": "第一屏要让用户快速理解如何发起查重任务，并清楚看到收费与保留规则。",
+      "compositionPattern": "Structured Task Board",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "炭黑主按钮"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "规则文案较多",
+        "上传与说明区需要明确分层"
+      ],
+      "generationNodeId": "gen-page-upload-workbench",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-upload-workbench"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "upload workbench body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    },
+    {
+      "nodeId": "page-task-progress",
+      "slug": "task-progress",
+      "title": "任务进度",
+      "htmlSrc": "pages/task-progress.html",
+      "pageIndex": 2,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "businessScenario": "展示任务号、处理阶段、状态反馈与自动跳转提示。",
+      "visualNorthStar": "页面要像流程看板一样清晰，减少用户等待焦虑。",
+      "compositionPattern": "Centered Progress Column",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "状态标签系统"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "任务状态信息需要聚焦",
+        "避免空页面感"
+      ],
+      "generationNodeId": "gen-page-task-progress",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-task-progress"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "task progress body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    },
+    {
+      "nodeId": "page-results-overview",
+      "slug": "results-overview",
+      "title": "结果总览",
+      "htmlSrc": "pages/results-overview.html",
+      "pageIndex": 3,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "information-dense",
+      "businessScenario": "展示重复率摘要、B 文件排名、免费预览与解锁说明。",
+      "visualNorthStar": "用户要一眼看懂风险高低、付费价值和下一步动作。",
+      "compositionPattern": "Analytical Control Deck",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "风险色标签"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "信息密度高",
+        "摘要与表格需要明确主次"
+      ],
+      "generationNodeId": "gen-page-results-overview",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-results-overview"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "results overview body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    },
+    {
+      "nodeId": "page-compare-evidence",
+      "slug": "compare-evidence",
+      "title": "对比证据",
+      "htmlSrc": "pages/compare-evidence.html",
+      "pageIndex": 4,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "information-dense",
+      "businessScenario": "左右文档对比、命中类型筛选、证据解释。",
+      "visualNorthStar": "要让查重证据像审阅台一样严谨，左右对应关系清晰可追踪。",
+      "compositionPattern": "Split Evidence Review",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "证据高亮标签"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "双栏文本容易拥挤",
+        "命中说明区需要稳定落点"
+      ],
+      "generationNodeId": "gen-page-compare-evidence",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-compare-evidence"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "compare evidence body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    },
+    {
+      "nodeId": "page-task-recovery",
+      "slug": "task-recovery",
+      "title": "任务恢复",
+      "htmlSrc": "pages/task-recovery.html",
+      "pageIndex": 5,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "businessScenario": "通过任务号、订单号或联系方式恢复结果。",
+      "visualNorthStar": "这是一个高信任入口，布局要简洁克制，让用户立刻知道如何找回任务。",
+      "compositionPattern": "Focused Recovery Form",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "炭黑主按钮"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "表单过短时容易单薄",
+        "成功提示需要明确"
+      ],
+      "generationNodeId": "gen-page-task-recovery",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-task-recovery"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "task recovery body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    },
+    {
+      "nodeId": "page-admin-console",
+      "slug": "admin-console",
+      "title": "运营后台",
+      "htmlSrc": "pages/admin-console.html",
+      "pageIndex": 6,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "information-dense",
+      "businessScenario": "订单、任务、日志与后台操作管理。",
+      "visualNorthStar": "页面要像运营中控台一样沉稳，表格、筛选与动作区一眼可用。",
+      "compositionPattern": "Operations Console Grid",
+      "continuityAnchors": [
+        "顶部导航",
+        "白底细边框卡片",
+        "数据表格系统"
+      ],
+      "libraryRestraintMode": false,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "表格列较多",
+        "动作区与详情区要清楚分离"
+      ],
+      "generationNodeId": "gen-page-admin-console",
+      "generationPath": [
+        "gen-project-shell",
+        "gen-page-admin-console"
+      ],
+      "inheritedFragments": [
+        "partials/project-shell.html"
+      ],
+      "privateRegions": [
+        "admin console body"
+      ],
+      "mutableSlots": [
+        "activeNavItem",
+        "pageTitle",
+        "pageKicker"
+      ]
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "cta-progress",
+      "targetPageId": "page-task-progress"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "cta-results",
+      "targetPageId": "page-results-overview"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "cta-compare",
+      "targetPageId": "page-compare-evidence"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "cta-recover",
+      "targetPageId": "page-task-recovery"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "cta-admin",
+      "targetPageId": "page-admin-console"
+    }
+  ],
+  "hiddenInteractionPlan": [
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "nav-progress",
+      "targetPageId": "page-task-progress",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "nav-results",
+      "targetPageId": "page-results-overview",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "nav-compare",
+      "targetPageId": "page-compare-evidence",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "nav-recover",
+      "targetPageId": "page-task-recovery",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-upload-workbench",
+      "domId": "nav-admin",
+      "targetPageId": "page-admin-console",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "nav-upload",
+      "targetPageId": "page-upload-workbench",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "nav-results",
+      "targetPageId": "page-results-overview",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "nav-compare",
+      "targetPageId": "page-compare-evidence",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "nav-recover",
+      "targetPageId": "page-task-recovery",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-progress",
+      "domId": "nav-admin",
+      "targetPageId": "page-admin-console",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "nav-upload",
+      "targetPageId": "page-upload-workbench",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "nav-progress",
+      "targetPageId": "page-task-progress",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "nav-compare",
+      "targetPageId": "page-compare-evidence",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "nav-recover",
+      "targetPageId": "page-task-recovery",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-results-overview",
+      "domId": "nav-admin",
+      "targetPageId": "page-admin-console",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "nav-upload",
+      "targetPageId": "page-upload-workbench",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "nav-progress",
+      "targetPageId": "page-task-progress",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "nav-results",
+      "targetPageId": "page-results-overview",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "nav-recover",
+      "targetPageId": "page-task-recovery",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-compare-evidence",
+      "domId": "nav-admin",
+      "targetPageId": "page-admin-console",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "nav-upload",
+      "targetPageId": "page-upload-workbench",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "nav-progress",
+      "targetPageId": "page-task-progress",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "nav-results",
+      "targetPageId": "page-results-overview",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "nav-compare",
+      "targetPageId": "page-compare-evidence",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-task-recovery",
+      "domId": "nav-admin",
+      "targetPageId": "page-admin-console",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-admin-console",
+      "domId": "nav-upload",
+      "targetPageId": "page-upload-workbench",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-admin-console",
+      "domId": "nav-progress",
+      "targetPageId": "page-task-progress",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-admin-console",
+      "domId": "nav-results",
+      "targetPageId": "page-results-overview",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-admin-console",
+      "domId": "nav-compare",
+      "targetPageId": "page-compare-evidence",
+      "hideEdge": true,
+      "reason": "global nav"
+    },
+    {
+      "sourceNodeId": "page-admin-console",
+      "domId": "nav-recover",
+      "targetPageId": "page-task-recovery",
+      "hideEdge": true,
+      "reason": "global nav"
+    }
+  ]
+}

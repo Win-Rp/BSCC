@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>标书查重系统 V1 原型</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail">
+      <div class="brand">
+        <div class="brand-mark">查</div>
+        <div>
+          <strong>标书查重</strong>
+          <span>V1 Prototype</span>
+        </div>
+      </div>
+      <nav class="nav-list">
+        <button class="nav-item active" data-screen="upload">上传查重</button>
+        <button class="nav-item" data-screen="progress">任务进度</button>
+        <button class="nav-item" data-screen="results">结果汇总</button>
+        <button class="nav-item" data-screen="compare">文档对比</button>
+        <button class="nav-item" data-screen="recover">任务恢复</button>
+        <button class="nav-item" data-screen="admin">管理后台</button>
+      </nav>
+      <div class="support-card">
+        <span>客服</span>
+        <strong>微信：bid-check</strong>
+        <small>support@example.com</small>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">投标团队内部自查工具</p>
+          <h1 id="screen-title">上传查重</h1>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-button" data-screen-jump="recover">恢复任务</button>
+          <button class="ghost-button" data-screen-jump="admin">后台入口</button>
+        </div>
+      </header>
+
+      <section class="screen active" id="upload">
+        <div class="upload-grid">
+          <section class="panel main-panel">
+            <div class="panel-head">
+              <div>
+                <h2>新建查重任务</h2>
+                <p>上传 1 份主标书 A，和 1 至 10 份对比标书 B。</p>
+              </div>
+              <span class="status-pill ok">免登录</span>
+            </div>
+
+            <div class="dropzone accent">
+              <span class="file-icon">A</span>
+              <div>
+                <strong>主标书 A</strong>
+                <p>拖拽或选择 Word/PDF 文件</p>
+              </div>
+              <button class="secondary-button">选择文件</button>
+            </div>
+
+            <div class="dropzone">
+              <span class="file-icon">B</span>
+              <div>
+                <strong>对比标书 B</strong>
+                <p>已选择 3 份，最多 10 份</p>
+              </div>
+              <button class="secondary-button">继续添加</button>
+            </div>
+
+            <div class="file-list">
+              <div><span>A标书-技术方案.docx</span><em>12.4 MB</em></div>
+              <div><span>B1-投标文件.pdf</span><em>9.1 MB</em></div>
+              <div><span>B2-商务响应.docx</span><em>6.8 MB</em></div>
+              <div><span>B3-技术部分.docx</span><em>14.2 MB</em></div>
+            </div>
+
+            <label class="field">
+              <span>关键字查重</span>
+              <textarea>围标, 串标, 独家授权&#10;同一模板, 资质异常</textarea>
+            </label>
+
+            <div class="notice-row">
+              <span>支持 .docx / .doc / 可复制文本 PDF</span>
+              <span>扫描 PDF V1 暂不支持</span>
+              <span>1 对多详情需付费解锁</span>
+            </div>
+
+            <button class="primary-button" data-screen-jump="progress">开始查重</button>
+          </section>
+
+          <aside class="panel">
+            <h2>本次任务预估</h2>
+            <div class="metric-stack">
+              <div><span>查重模式</span><strong>1 对多</strong></div>
+              <div><span>B 文件数量</span><strong>3 份</strong></div>
+              <div><span>结果保留</span><strong>7 天</strong></div>
+            </div>
+            <div class="soft-callout">
+              <strong>免费可看</strong>
+              <p>重复率排行榜、部分片段预览、关键字命中摘要。</p>
+            </div>
+            <div class="soft-callout locked">
+              <strong>付费解锁</strong>
+              <p>全部 B 文件的完整高亮详情和左右分屏对比。</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="progress">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>任务处理中</h2>
+              <p>任务号：T202606250001</p>
+            </div>
+            <span class="status-pill warn">查重中</span>
+          </div>
+          <div class="progress-track"><span style="width: 68%"></span></div>
+          <div class="stepper">
+            <div class="done">已上传</div>
+            <div class="done">解析中</div>
+            <div class="active-step">查重中</div>
+            <div>待支付解锁</div>
+          </div>
+          <div class="status-table">
+            <div><strong>A标书-技术方案.docx</strong><span class="status-pill ok">解析成功</span></div>
+            <div><strong>B1-投标文件.pdf</strong><span class="status-pill ok">解析成功</span></div>
+            <div><strong>B2-商务响应.docx</strong><span class="status-pill ok">解析成功</span></div>
+            <div><strong>B3-技术部分.docx</strong><span class="status-pill warn">查重中</span></div>
+          </div>
+          <button class="primary-button" data-screen-jump="results">查看完成态</button>
+        </section>
+      </section>
+
+      <section class="screen" id="results">
+        <div class="result-layout">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>结果汇总</h2>
+                <p>任务号：T202606250001，结果保留至 2026-07-02</p>
+              </div>
+              <span class="status-pill danger">待支付解锁</span>
+            </div>
+            <div class="score-grid">
+              <div class="score-card primary-score"><span>总重复率</span><strong>72%</strong></div>
+              <div class="score-card"><span>完全重复</span><strong>31%</strong></div>
+              <div class="score-card"><span>改写相似</span><strong>25%</strong></div>
+              <div class="score-card"><span>语义相似</span><strong>16%</strong></div>
+              <div class="score-card"><span>格式相似</span><strong>80%</strong></div>
+              <div class="score-card"><span>元数据相似</span><strong>50%</strong></div>
+            </div>
+
+            <h3>1 对多重复率排行榜</h3>
+            <div class="rank-list">
+              <button class="rank-row selected">
+                <strong>B1-投标文件.pdf</strong>
+                <span>72%</span>
+                <em>高相似</em>
+              </button>
+              <button class="rank-row">
+                <strong>B3-技术部分.docx</strong>
+                <span>58%</span>
+                <em>中相似</em>
+              </button>
+              <button class="rank-row">
+                <strong>B2-商务响应.docx</strong>
+                <span>24%</span>
+                <em>低相似</em>
+              </button>
+            </div>
+          </section>
+
+          <aside class="panel">
+            <h2>免费片段预览</h2>
+            <div class="preview-snippet exact">本项目技术方案采用模块化架构，确保服务连续性与可扩展性。</div>
+            <div class="preview-snippet rewrite">项目实施周期、验收节点及交付内容与对比文件高度接近。</div>
+            <div class="preview-snippet semantic">售后服务承诺的响应时效表达不同，但含义基本一致。</div>
+            <div class="pay-box">
+              <strong>付费后解锁本次 1 对多结果</strong>
+              <p>3 份 B 文件 × 后台配置单价</p>
+              <button class="primary-button" id="open-pay">解锁完整高亮详情</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="compare">
+        <section class="compare-shell">
+          <div class="compare-toolbar">
+            <strong>A标书-技术方案.docx</strong>
+            <select>
+              <option>B1-投标文件.pdf</option>
+              <option>B3-技术部分.docx</option>
+              <option>B2-商务响应.docx</option>
+            </select>
+            <div class="legend">
+              <span class="dot exact"></span>完全重复
+              <span class="dot rewrite"></span>改写相似
+              <span class="dot semantic"></span>语义相似
+              <span class="dot keyword"></span>关键字
+            </div>
+          </div>
+          <div class="doc-panes">
+            <article class="doc-panel">
+              <h3>A 标书</h3>
+              <p>第一章 项目概述</p>
+              <p class="mark exact" data-pair="m1">本项目技术方案采用模块化架构，确保服务连续性与可扩展性。</p>
+              <p>系统建设应满足安全、稳定、易维护的基本要求。</p>
+              <p class="mark rewrite" data-pair="m2">项目实施周期分为准备、部署、联调、验收四个阶段。</p>
+              <p class="mark keyword">本项目严禁围标、串标等违规行为。</p>
+              <p class="mark semantic" data-pair="m3">售后服务需在接到问题后及时响应并形成处理记录。</p>
+            </article>
+            <article class="doc-panel">
+              <h3>B 标书</h3>
+              <p>一、项目说明</p>
+              <p id="m1" class="mark exact">本项目技术方案采用模块化架构，确保服务连续性与可扩展性。</p>
+              <p>方案设计遵循可靠、简洁、可扩展原则。</p>
+              <p id="m2" class="mark rewrite">项目实施过程包括前期准备、系统部署、联合调试和最终验收。</p>
+              <p>投标过程应遵守相关法律法规。</p>
+              <p id="m3" class="mark semantic">服务团队将在收到故障反馈后快速响应，并保留处置记录。</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen" id="recover">
+        <section class="panel narrow">
+          <h2>恢复订单或任务</h2>
+          <p>支持任务号、订单号、联系方式组合查询。</p>
+          <label class="field"><span>任务号</span><input value="T202606250001"></label>
+          <label class="field"><span>订单号</span><input placeholder="可选"></label>
+          <label class="field"><span>联系方式</span><input placeholder="邮箱 / 手机号 / 微信号"></label>
+          <button class="primary-button" data-screen-jump="results">查询并恢复</button>
+          <div class="soft-callout">
+            <strong>可恢复</strong>
+            <p>该任务 7 天内可查看。若为 1 对多未支付任务，将恢复到预览和支付入口。</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen" id="admin">
+        <div class="admin-layout">
+          <aside class="admin-menu">
+            <strong>管理后台</strong>
+            <span class="active-admin">订单管理</span>
+            <span>任务管理</span>
+            <span>系统配置</span>
+            <span>清理任务</span>
+          </aside>
+          <section class="panel admin-panel">
+            <div class="panel-head">
+              <div>
+                <h2>订单与任务工作台</h2>
+                <p>按订单号、任务号、联系方式快速定位异常。</p>
+              </div>
+              <button class="secondary-button">导出当前列表</button>
+            </div>
+            <div class="filter-row">
+              <input value="O202606250001">
+              <select><option>全部状态</option><option>已支付</option><option>待支付</option></select>
+              <button class="primary-button compact">查询</button>
+            </div>
+            <div class="admin-table">
+              <div class="table-head"><span>订单号</span><span>任务号</span><span>金额</span><span>状态</span><span>操作</span></div>
+              <div><span>O202606250001</span><span>T202606250001</span><span>¥30.00</span><span class="status-pill warn">待支付</span><button>标记已支付</button></div>
+              <div><span>O202606250002</span><span>T202606250002</span><span>¥50.00</span><span class="status-pill ok">已支付</span><button>查看详情</button></div>
+              <div><span>-</span><span>T202606250003</span><span>-</span><span class="status-pill danger">解析失败</span><button>重跑任务</button></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="pay-modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="close-pay">×</button>
+      <h2>支付宝扫码支付</h2>
+      <p class="muted">付费后解锁本次 1 对多结果。</p>
+      <label class="field"><span>联系方式</span><input value="user@example.com"></label>
+      <div class="pay-summary">
+        <span>订单号：O202606250001</span>
+        <span>3 份 B 文件 × ¥10.00</span>
+        <strong>应付 ¥30.00</strong>
+      </div>
+      <div class="qr">支付宝二维码</div>
+      <button class="primary-button" data-screen-jump="compare" id="paid-demo">模拟支付成功</button>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

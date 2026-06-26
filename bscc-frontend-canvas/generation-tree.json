@@ -1,0 +1,144 @@
+{
+  "root": {
+    "nodeId": "gen-project-shell",
+    "kind": "project-shell",
+    "pageIds": [
+      "page-upload-workbench",
+      "page-task-progress",
+      "page-results-overview",
+      "page-compare-evidence",
+      "page-task-recovery",
+      "page-admin-console"
+    ],
+    "output": "partials/project-shell.html",
+    "sharedRegions": [
+      "page frame",
+      "top header",
+      "global navigation",
+      "section title area"
+    ],
+    "privateRegions": [],
+    "mutableSlots": [
+      "activeNavItem",
+      "pageTitle",
+      "pageKicker"
+    ],
+    "status": "generated",
+    "children": [
+      {
+        "nodeId": "gen-page-upload-workbench",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-upload-workbench"
+        ],
+        "output": "pages/upload-workbench.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "upload workbench body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-task-progress",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-task-progress"
+        ],
+        "output": "pages/task-progress.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "task progress body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-results-overview",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-results-overview"
+        ],
+        "output": "pages/results-overview.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "results overview body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-compare-evidence",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-compare-evidence"
+        ],
+        "output": "pages/compare-evidence.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "compare evidence body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-task-recovery",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-task-recovery"
+        ],
+        "output": "pages/task-recovery.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "task recovery body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-admin-console",
+        "kind": "page-leaf",
+        "pageIds": [
+          "page-admin-console"
+        ],
+        "output": "pages/admin-console.html",
+        "sharedRegions": [],
+        "privateRegions": [
+          "admin console body"
+        ],
+        "mutableSlots": [
+          "activeNavItem",
+          "pageTitle",
+          "pageKicker"
+        ],
+        "status": "generated",
+        "children": []
+      }
+    ]
+  }
+}

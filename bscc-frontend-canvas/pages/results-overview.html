@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结果总览</title>
+    <style id="theme-vars">
+:root {
+  --bscc-background: #f5f5f3;
+  --bscc-surface: #ffffff;
+  --bscc-surface-muted: #f0f0ec;
+  --bscc-surface-strong: #e6e6df;
+  --bscc-text: #191919;
+  --bscc-text-muted: #5c5c56;
+  --bscc-text-subtle: #7c7c74;
+  --bscc-border: #d9d9d2;
+  --bscc-border-strong: #b9b9b0;
+  --bscc-primary: #191919;
+  --bscc-primary-soft: #2a2a2a;
+  --bscc-primary-tint: #ececea;
+  --bscc-state-success: #2f6b45;
+  --bscc-state-warning: #9a6a11;
+  --bscc-state-error: #8f3333;
+  --bscc-state-info: #385b87;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --shadow-static: 0 1px 2px rgba(25, 25, 25, 0.04);
+  --shadow-float: 0 18px 42px rgba(25, 25, 25, 0.12);
+  --page-max-width: 1440px;
+  --content-max-width: 1280px;
+}
+
+.dark {
+  --bscc-background: #131313;
+  --bscc-surface: #1b1b1b;
+  --bscc-surface-muted: #202020;
+  --bscc-surface-strong: #2b2b2b;
+  --bscc-text: #f4f4ee;
+  --bscc-text-muted: #c2c2b8;
+  --bscc-text-subtle: #9d9d93;
+  --bscc-border: #33332f;
+  --bscc-border-strong: #4b4b45;
+  --bscc-primary: #f4f4ee;
+  --bscc-primary-soft: #e3e3dc;
+  --bscc-primary-tint: #262623;
+  --shadow-static: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.bscc-display {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.bscc-h1 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.bscc-h2 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.bscc-h3 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.bscc-label {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Consolas", "SFMono-Regular", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--bscc-background);
+    --color-primary: var(--bscc-primary);
+    --color-border: var(--bscc-border);
+  }
+  @layer base {
+    body { background: var(--bscc-background); color: var(--bscc-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+      <div data-shell="project-shell" class="min-h-screen bg-[var(--bscc-background)] text-[var(--bscc-text)] antialiased">
+        <header class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+          <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-6 py-6 lg:px-8">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div class="min-w-0 space-y-2">
+                <h1 class="max-w-[22ch] text-[clamp(24px,2.4vw,32px)] font-semibold leading-[1.2] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+                  BSCC 画布后台
+                </h1>
+                <p class="max-w-[72ch] text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+                  统一承接上传、进度、结果、对比、恢复与运营场景的审计型工作台外壳。
+                </p>
+              </div>
+              <div class="grid shrink-0 gap-1 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-3 text-right">
+                <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">风格基线</span>
+                <span class="font-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">黑白灰 / 细边框 / 高可读</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+          <div class="mx-auto w-full max-w-[1280px] px-6 py-4 lg:px-8">
+            <nav aria-label="全局导航" class="flex flex-wrap items-center gap-2 lg:gap-3">
+              <button type="button" data-dom-id="nav-upload" data-nav-key="upload-workbench" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                上传工作台
+              </button>
+              <button type="button" data-dom-id="nav-progress" data-nav-key="task-progress" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                任务进度
+              </button>
+              <button type="button" data-nav-key="results-overview" data-active="true" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                结果总览
+              </button>
+              <button type="button" data-dom-id="nav-compare" data-nav-key="compare-evidence" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                对比证据
+              </button>
+              <button type="button" data-dom-id="nav-recover" data-nav-key="task-recovery" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                任务恢复
+              </button>
+              <button type="button" data-dom-id="nav-admin" data-nav-key="admin-console" data-active="false" class="inline-flex h-10 shrink-0 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+                运营后台
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <div class="mx-auto w-full max-w-[1280px] px-6 py-8 lg:px-8 lg:py-10">
+          <section class="overflow-hidden rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+            <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-6 py-5 lg:px-8">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div class="min-w-0 space-y-2">
+                  <p data-shell-field="page-kicker" class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">
+                    结果中心
+                  </p>
+                  <h2 data-shell-field="page-title" class="max-w-[18ch] text-[clamp(22px,2vw,28px)] font-semibold leading-[1.22] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+                    结果总览
+                  </h2>
+                </div>
+                <div class="grid shrink-0 gap-1 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3 text-right">
+                  <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">内容约定</span>
+                  <span class="font-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">主容器 / 左对齐 / 可继承</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[var(--bscc-surface)] px-6 py-6 lg:px-8 lg:py-8">
+              <div data-slot="page-main-content" aria-label="主内容插槽" class="grid gap-6">
+                <section aria-label="顶部摘要" class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-5">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">总重复率</p>
+                        <p class="mt-3 font-mono text-[30px] font-semibold leading-none text-[var(--bscc-text)]">78%</p>
+                      </div>
+                      <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-error)] whitespace-nowrap">高风险</span>
+                    </div>
+                    <p class="mt-4 line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">当前选中 B 文件与 A 文件存在高强度文本重合，建议优先进入证据页核验。</p>
+                  </article>
+
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-5">
+                    <p class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">高风险结果</p>
+                    <p class="mt-3 font-mono text-[30px] font-semibold leading-none text-[var(--bscc-text)]">2 份</p>
+                    <p class="mt-4 line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">本次共返回 6 份 B 文件摘要，前两名均超过 70%，需优先审阅。</p>
+                  </article>
+
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-5">
+                    <p class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">免费预览</p>
+                    <p class="mt-3 font-mono text-[30px] font-semibold leading-none text-[var(--bscc-text)]">3 段</p>
+                    <p class="mt-4 line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">摘要排行与关键片段始终可见，便于未解锁前判断是否需要继续核验。</p>
+                  </article>
+
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-primary-tint)] p-5">
+                    <p class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">详情状态</p>
+                    <p class="mt-3 font-mono text-[30px] font-semibold leading-none text-[var(--bscc-text)]">待解锁</p>
+                    <p class="mt-4 line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">格式、元数据与关键字明细已整理，可继续查看预览或完成解锁后进入对比。</p>
+                  </article>
+                </section>
+
+                <section aria-label="排名与预览" class="grid gap-6 xl:grid-cols-[minmax(0,1.85fr)_minmax(320px,0.95fr)]">
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="flex flex-col gap-3 border-b border-[var(--bscc-border)] px-5 py-4 lg:flex-row lg:items-end lg:justify-between">
+                      <div class="min-w-0">
+                        <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">B 文件排名</h3>
+                        <p class="mt-1 max-w-[64ch] text-[14px] leading-6 text-[var(--bscc-text-muted)]">按总重复率排序，选中行同步驱动右侧预览与下方明细分区。</p>
+                      </div>
+                      <div class="grid shrink-0 gap-1 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3 text-right">
+                        <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">任务号</span>
+                        <strong class="font-mono text-[13px] font-medium leading-5 text-[var(--bscc-text)]">BSCC-20260626-0284</strong>
+                      </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full table-fixed border-collapse">
+                        <thead class="bg-[var(--bscc-surface-muted)]">
+                          <tr class="text-left">
+                            <th class="w-[72px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">#</th>
+                            <th class="min-w-[240px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">B 文件</th>
+                            <th class="w-[180px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">重复率</th>
+                            <th class="w-[120px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">风险等级</th>
+                            <th class="min-w-[220px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">风险摘要</th>
+                            <th class="w-[96px] px-5 py-3 text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">操作</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr aria-selected="true" class="border-t border-[var(--bscc-border)] bg-[var(--bscc-primary-tint)]">
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] font-mono text-[13px] font-medium text-[var(--bscc-text)]">01</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="min-w-0">
+                                <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">南桥路网提升项目_B2_预算说明.docx</p>
+                                <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">compare_result_id / 100241</p>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-3">
+                                  <span class="font-mono text-[13px] font-medium text-[var(--bscc-text)]">78%</span>
+                                  <span class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">完全 42 / 改写 21 / 语义 15</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface-muted)]">
+                                  <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 78%;"></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-error)] whitespace-nowrap">高风险</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">目录结构、报价条目与资格承诺段落均出现高度重合，且元数据痕迹接近。</p>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <button type="button" class="inline-flex h-9 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 text-[13px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]">
+                                查看
+                              </button>
+                            </td>
+                          </tr>
+
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] font-mono text-[13px] font-medium text-[var(--bscc-text)]">02</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="min-w-0">
+                                <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">轨道区间土建施工_B4_商务标.docx</p>
+                                <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">compare_result_id / 100238</p>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-3">
+                                  <span class="font-mono text-[13px] font-medium text-[var(--bscc-text)]">72%</span>
+                                  <span class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">完全 35 / 改写 19 / 语义 18</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface-muted)]">
+                                  <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 72%;"></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-error)] whitespace-nowrap">高风险</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">报价清单描述与资质证明页重复较多，建议继续核对段落证据。</p>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <button type="button" class="inline-flex h-9 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 text-[13px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]">
+                                查看
+                              </button>
+                            </td>
+                          </tr>
+
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] font-mono text-[13px] font-medium text-[var(--bscc-text)]">03</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="min-w-0">
+                                <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">城区雨污分流工程_B1_资格文件.docx</p>
+                                <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">compare_result_id / 100226</p>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-3">
+                                  <span class="font-mono text-[13px] font-medium text-[var(--bscc-text)]">54%</span>
+                                  <span class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">完全 18 / 改写 16 / 语义 20</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface-muted)]">
+                                  <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 54%;"></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-warning)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-warning)] whitespace-nowrap">中风险</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">主要命中在通用承诺语句和项目经验表，重复率居中。</p>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <button type="button" class="inline-flex h-9 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 text-[13px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]">
+                                查看
+                              </button>
+                            </td>
+                          </tr>
+
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] font-mono text-[13px] font-medium text-[var(--bscc-text)]">04</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="min-w-0">
+                                <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">应急泵站改造_B3_技术响应.docx</p>
+                                <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">compare_result_id / 100219</p>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-3">
+                                  <span class="font-mono text-[13px] font-medium text-[var(--bscc-text)]">36%</span>
+                                  <span class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">完全 9 / 改写 13 / 语义 14</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface-muted)]">
+                                  <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 36%;"></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-success)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-success)] whitespace-nowrap">低风险</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">个别工序描述接近，整体结构差异较大，可作为次级核查对象。</p>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <button type="button" class="inline-flex h-9 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 text-[13px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]">
+                                查看
+                              </button>
+                            </td>
+                          </tr>
+
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] font-mono text-[13px] font-medium text-[var(--bscc-text)]">05</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="min-w-0">
+                                <p class="truncate text-[14px] font-medium leading-6 text-[var(--bscc-text)]">滨江景观工程_B6_施工组织.docx</p>
+                                <p class="truncate font-mono text-[12px] leading-5 text-[var(--bscc-text-muted)]">compare_result_id / 100213</p>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-3">
+                                  <span class="font-mono text-[13px] font-medium text-[var(--bscc-text)]">21%</span>
+                                  <span class="truncate text-[12px] leading-5 text-[var(--bscc-text-muted)]">完全 4 / 改写 7 / 语义 10</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface-muted)]">
+                                  <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 21%;"></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-success)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-success)] whitespace-nowrap">低风险</span>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <p class="line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">仅在通用条款和少量术语上出现重合，可暂列观察。</p>
+                            </td>
+                            <td class="px-5 py-4 align-top">
+                              <button type="button" class="inline-flex h-9 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 text-[13px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)]">
+                                查看
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </article>
+
+                  <aside class="grid gap-6">
+                    <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                      <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="min-w-0">
+                            <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">免费预览</h3>
+                            <p class="mt-1 line-clamp-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">未解锁状态下也优先展示选中结果的摘要片段。</p>
+                          </div>
+                          <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-error)] whitespace-nowrap">高风险</span>
+                        </div>
+                      </div>
+                      <div class="grid gap-3 px-5 py-5">
+                        <article class="rounded-[8px] bg-[var(--bscc-surface-muted)] p-4">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-error)]">完全重复</span>
+                            <strong class="font-mono text-[13px] text-[var(--bscc-text)]">92%</strong>
+                          </div>
+                          <p class="mt-3 line-clamp-3 text-[14px] leading-6 text-[var(--bscc-text)]">A 文件在“报价组成表”中的单价说明与 B 文件对应段落基本一致，仅个别序号不同。</p>
+                          <p class="mt-2 line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">B 文件片段：报价依据、措施费说明、清单说明顺序完全重合。</p>
+                        </article>
+                        <article class="rounded-[8px] bg-[var(--bscc-surface-muted)] p-4">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-warning)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-warning)]">改写相似</span>
+                            <strong class="font-mono text-[13px] text-[var(--bscc-text)]">68%</strong>
+                          </div>
+                          <p class="mt-3 line-clamp-3 text-[14px] leading-6 text-[var(--bscc-text)]">资格承诺部分进行了词语替换，但段落顺序与关键表述仍高度接近。</p>
+                          <p class="mt-2 line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">B 文件片段：质量目标、工期承诺、项目团队配置结构一致。</p>
+                        </article>
+                        <article class="rounded-[8px] bg-[var(--bscc-surface-muted)] p-4">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-info)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-info)]">关键字命中</span>
+                            <strong class="font-mono text-[13px] text-[var(--bscc-text)]">12 次</strong>
+                          </div>
+                          <p class="mt-3 line-clamp-3 text-[14px] leading-6 text-[var(--bscc-text)]">“联合体投标”“安全文明措施费”“履约保函”等关键词在同类位置反复命中。</p>
+                          <p class="mt-2 line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">仅展示摘要片段，完整上下文需解锁后查看。</p>
+                        </article>
+                      </div>
+                    </article>
+
+                    <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-5">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">解锁说明</h3>
+                      <p class="mt-2 text-[14px] leading-6 text-[var(--bscc-text-muted)]">当前页已提供摘要排行与免费预览。解锁后可继续查看完整对比、格式明细与关键字定位。</p>
+                      <div class="mt-4 grid gap-3">
+                        <div class="flex items-start gap-3 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                          <i data-lucide="file-search" class="mt-0.5 h-4 w-4 shrink-0 text-[var(--bscc-text-muted)]"></i>
+                          <div class="min-w-0">
+                            <p class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">完整证据</p>
+                            <p class="line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">查看段落级对照、相似原因与原文上下文。</p>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-3 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                          <i data-lucide="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-[var(--bscc-text-muted)]"></i>
+                          <div class="min-w-0">
+                            <p class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">审计细项</p>
+                            <p class="line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">格式、元数据与关键词命中结果会保持同一审阅顺序。</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                        <button type="button" data-dom-id="cta-compare" class="group inline-flex h-10 items-center justify-center gap-2 rounded-[8px] bg-[var(--bscc-primary)] px-4 text-[14px] font-medium text-[var(--bscc-surface)] transition-[background-color,transform] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:translate-y-[-1px] hover:bg-[var(--bscc-primary-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)]">
+                          查看对比
+                          <i data-lucide="arrow-right" class="h-4 w-4 transition-transform duration-150 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-[2px]"></i>
+                        </button>
+                        <button type="button" class="inline-flex h-10 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium text-[var(--bscc-text)] transition-colors duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)]">
+                          立即解锁
+                        </button>
+                      </div>
+                    </article>
+
+                    <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-5">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">支持与恢复</h3>
+                      <dl class="mt-4 grid gap-3">
+                        <div class="flex items-start justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">客服邮箱</dt>
+                          <dd class="truncate font-mono text-[13px] leading-6 text-[var(--bscc-text)]">support@bscc.example</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">恢复入口</dt>
+                          <dd class="text-[13px] leading-6 text-[var(--bscc-text)]">支持任务号 / 订单号</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">结果保留</dt>
+                          <dd class="font-mono text-[13px] leading-6 text-[var(--bscc-text)]">2026-07-03 23:59</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  </aside>
+                </section>
+
+                <section aria-label="选中结果详情" class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                  <div class="flex flex-col gap-4 border-b border-[var(--bscc-border)] px-5 py-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div class="min-w-0">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">选中结果详情</h3>
+                      <p class="mt-1 max-w-[72ch] text-[14px] leading-6 text-[var(--bscc-text-muted)]">当前选中“南桥路网提升项目_B2_预算说明.docx”，以下分区按审阅顺序展示格式、元数据与关键词线索。</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="inline-flex h-7 items-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-2.5 text-[12px] font-medium text-[var(--bscc-text)] whitespace-nowrap">免费摘要已同步</span>
+                      <span class="inline-flex h-7 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-warning)_10%,var(--bscc-surface))] px-2.5 text-[12px] font-medium text-[var(--bscc-state-warning)] whitespace-nowrap">完整详情待解锁</span>
+                    </div>
+                  </div>
+
+                  <div class="grid gap-6 px-5 py-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+                    <div class="grid gap-5">
+                      <div class="grid gap-4 md:grid-cols-2">
+                        <article class="rounded-[8px] bg-[var(--bscc-surface-muted)] p-4">
+                          <p class="text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">格式相似度</p>
+                          <div class="mt-3 flex items-end justify-between gap-3">
+                            <strong class="font-mono text-[24px] leading-none text-[var(--bscc-text)]">83%</strong>
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">目录 / 表格 / 编号体系</span>
+                          </div>
+                          <div class="mt-3 h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface)]">
+                            <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 83%;"></div>
+                          </div>
+                        </article>
+                        <article class="rounded-[8px] bg-[var(--bscc-surface-muted)] p-4">
+                          <p class="text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">元数据相似度</p>
+                          <div class="mt-3 flex items-end justify-between gap-3">
+                            <strong class="font-mono text-[24px] leading-none text-[var(--bscc-text)]">91%</strong>
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">创建者 / 修订链 / 模板</span>
+                          </div>
+                          <div class="mt-3 h-2 overflow-hidden rounded-[9999px] bg-[var(--bscc-surface)]">
+                            <div class="h-full rounded-[9999px] bg-[var(--bscc-primary)]" style="width: 91%;"></div>
+                          </div>
+                        </article>
+                      </div>
+
+                      <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] p-4">
+                        <h4 class="text-[16px] font-semibold leading-6 text-[var(--bscc-text)]">风险拆解</h4>
+                        <div class="mt-4 grid gap-3 md:grid-cols-2">
+                          <div class="rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                            <p class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">重复句 / 段落</p>
+                            <p class="mt-1 font-mono text-[13px] leading-6 text-[var(--bscc-text-muted)]">18 句 / 6 段</p>
+                          </div>
+                          <div class="rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                            <p class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">命中关键词</p>
+                            <p class="mt-1 font-mono text-[13px] leading-6 text-[var(--bscc-text-muted)]">12 次 / 4 类</p>
+                          </div>
+                          <div class="rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                            <p class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">高风险来源</p>
+                            <p class="mt-1 line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">报价条目顺序、通用承诺文本、模板页眉页脚。</p>
+                          </div>
+                          <div class="rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                            <p class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">建议动作</p>
+                            <p class="mt-1 line-clamp-2 text-[13px] leading-6 text-[var(--bscc-text-muted)]">先查看对比证据，再决定是否继续导出与恢复处理。</p>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+
+                    <article class="rounded-[8px] bg-[var(--bscc-primary-tint)] p-5">
+                      <h4 class="text-[16px] font-semibold leading-6 text-[var(--bscc-text)]">当前可见范围</h4>
+                      <dl class="mt-4 grid gap-3">
+                        <div class="flex items-start justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">摘要排行</dt>
+                          <dd class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">始终可见</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">免费预览</dt>
+                          <dd class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">3 段摘要</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">完整详情</dt>
+                          <dd class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">格式 / 元数据 / 关键字</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-3">
+                          <dt class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">下一步</dt>
+                          <dd class="text-[13px] font-medium leading-6 text-[var(--bscc-text)]">查看对比或解锁</dd>
+                        </div>
+                      </dl>
+                    </article>
+                  </div>
+                </section>
+
+                <section aria-label="格式元数据关键字分区" class="grid gap-6 xl:grid-cols-3">
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">格式分区</h3>
+                      <p class="mt-1 text-[14px] leading-6 text-[var(--bscc-text-muted)]">重点查看目录、页眉页脚、表格与编号结构。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full table-fixed border-collapse">
+                        <thead class="bg-[var(--bscc-surface-muted)]">
+                          <tr>
+                            <th class="w-[104px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">项目</th>
+                            <th class="px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">A / B 文件</th>
+                            <th class="w-[88px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">相似度</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">目录结构</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">一级标题顺序一致，页码格式相近。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">88%</td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">页眉页脚</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">页脚说明与页码位置接近。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">79%</td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">表格样式</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">报价表列名、对齐方式与边框规则高度相似。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">84%</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </article>
+
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">元数据分区</h3>
+                      <p class="mt-1 text-[14px] leading-6 text-[var(--bscc-text-muted)]">用于辅助判断是否来自同一模板或同源编辑链。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full table-fixed border-collapse">
+                        <thead class="bg-[var(--bscc-surface-muted)]">
+                          <tr>
+                            <th class="w-[96px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">字段</th>
+                            <th class="px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">判断</th>
+                            <th class="w-[88px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">结果</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">创建者</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">命名方式接近，存在同源迹象。</td>
+                            <td class="px-5 py-4"><span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-error)]">相同</span></td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">修订链</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">最近两次修订时间间隔小于 5 分钟。</td>
+                            <td class="px-5 py-4"><span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-warning)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-warning)]">相近</span></td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">模板来源</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">模板名称一致，页边距配置相同。</td>
+                            <td class="px-5 py-4"><span class="inline-flex h-6 items-center rounded-[8px] bg-[color-mix(in_srgb,var(--bscc-state-error)_10%,var(--bscc-surface))] px-2 text-[12px] font-medium text-[var(--bscc-state-error)]">相同</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </article>
+
+                  <article class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="border-b border-[var(--bscc-border)] px-5 py-4">
+                      <h3 class="text-[18px] font-semibold leading-[1.3] text-[var(--bscc-text)]">关键字分区</h3>
+                      <p class="mt-1 text-[14px] leading-6 text-[var(--bscc-text-muted)]">突出命中次数、位置与业务语义，避免仅给出空泛提示。</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full table-fixed border-collapse">
+                        <thead class="bg-[var(--bscc-surface-muted)]">
+                          <tr>
+                            <th class="w-[88px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">关键字</th>
+                            <th class="px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">命中文本</th>
+                            <th class="w-[88px] px-5 py-3 text-left text-[12px] font-medium leading-5 text-[var(--bscc-text-muted)]">位置</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">联合体</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">联合体投标承诺书、牵头单位职责说明。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">P03</td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">保函</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">履约保函格式与金额说明文字接近。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">P11</td>
+                          </tr>
+                          <tr class="border-t border-[var(--bscc-border)]">
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text)] whitespace-nowrap">措施费</td>
+                            <td class="px-5 py-4 text-[13px] leading-6 text-[var(--bscc-text-muted)]">安全文明措施费与临建费用表述重合。</td>
+                            <td class="px-5 py-4 font-mono text-[13px] leading-6 text-[var(--bscc-text)]">P18</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </article>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <footer class="mt-6 border-t border-[var(--bscc-border)] px-1 pt-5">
+            <div class="flex flex-col gap-3 text-[13px] leading-6 text-[var(--bscc-text-muted)] lg:flex-row lg:items-center lg:justify-between">
+              <p>结果页默认保留摘要排行、免费预览与恢复入口，便于在画布中继续扩展支付与证据联动。</p>
+              <p class="font-mono text-[12px] text-[var(--bscc-text-muted)]">results-overview / audit-control-deck / zh-CN</p>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </main>
+    <style>
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

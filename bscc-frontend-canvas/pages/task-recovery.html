@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务恢复</title>
+    <style id="theme-vars">
+:root {
+  --bscc-background: #f5f5f3;
+  --bscc-surface: #ffffff;
+  --bscc-surface-muted: #f0f0ec;
+  --bscc-surface-strong: #e6e6df;
+  --bscc-text: #191919;
+  --bscc-text-muted: #5c5c56;
+  --bscc-text-subtle: #7c7c74;
+  --bscc-border: #d9d9d2;
+  --bscc-border-strong: #b9b9b0;
+  --bscc-primary: #191919;
+  --bscc-primary-soft: #2a2a2a;
+  --bscc-primary-tint: #ececea;
+  --bscc-state-success: #2f6b45;
+  --bscc-state-warning: #9a6a11;
+  --bscc-state-error: #8f3333;
+  --bscc-state-info: #385b87;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --shadow-static: 0 1px 2px rgba(25, 25, 25, 0.04);
+  --shadow-float: 0 18px 42px rgba(25, 25, 25, 0.12);
+  --page-max-width: 1440px;
+  --content-max-width: 1280px;
+}
+
+.dark {
+  --bscc-background: #131313;
+  --bscc-surface: #1b1b1b;
+  --bscc-surface-muted: #202020;
+  --bscc-surface-strong: #2b2b2b;
+  --bscc-text: #f4f4ee;
+  --bscc-text-muted: #c2c2b8;
+  --bscc-text-subtle: #9d9d93;
+  --bscc-border: #33332f;
+  --bscc-border-strong: #4b4b45;
+  --bscc-primary: #f4f4ee;
+  --bscc-primary-soft: #e3e3dc;
+  --bscc-primary-tint: #262623;
+  --shadow-static: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.bscc-display {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.bscc-h1 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.bscc-h2 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.bscc-h3 {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.bscc-label {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Consolas", "SFMono-Regular", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--bscc-background);
+    --color-primary: var(--bscc-primary);
+    --color-border: var(--bscc-border);
+  }
+  @layer base {
+    body { background: var(--bscc-background); color: var(--bscc-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <div data-shell="project-shell" class="min-h-screen bg-[var(--bscc-background)] text-[var(--bscc-text)] antialiased">
+      <header class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+        <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-6 py-6 lg:px-8">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div class="min-w-0 space-y-2">
+              <h1 class="max-w-[22ch] text-[clamp(24px,2.4vw,32px)] font-semibold leading-[1.2] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+                BSCC 画布后台
+              </h1>
+              <p class="max-w-[72ch] text-[14px] leading-6 text-[var(--bscc-text-muted)] line-clamp-2">
+                统一承接上传、进度、结果、对比、恢复与运营场景的审计型工作台外壳。
+              </p>
+            </div>
+            <div class="grid shrink-0 gap-1 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 py-3 text-right">
+              <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">风格基线</span>
+              <span class="bscc-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">黑白灰 / 细边框 / 高可读</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+        <div class="mx-auto w-full max-w-[1280px] px-6 py-4 lg:px-8">
+          <nav aria-label="全局导航" class="flex flex-wrap items-center gap-2 lg:gap-3">
+            <button type="button" data-nav-key="upload-workbench" data-dom-id="nav-upload" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+              上传工作台
+            </button>
+            <button type="button" data-nav-key="task-progress" data-dom-id="nav-progress" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+              任务进度
+            </button>
+            <button type="button" data-nav-key="results-overview" data-dom-id="nav-results" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+              结果总览
+            </button>
+            <button type="button" data-nav-key="compare-evidence" data-dom-id="nav-compare" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+              对比证据
+            </button>
+            <button type="button" data-nav-key="task-recovery" data-active="true" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-primary)] bg-[var(--bscc-primary)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-surface)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-primary-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)]">
+              任务恢复
+            </button>
+            <button type="button" data-nav-key="admin-console" data-dom-id="nav-admin" data-active="false" class="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-background)] data-[active=true]:border-[var(--bscc-primary)] data-[active=true]:bg-[var(--bscc-primary)] data-[active=true]:text-[var(--bscc-surface)]">
+              运营后台
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <main class="mx-auto w-full max-w-[1280px] px-6 py-8 lg:px-8 lg:py-10">
+        <section class="overflow-hidden rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+          <div class="border-b border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-6 py-5 lg:px-8">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div class="min-w-0 space-y-2">
+                <p data-shell-field="page-kicker" class="truncate text-[12px] font-medium leading-5 tracking-[0.04em] text-[var(--bscc-text-muted)]">
+                  恢复入口
+                </p>
+                <h2 data-shell-field="page-title" class="max-w-[18ch] text-[clamp(22px,2vw,28px)] font-semibold leading-[1.22] tracking-[-0.02em]" style="text-wrap: balance; word-break: keep-all; overflow-wrap: break-word;">
+                  任务恢复
+                </h2>
+              </div>
+              <div class="grid shrink-0 gap-1 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3 text-right">
+                <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">内容约定</span>
+                <span class="bscc-mono text-[13px] font-medium leading-5 tracking-[0.01em] text-[var(--bscc-text)]">主容器 / 左对齐 / 可继承</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--bscc-surface)] px-6 py-6 lg:px-8 lg:py-8">
+            <div data-slot="page-main-content" aria-label="主内容插槽" class="grid gap-6">
+              <div class="grid gap-6 lg:grid-cols-12">
+                <section aria-labelledby="recovery-form-title" class="grid gap-5 lg:col-span-7">
+                  <article class="rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="border-b border-[var(--bscc-border)] px-5 py-5 lg:px-6">
+                      <div class="grid gap-3">
+                        <h3 id="recovery-form-title" class="text-[18px] font-semibold leading-[1.35] text-[var(--bscc-text)]">
+                          恢复方式
+                        </h3>
+                        <p class="max-w-[58ch] text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+                          通过任务号、订单号或联系方式重新定位结果。系统会优先校验任务号，再结合订单号与联系方式确认任务归属。
+                        </p>
+                        <div class="inline-flex w-fit items-center justify-center gap-2 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-primary-tint)] px-3 py-2 text-[13px] leading-5 whitespace-nowrap text-[var(--bscc-text)]">
+                          <i data-lucide="shield-check" class="h-4 w-4 shrink-0 text-[var(--bscc-text)]"></i>
+                          <span>至少填写任务号或订单号</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="grid gap-5 px-5 py-5 lg:px-6 lg:py-6">
+                      <div class="grid gap-2">
+                        <label for="task-no" class="text-[13px] font-medium leading-5 text-[var(--bscc-text-muted)]">任务号</label>
+                        <input id="task-no" type="text" placeholder="输入任务号" class="h-12 w-full rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] leading-6 text-[var(--bscc-text)] outline-none transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] placeholder:text-[var(--bscc-text-muted)] hover:border-[var(--bscc-border-strong)] focus:border-[var(--bscc-primary)] focus:ring-2 focus:ring-[var(--bscc-primary-tint)]" />
+                        <p class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">
+                          建议优先填写任务号，核验路径最短。
+                        </p>
+                      </div>
+
+                      <div class="grid gap-2">
+                        <label for="order-no" class="text-[13px] font-medium leading-5 text-[var(--bscc-text-muted)]">订单号</label>
+                        <input id="order-no" type="text" placeholder="输入订单号" class="h-12 w-full rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] leading-6 text-[var(--bscc-text)] outline-none transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] placeholder:text-[var(--bscc-text-muted)] hover:border-[var(--bscc-border-strong)] focus:border-[var(--bscc-primary)] focus:ring-2 focus:ring-[var(--bscc-primary-tint)]" />
+                        <p class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">
+                          当任务号缺失时，可单独使用订单号发起恢复。
+                        </p>
+                      </div>
+
+                      <div class="grid gap-2">
+                        <label for="contact" class="text-[13px] font-medium leading-5 text-[var(--bscc-text-muted)]">联系方式</label>
+                        <input id="contact" type="text" placeholder="输入邮箱、手机号或微信号" class="h-12 w-full rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-4 text-[14px] leading-6 text-[var(--bscc-text)] outline-none transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] placeholder:text-[var(--bscc-text-muted)] hover:border-[var(--bscc-border-strong)] focus:border-[var(--bscc-primary)] focus:ring-2 focus:ring-[var(--bscc-primary-tint)]" />
+                        <p class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">
+                          联系方式用于辅助核验，不会替代任务号或订单号。
+                        </p>
+                      </div>
+
+                      <div class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface-muted)] px-4 py-4">
+                        <div class="grid gap-3 sm:grid-cols-3">
+                          <div class="grid gap-1">
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">保留周期</span>
+                            <strong class="bscc-mono text-[14px] font-medium leading-6 text-[var(--bscc-text)]">7 天</strong>
+                          </div>
+                          <div class="grid gap-1">
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">核验方式</span>
+                            <strong class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">任务 / 订单 / 联系</strong>
+                          </div>
+                          <div class="grid gap-1">
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">恢复结果</span>
+                            <strong class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">摘要 / 预览 / 详情</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-3 border-t border-[var(--bscc-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                        <p class="max-w-[42ch] text-[13px] leading-6 text-[var(--bscc-text-muted)]">
+                          提交后将先返回恢复结果，再根据任务状态决定是否继续查看详情或进入后台处理。
+                        </p>
+                        <button type="button" class="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-5 text-[14px] font-semibold leading-none whitespace-nowrap text-[var(--bscc-text)] transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:-translate-y-[1px] hover:bg-[var(--bscc-surface-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)] active:translate-y-0">
+                          <span>查询恢复</span>
+                          <i data-lucide="search" class="h-4 w-4 shrink-0 transition-transform duration-150 ease-[cubic-bezier(.2,.8,.2,1)]"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                </section>
+
+                <aside class="grid gap-5 lg:col-span-5">
+                  <article class="rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)]">
+                    <div class="border-b border-[var(--bscc-border)] px-5 py-5 lg:px-6">
+                      <div class="flex flex-col gap-3">
+                        <div class="inline-flex w-fit items-center justify-center gap-2 rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-primary-tint)] px-3 py-2 text-[12px] font-medium leading-5 whitespace-nowrap text-[var(--bscc-text)]">
+                          <i data-lucide="badge-check" class="h-4 w-4 shrink-0 text-[var(--bscc-state-success)]"></i>
+                          <span>已完成恢复</span>
+                        </div>
+                        <h3 class="text-[18px] font-semibold leading-[1.35] text-[var(--bscc-text)]">
+                          恢复结果
+                        </h3>
+                        <p class="text-[14px] leading-6 text-[var(--bscc-text-muted)]">
+                          当前任务已重新绑定到本次会话，结果页会按订单状态展示摘要、预览或完整详情。
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="grid gap-4 px-5 py-5 lg:px-6 lg:py-6">
+                      <div class="rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-background)] px-4 py-4">
+                        <div class="grid gap-3">
+                          <div class="flex items-start justify-between gap-4">
+                            <span class="text-[12px] leading-5 text-[var(--bscc-text-muted)]">当前状态</span>
+                            <span class="inline-flex items-center justify-center rounded-[8px] bg-[var(--bscc-primary-tint)] px-3 py-1 text-[12px] font-medium leading-5 whitespace-nowrap text-[var(--bscc-state-success)]">恢复成功</span>
+                          </div>
+                          <div class="grid gap-2">
+                            <div class="flex items-center justify-between gap-4 border-b border-[var(--bscc-border)] pb-2">
+                              <span class="text-[13px] leading-5 text-[var(--bscc-text-muted)]">恢复目标</span>
+                              <strong class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">结果总览</strong>
+                            </div>
+                            <div class="flex items-center justify-between gap-4 border-b border-[var(--bscc-border)] pb-2">
+                              <span class="text-[13px] leading-5 text-[var(--bscc-text-muted)]">已校验字段</span>
+                              <strong class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">任务号 + 订单号</strong>
+                            </div>
+                            <div class="flex items-center justify-between gap-4">
+                              <span class="text-[13px] leading-5 text-[var(--bscc-text-muted)]">可继续动作</span>
+                              <strong class="text-[14px] font-medium leading-6 text-[var(--bscc-text)]">查看详情 / 后台处理</strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p class="max-w-[28ch] text-[13px] leading-6 text-[var(--bscc-text-muted)]">
+                          若需补录订单、延长保留期或人工重试，可进入运营后台继续处理。
+                        </p>
+                        <button type="button" data-dom-id="cta-admin" class="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-[var(--bscc-primary)] bg-[var(--bscc-primary)] px-5 text-[14px] font-semibold leading-none whitespace-nowrap text-[var(--bscc-surface)] transition-[background-color,border-color,color,transform] duration-150 ease-[cubic-bezier(.2,.8,.2,1)] hover:-translate-y-[1px] hover:bg-[var(--bscc-primary-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bscc-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bscc-surface)] active:translate-y-0">
+                          <span>进入后台</span>
+                          <i data-lucide="arrow-right" class="h-4 w-4 shrink-0 transition-transform duration-150 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-[2px]"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-5 py-5 lg:px-6">
+                    <div class="grid gap-4">
+                      <h3 class="text-[18px] font-semibold leading-[1.35] text-[var(--bscc-text)]">
+                        操作说明
+                      </h3>
+                      <ol class="grid gap-3">
+                        <li class="flex items-start gap-3 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                          <span class="bscc-mono inline-flex h-7 min-w-7 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-2 text-[12px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)]">01</span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">优先填写任务号；若任务号缺失，再补充订单号与联系方式。</p>
+                        </li>
+                        <li class="flex items-start gap-3 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                          <span class="bscc-mono inline-flex h-7 min-w-7 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-2 text-[12px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)]">02</span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">提交后先确认恢复结果，再判断是否需要前往结果页或运营后台继续处理。</p>
+                        </li>
+                        <li class="flex items-start gap-3 rounded-[8px] bg-[var(--bscc-surface-muted)] px-4 py-3">
+                          <span class="bscc-mono inline-flex h-7 min-w-7 items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-2 text-[12px] font-medium leading-none whitespace-nowrap text-[var(--bscc-text)]">03</span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">如遇订单未解锁、任务超期或信息不一致，可转入后台执行人工校验。</p>
+                        </li>
+                      </ol>
+                    </div>
+                  </article>
+
+                  <article class="rounded-[12px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-5 py-5 lg:px-6">
+                    <div class="grid gap-4">
+                      <h3 class="text-[18px] font-semibold leading-[1.35] text-[var(--bscc-text)]">
+                        恢复说明
+                      </h3>
+                      <ul class="grid gap-3">
+                        <li class="flex items-start gap-3">
+                          <span aria-hidden="true" class="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-[4px] bg-[var(--bscc-text-muted)]"></span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">恢复入口仅处理 7 天内仍在保留期的任务与订单。</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span aria-hidden="true" class="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-[4px] bg-[var(--bscc-text-muted)]"></span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">联系方式用于辅助校验，不会单独作为找回依据。</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span aria-hidden="true" class="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-[4px] bg-[var(--bscc-text-muted)]"></span>
+                          <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">恢复成功后将自动保留当前任务上下文，方便继续对比与审阅。</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </article>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <footer class="border-t border-[var(--bscc-border)] bg-[var(--bscc-background)]">
+      <div class="mx-auto flex w-full max-w-[1280px] flex-col gap-3 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <p class="text-[13px] leading-6 text-[var(--bscc-text-muted)]">
+          BSCC 恢复页用于重新绑定任务、订单与联系方式，帮助投标团队快速回到结果判断流程。
+        </p>
+        <div class="flex flex-wrap items-center gap-3 text-[12px] leading-5 text-[var(--bscc-text-muted)]">
+          <span class="inline-flex items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 py-1 whitespace-nowrap">结果保留 7 天</span>
+          <span class="inline-flex items-center justify-center rounded-[8px] border border-[var(--bscc-border)] bg-[var(--bscc-surface)] px-3 py-1 whitespace-nowrap">单主色审计风</span>
+        </div>
+      </div>
+    </footer>
+    <style>
+      @media (prefers-reduced-motion: reduce) {
+        [data-dom-id="cta-admin"],
+        [data-dom-id="cta-admin"] i,
+        button,
+        input {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
