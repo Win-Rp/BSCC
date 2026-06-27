@@ -1,11 +1,19 @@
 <template>
   <el-config-provider namespace="el">
-    <AppShell>
+    <template v-if="route.meta.requiresShell !== false">
+      <AppShell>
+        <router-view />
+      </AppShell>
+    </template>
+    <template v-else>
       <router-view />
-    </AppShell>
+    </template>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import AppShell from "@/components/AppShell.vue";
+
+const route = useRoute();
 </script>

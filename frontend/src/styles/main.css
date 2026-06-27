@@ -656,10 +656,9 @@ a {
 }
 
 .compare-original-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px 20px;
-  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .compare-original-toolbar__heading {
@@ -686,13 +685,7 @@ a {
   overflow-wrap: anywhere;
 }
 
-.compare-original-toolbar__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  align-items: center;
-  justify-content: flex-end;
-}
+
 
 .compare-original-toolbar__select {
   width: min(360px, 100%);

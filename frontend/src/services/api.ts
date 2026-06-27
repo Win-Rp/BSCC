@@ -34,6 +34,9 @@ export interface SummaryResult {
   keyword_hit_count: number;
   matched_sentence_count: number;
   matched_paragraph_count: number;
+  exact_count: number;
+  rewrite_count: number;
+  semantic_count: number;
 }
 
 export interface TaskSummary {
@@ -289,6 +292,23 @@ export function deleteTaskData(token: string, taskNo: string) {
 export function getAdminLogs(token: string) {
   return request<{ items: AdminLogRow[]; total: number }>("/api/admin/logs", {
     headers: authHeaders(token)
+  });
+}
+
+export function getSystemSettings(token?: string) {
+  return request<any>("/api/admin/settings", {
+    headers: token ? authHeaders(token) : {}
+  });
+}
+
+export function updateSystemSettings(token: string, data: any) {
+  return request<any>("/api/admin/settings", {
+    method: "PUT",
+    headers: {
+      ...authHeaders(token),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
   });
 }
 

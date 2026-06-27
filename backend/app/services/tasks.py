@@ -139,7 +139,10 @@ def get_summary(task_no: str) -> dict[str, Any]:
         a_file = conn.execute("SELECT id, original_name FROM task_files WHERE task_id = ? AND role = 'A'", (task["id"],)).fetchone()
         rows = conn.execute(
             """
-            SELECT cr.*, tf.original_name AS b_file_name
+            SELECT cr.*, tf.original_name AS b_file_name,
+                   (SELECT COUNT(*) FROM matched_segments ms WHERE ms.compare_result_id = cr.id AND ms.match_type = 'exact') AS exact_count,
+                   (SELECT COUNT(*) FROM matched_segments ms WHERE ms.compare_result_id = cr.id AND ms.match_type = 'rewrite') AS rewrite_count,
+                   (SELECT COUNT(*) FROM matched_segments ms WHERE ms.compare_result_id = cr.id AND ms.match_type = 'semantic') AS semantic_count
             FROM compare_results cr
             JOIN task_files tf ON tf.id = cr.b_file_id
             WHERE cr.task_id = ?
@@ -167,6 +170,9 @@ def get_summary(task_no: str) -> dict[str, Any]:
                     "keyword_hit_count": row["keyword_hit_count"],
                     "matched_sentence_count": row["matched_sentence_count"],
                     "matched_paragraph_count": row["matched_paragraph_count"],
+                    "exact_count": row["exact_count"],
+                    "rewrite_count": row["rewrite_count"],
+                    "semantic_count": row["semantic_count"],
                 }
                 for row in rows
             ],
