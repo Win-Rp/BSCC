@@ -87,14 +87,29 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useHead } from "@unhead/vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 import UploadDropCard from "@/components/UploadDropCard.vue";
 import { createTask } from "@/services/api";
 import { saveTaskNo } from "@/services/session";
+import { createHeadConfig, resolveRouteSeo } from "@/utils/seo";
 
 const router = useRouter();
+useHead(
+  createHeadConfig(
+    resolveRouteSeo(
+      {
+        title: "标书查重工具入口_上传投标文件开始检查_{siteTitle}",
+        description:
+          "上传主标书 A 与对比标书 B，开始标书查重、标书检查和围标风险排查，支持 DOCX 与可复制文本 PDF。",
+        keywords: ["标书查重入口", "投标文件查重", "标书检查工具", "围标风险排查"]
+      },
+      { currentPath: "/upload" }
+    )
+  ) as any
+);
 const keywordsList = ref<string[]>([]);
 const submitting = ref(false);
 const aFiles = ref<File[]>([]);

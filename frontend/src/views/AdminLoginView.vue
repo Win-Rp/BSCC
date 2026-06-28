@@ -58,6 +58,7 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { User, Lock, InfoFilled } from '@element-plus/icons-vue';
 import { adminLogin, getPublicSiteConfig } from '@/services/api';
+import { applyRouteSeo } from '@/utils/seo';
 
 const router = useRouter();
 const loginFormRef = ref<FormInstance>();
@@ -89,7 +90,14 @@ onMounted(async () => {
 watch(
   adminPanelTitle,
   (value) => {
-    document.title = value;
+    applyRouteSeo(
+      {
+        title: value,
+        description: '网站运营后台登录入口。',
+        robots: 'noindex,nofollow'
+      },
+      { currentPath: '/admin/login' }
+    );
   },
   { immediate: true }
 );

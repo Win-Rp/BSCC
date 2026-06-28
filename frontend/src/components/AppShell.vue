@@ -15,8 +15,15 @@
         </div>
       </div>
       <div class="shell-topbar__menu">
-        <router-link to="/" class="shell-topbar__link" active-class="is-active">主页</router-link>
-        <router-link to="/docs" class="shell-topbar__link" active-class="is-active">文档</router-link>
+        <router-link
+          v-for="item in menuItems"
+          :key="item.to"
+          :to="item.to"
+          class="shell-topbar__link"
+          :class="{ 'is-active': route.path === item.to }"
+        >
+          {{ item.label }}
+        </router-link>
       </div>
     </nav>
 
@@ -90,6 +97,7 @@ import StepperNav from "./StepperNav.vue";
 import { Loading } from "@element-plus/icons-vue";
 import { isTaskProcessing } from "@/composables/useTaskState";
 import { getPublicSiteConfig, getSupport } from "@/services/api";
+import { applyRouteSeo, type RouteSeoMeta } from "@/utils/seo";
 
 const router = useRouter();
 const route = useRoute();
@@ -101,6 +109,14 @@ const supportWechat = ref("");
 const supportEmail = ref("");
 const supportWechatQrSrc = "/support-wechat-qr.png";
 const supportWechatQrVisible = ref(true);
+const menuItems = [
+  { label: "主页", to: "/" },
+  { label: "上传查重", to: "/upload" },
+  { label: "免费查重", to: "/free" },
+  { label: "标书检查", to: "/check" },
+  { label: "标书合规", to: "/compliance" },
+  { label: "文档", to: "/docs" }
+];
 
 onMounted(async () => {
   try {
@@ -124,14 +140,15 @@ onMounted(async () => {
 });
 
 watch(
-  siteTitle,
-  (value) => {
-    document.title = value?.trim() || "标书查重系统";
+  [siteTitle, () => route.fullPath],
+  () => {
+    applyRouteSeo(route.meta.seo as RouteSeoMeta | undefined, {
+      siteTitle: siteTitle.value,
+      currentPath: route.path
+    });
   },
   { immediate: true }
 );
-
-const hasSupportInfo = computed(() => Boolean(supportWechat.value || supportEmail.value));
 
 const currentRouteName = computed(() => {
   if (isTaskProcessing.value && route.name === 'results') {
@@ -139,7 +156,7 @@ const currentRouteName = computed(() => {
   }
   return route.name as string;
 });
-const showStepper = computed(() => route.name !== "docs");
+const showStepper = computed(() => ["upload", "results", "compare"].includes(String(route.name || "")));
 
 const navSteps = computed(() => {
   const steps: Array<{ label: string; value: string; subLabel: string; icon?: any }> = [

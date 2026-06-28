@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/login
+Disallow: /results
+Disallow: /compare
+
+Sitemap: https://biaoshu.mxitx.com/sitemap.xml

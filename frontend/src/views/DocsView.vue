@@ -301,6 +301,45 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from "@unhead/vue";
+import { createHeadConfig, resolveRouteSeo } from "@/utils/seo";
+
+useHead(
+  createHeadConfig(
+    resolveRouteSeo(
+      {
+        title: "标书查重使用说明_结果解读与对比证据查看_{siteTitle}",
+        description:
+          "查看标书查重使用说明，了解如何上传投标文件、阅读结果总览、使用对比证据页面和找回历史任务结果。",
+        keywords: ["标书查重使用说明", "标书结果怎么看", "投标文件对比说明"],
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "为什么我只能看到预览，看不到完整详情？",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "当任务上传了 2-10 份 B 文件时，系统会先展示免费预览，解锁后可查看完整详情。"
+              }
+            },
+            {
+              "@type": "Question",
+              name: "任务处理中可以关闭页面吗？",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "可以，建议先保存任务号，随后可凭任务号找回结果。"
+              }
+            }
+          ]
+        }
+      },
+      { currentPath: "/docs" }
+    )
+  ) as any
+);
+
 const anchors = [
   { id: "quick-start", label: "快速上手" },
   { id: "prepare", label: "使用前准备" },

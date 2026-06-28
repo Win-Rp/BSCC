@@ -677,6 +677,7 @@ import {
   updateSystemSettings,
   type AdminOverview
 } from '@/services/api';
+import { applyRouteSeo } from '@/utils/seo';
 
 const router = useRouter();
 const currentAdmin = ref(localStorage.getItem('admin_username') || '未知管理员');
@@ -1066,7 +1067,14 @@ const refreshAll = () => {
 watch(
   adminPanelTitle,
   (value) => {
-    document.title = value;
+    applyRouteSeo(
+      {
+        title: value,
+        description: '网站运营后台工作台。',
+        robots: 'noindex,nofollow'
+      },
+      { currentPath: '/admin' }
+    );
   },
   { immediate: true }
 );
