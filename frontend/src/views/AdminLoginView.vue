@@ -2,7 +2,7 @@
   <div class="admin-login-container">
     <el-card class="admin-login-card" shadow="hover">
       <div class="login-header">
-        <h2>BSCC 运营后台</h2>
+        <h2>{{ adminPanelTitle }}</h2>
         <p>登录后可管理订单、任务和日志数据</p>
       </div>
 
@@ -52,16 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { User, Lock, InfoFilled } from '@element-plus/icons-vue';
-import { adminLogin } from '@/services/api';
+import { adminLogin, getPublicSiteConfig } from '@/services/api';
 
 const router = useRouter();
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
+const siteTitle = ref('标书查重系统');
+const adminPanelTitle = computed(() => `${(siteTitle.value || '标书查重系统').trim()} 运营后台`);
 
 const loginForm = reactive({
   username: '',
@@ -72,6 +74,25 @@ const loginRules = reactive<FormRules>({
   username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 });
+
+onMounted(async () => {
+  try {
+    const siteConfig = await getPublicSiteConfig();
+    if (siteConfig?.site_title) {
+      siteTitle.value = siteConfig.site_title;
+    }
+  } catch {
+    // 保持默认标题即可
+  }
+});
+
+watch(
+  adminPanelTitle,
+  (value) => {
+    document.title = value;
+  },
+  { immediate: true }
+);
 
 const handleLogin = async () => {
   if (!loginFormRef.value) return;

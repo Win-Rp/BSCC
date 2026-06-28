@@ -105,7 +105,7 @@
           </el-table>
         </el-card>
 
-              <el-card shadow="never" class="glass-card detail-section-card" v-if="detailAvailable || summary?.payment_required">
+              <el-card shadow="never" class="glass-card detail-section-card" v-if="detailAvailable || lockedDetail">
                 <div class="detail-panel__content" v-loading="loadingDetail">
                   <template v-if="detailAvailable">
               <div class="explain-table">
@@ -209,6 +209,72 @@
               </el-table>
             </div>
             </template>
+            <template v-else-if="lockedDetail">
+              <div class="explain-table">
+                <h3>
+                  重复片段摘录
+                  <span class="table-subtitle" v-if="totalMatches > 0">
+                    (已展示前 {{ matchRows.length }} 处预览)
+                  </span>
+                </h3>
+                <el-alert
+                  type="warning"
+                  :closable="false"
+                  title="当前任务尚未支付，以下为免费重复片段预览，完整详情解锁后可查看全部明细。"
+                  style="margin-bottom: 16px;"
+                />
+                <el-table :data="matchRows" border empty-text="当前暂无可展示的重复片段预览">
+                  <el-table-column label="类型" width="100">
+                    <template #default="{ row }">
+                      <el-tag
+                        :type="row.match_type === 'exact' ? 'danger' : 'warning'"
+                        size="small"
+                        effect="dark"
+                      >
+                        {{ row.match_type === 'exact' ? '完全重复' : '改写相似' }}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="a_text" label="主标书 A 片段" min-width="260">
+                    <template #default="{ row }">
+                      <div class="text-snippet">{{ row.a_text }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="b_text" label="对比标书 B 片段" min-width="260">
+                    <template #default="{ row }">
+                      <div class="text-snippet">{{ row.b_text }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="相似度" width="90">
+                    <template #default="{ row }">
+                      {{ toPercent(row.similarity) }}%
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+
+              <div class="explain-table">
+                <h3>格式相似项</h3>
+                <div class="locked-group">
+                  <el-empty description="支付解锁后显示格式相似项明细" />
+                </div>
+              </div>
+
+              <div class="explain-table">
+                <h3>元数据对比</h3>
+                <div class="locked-group">
+                  <el-empty description="支付解锁后显示元数据对比结果" />
+                </div>
+              </div>
+
+              <div class="explain-table">
+                <h3>关键字命中</h3>
+                <div class="locked-group">
+                  <el-empty description="支付解锁后显示关键字命中详情" />
+                </div>
+              </div>
+
+            </template>
             <template v-else-if="!summary?.payment_required">
               <el-empty description="当前结果没有详情" />
             </template>
@@ -217,45 +283,99 @@
       </section>
       
       <aside class="side-stack">
-        <el-card shadow="never" class="glass-card">
-            <div class="detail-section__head">
-              <div>
-                <h3>数据可视化</h3>
+        <section v-if="summary?.payment_required" class="unlock-offer-card unlock-offer-card--sidebar">
+          <div class="unlock-offer-card__badge">{{ promoBadgeText }}</div>
+          <div class="unlock-offer-card__content">
+            <div class="unlock-offer-card__text">
+              <h3>{{ hasPromo ? "先锁定优惠，再看完整详情" : "支付后立即查看完整详情" }}</h3>
+              <p>
+                完整解锁全部重复片段、格式相似项、元数据对比与关键字命中。
+                <template v-if="hasPromo && promoSummary">
+                  当前仅需 <strong>{{ formatMoney(promoSummary.effective_unit_price_cents) }} / 每份对比文件</strong>，
+                  原价 <span class="unlock-offer-card__origin-price">{{ formatMoney(promoSummary.original_unit_price_cents) }}</span>，
+                  本次任务可立省 <strong>{{ formatMoney(promoSummary.savings_cents) }}</strong>。
+                </template>
+                <template v-else>
+                  当前按标准价格解锁，支付后立即开放全部详情与后续回看权限。
+                </template>
+              </p>
+              <div v-if="hasPromo" class="unlock-offer-card__promo-strip">
+                <span>原价总额 {{ formatMoney(promoSummary?.original_amount_cents ?? 0) }}</span>
+                <span>现价 {{ formatMoney(promoSummary?.effective_amount_cents ?? 0) }}</span>
+                <span>立省 {{ promoDiscountText }}</span>
+              </div>
+              <div v-if="showPromoCountdown" class="unlock-offer-card__countdown">
+                <span>距优惠结束仅剩</span>
+                <strong>{{ promoCountdownText }}</strong>
+              </div>
+              <div class="unlock-offer-card__chips">
+                <span>{{ promoNoteText }}</span>
+                <span>结果保留期内随时回看</span>
+                <span>{{ promoLossAversionText }}</span>
               </div>
             </div>
+            <div class="unlock-offer-card__action">
+              <div class="unlock-offer-card__price">
+                {{ promoSummary ? formatMoney(promoSummary.effective_amount_cents) : "生成订单后显示" }}
+              </div>
+              <div v-if="promoSummary" class="unlock-offer-card__price-note">
+                {{ summary?.b_file_count || 0 }} 份对比文件
+              </div>
+              <el-button type="danger" class="unlock-offer-card__button" @click="paymentVisible = true">
+                {{ hasPromo ? "立即锁定优惠" : "立即支付解锁" }}
+              </el-button>
+            </div>
+          </div>
+        </section>
 
-            <!-- 总体排行柱状图 -->
-            <div class="chart-container" style="height: 280px; width: 100%; margin-bottom: 24px;">
+        <el-card shadow="never" class="glass-card side-stack__chart-card">
+          <div class="detail-section__head side-stack__head">
+            <div>
+              <h3>数据可视化</h3>
+              <p>从总体风险到单份标书画像，右侧集中查看关键指标。</p>
+            </div>
+          </div>
+
+          <div class="chart-panel">
+            <div class="chart-panel__head">
+              <span class="chart-panel__eyebrow">总览</span>
+              <h4>总体相似度排行</h4>
+            </div>
+            <div class="chart-container chart-container--rank">
               <v-chart class="chart" :option="rankChartOption" autoresize />
             </div>
+          </div>
 
-            <!-- 选中结果风险雷达图 -->
-            <template v-if="detailAvailable">
-              <el-divider border-style="dashed" />
-              <div class="chart-container" style="height: 300px; width: 100%; margin-top: 24px;">
+          <template v-if="detailAvailable">
+            <div class="chart-panel chart-panel--soft">
+              <div class="chart-panel__head">
+                <span class="chart-panel__eyebrow">当前选中</span>
+                <h4>风险画像分析</h4>
+                <p>{{ selectedResult?.b_file_name || "查看当前对比标书的多维相似度分布" }}</p>
+              </div>
+              <div class="chart-container chart-container--radar">
                 <v-chart class="chart" :option="detailRadarOption" autoresize />
               </div>
-            </template>
+            </div>
+          </template>
 
-            <!-- 关键字命中词云/饼图 -->
-            <template v-if="detailAvailable && keywordRows.length > 0">
-              <el-divider border-style="dashed" />
-              <div class="chart-container" style="height: 280px; width: 100%; margin-top: 24px;">
+          <template v-if="detailAvailable && keywordRows.length > 0">
+            <div class="chart-panel chart-panel--soft">
+              <div class="chart-panel__head">
+                <span class="chart-panel__eyebrow">命中分析</span>
+                <h4>关键字分布</h4>
+                <p>聚合展示当前选中结果中的高频命中词。</p>
+              </div>
+              <div class="chart-container chart-container--keyword">
                 <v-chart class="chart" :option="keywordChartOption" autoresize />
               </div>
-            </template>
-
-            <div class="action-strip" v-if="summary?.payment_required">
-              <div class="inline-tags">
-                <el-tag type="warning">完整详情需支付</el-tag>
-              </div>
-              <el-button type="primary" @click="paymentVisible = true">支付解锁</el-button>
             </div>
-          </el-card>
+          </template>
+        </el-card>
       </aside>
     </div>
     
-      <PaymentDialog v-model="paymentVisible" :task-no="taskNo" @paid="handlePaid" />
+      <PaymentDialog v-model="paymentVisible" :task-no="taskNo" :b-file-count="summary?.b_file_count || 1" @paid="handlePaid" />
     </el-card>
     </template>
   </section>
@@ -277,15 +397,21 @@ import type { EChartsOption } from "echarts";
 import VChart from "vue-echarts";
 import PaymentDialog from "@/components/PaymentDialog.vue";
 import {
+  getPreview,
+  getPublicSiteConfig,
   getDetail,
   getTaskSummary,
   getTaskStatus,
   type CompareDetail,
+  type MatchSegment,
+  type PromoPricingSummary,
+  type PublicSiteConfig,
   type SummaryResult,
   type TaskSummary
 } from "@/services/api";
 import { getTaskNo, saveTaskNo } from "@/services/session";
 import { isTaskProcessing as isProcessing } from "@/composables/useTaskState";
+import { buildPromoSummary, buildServerOffsetMs, formatCountdown, formatMoney, getRemainingMs } from "@/utils/promo";
 
 interface RankRow {
   id: number;
@@ -304,20 +430,25 @@ interface RankRow {
 const router = useRouter();
 const route = useRoute();
 const summary = ref<TaskSummary | null>(null);
+const publicSiteConfig = ref<PublicSiteConfig | null>(null);
 const selectedResultId = ref<number>(Number(route.query.result || 0));
 const selectedDetail = ref<CompareDetail | null>(null);
+const previewMatches = ref<MatchSegment[]>([]);
 const paymentVisible = ref(false);
 const loadingDetail = ref(false);
 isProcessing.value = true;
 const processingMessage = ref("正在查询任务状态...");
 const detailError = ref("");
 let pollTimer: number | undefined;
+let promoTimer: number | undefined;
+const promoNow = ref(Date.now());
 
 const taskNo = computed(() => String(route.query.task ?? "") || getTaskNo());
 const selectedResult = computed(() => {
   return summary.value?.results.find((item) => item.compare_result_id === selectedResultId.value) ?? null;
 });
 const detailAvailable = computed(() => Boolean(selectedDetail.value));
+const lockedDetail = computed(() => Boolean(summary.value?.payment_required && !detailAvailable.value));
 const detailMessage = computed(() => {
   if (loadingDetail.value) return "";
   if (detailError.value) return detailError.value;
@@ -334,11 +465,20 @@ const formatRows = computed(() => selectedDetail.value?.format_results ?? []);
 const metadataRows = computed(() => selectedDetail.value?.metadata_results ?? []);
 const keywordRows = computed(() => selectedDetail.value?.keyword_hits ?? []);
 const matchRows = computed(() => {
-  const matches = selectedDetail.value?.matches ?? [];
+  const matches = selectedDetail.value?.matches ?? previewMatches.value;
   // 在总览页面仅截取前 5 条重复片段作为预览
   return matches.slice(0, 5);
 });
-const totalMatches = computed(() => selectedDetail.value?.matches.length ?? 0);
+const totalMatches = computed(() => selectedDetail.value?.matches.length ?? previewMatches.value.length);
+const promoSummary = computed<PromoPricingSummary | null>(() => buildPromoSummary(publicSiteConfig.value?.promo, summary.value?.b_file_count || 1));
+const hasPromo = computed(() => Boolean(promoSummary.value?.promo_active));
+const promoBadgeText = computed(() => promoSummary.value?.promo_badge || "限时特惠");
+const promoNoteText = computed(() => hasPromo.value ? (promoSummary.value?.promo_note || "完整明细立即开放") : "完整明细立即开放");
+const promoLossAversionText = computed(() => hasPromo.value ? (promoSummary.value?.promo_loss_aversion_text || "错过后将恢复原价") : "支付后立即开放完整详情");
+const promoDiscountText = computed(() => `${promoSummary.value?.discount_percent ?? 0}%`);
+const promoServerOffsetMs = computed(() => buildServerOffsetMs(publicSiteConfig.value?.promo.server_now));
+const showPromoCountdown = computed(() => Boolean(promoSummary.value?.show_countdown && getRemainingMs(promoSummary.value, promoServerOffsetMs.value, promoNow.value) > 0));
+const promoCountdownText = computed(() => formatCountdown(getRemainingMs(promoSummary.value, promoServerOffsetMs.value, promoNow.value)));
 
 // ECharts 选项：总排行柱状图
 const rankChartOption = computed<EChartsOption>(() => {
@@ -347,20 +487,15 @@ const rankChartOption = computed<EChartsOption>(() => {
   const scores = data.map((item) => toPercent(item.total_similarity));
 
   return {
-    title: {
-      text: "总体相似度排行",
-      left: "center",
-      textStyle: { fontSize: 14, fontWeight: "normal", color: "#333" }
-    },
     tooltip: {
       trigger: "axis",
       formatter: "{b}: {c}%"
     },
-    grid: { top: 40, left: "3%", right: "4%", bottom: "3%", containLabel: true },
+    grid: { top: 24, left: "6%", right: "4%", bottom: 64, containLabel: true },
     xAxis: {
       type: "category",
       data: names,
-      axisLabel: { interval: 0, rotate: 30, overflow: "truncate", width: 80 }
+      axisLabel: { interval: 0, rotate: 24, overflow: "truncate", width: 80, margin: 14 }
     },
     yAxis: {
       type: "value",
@@ -528,16 +663,31 @@ async function loadSummary() {
   }
 }
 
+async function loadPublicSiteConfig() {
+  publicSiteConfig.value = await getPublicSiteConfig();
+}
+
 async function loadEvidence(forceMessage = false) {
   if (!taskNo.value || !selectedResultId.value) return;
 
   selectedDetail.value = null;
+  previewMatches.value = [];
   detailError.value = "";
   loadingDetail.value = true;
 
   try {
+    if (summary.value?.payment_required) {
+      try {
+        const preview = await getPreview(taskNo.value, selectedResultId.value);
+        previewMatches.value = preview.segments ?? [];
+      } catch {
+        previewMatches.value = [];
+      }
+    }
+
     const response = await getDetail(taskNo.value, selectedResultId.value);
     selectedDetail.value = response;
+    previewMatches.value = response.matches ?? [];
   } catch (error) {
     selectedDetail.value = null;
     detailError.value = error instanceof Error ? error.message : "详情加载失败";
@@ -647,6 +797,13 @@ onMounted(async () => {
   }
 
   try {
+    await loadPublicSiteConfig().catch(() => {
+      publicSiteConfig.value = null;
+    });
+    promoNow.value = Date.now();
+    promoTimer = window.setInterval(() => {
+      promoNow.value = Date.now();
+    }, 1000);
     // 开始轮询，替代原有的 Progress 逻辑
     await pollTaskStatus();
     if (isProcessing.value && !processingMessage.value.includes("失败")) {
@@ -661,6 +818,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.clearInterval(pollTimer);
+  window.clearInterval(promoTimer);
 });
 </script>
 
@@ -802,6 +960,306 @@ onUnmounted(() => {
   margin-top: 24px;
   display: flex;
   justify-content: center;
+}
+
+.locked-group {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 12px;
+}
+
+.side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.side-stack__chart-card {
+  overflow: hidden;
+}
+
+.side-stack__head {
+  margin-bottom: 18px;
+}
+
+.chart-panel {
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
+  border: 1px solid rgba(17, 17, 17, 0.06);
+}
+
+.chart-panel + .chart-panel {
+  margin-top: 16px;
+}
+
+.chart-panel--soft {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.54));
+}
+
+.chart-panel__head {
+  margin-bottom: 14px;
+}
+
+.chart-panel__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.06);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.chart-panel__head h4 {
+  margin: 10px 0 4px;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.chart-panel__head p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.chart-container {
+  width: 100%;
+}
+
+.chart-container--rank {
+  height: 280px;
+}
+
+.chart-container--radar {
+  height: 300px;
+}
+
+.chart-container--keyword {
+  height: 280px;
+}
+
+.unlock-offer-card {
+  position: relative;
+  padding: 28px 24px 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(245, 108, 108, 0.18), transparent 36%),
+    linear-gradient(135deg, rgba(17, 17, 17, 0.98), rgba(54, 32, 18, 0.95));
+  color: #fff7ee;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(17, 17, 17, 0.16);
+}
+
+.unlock-offer-card--sidebar {
+  padding: 24px 20px 20px;
+}
+
+.unlock-offer-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 38%),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 16px,
+      rgba(255, 255, 255, 0.025) 16px,
+      rgba(255, 255, 255, 0.025) 32px
+    );
+  pointer-events: none;
+}
+
+.unlock-offer-card__badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 1;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ffe08a, #ffb347);
+  color: #3c2200;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  box-shadow: 0 8px 18px rgba(255, 179, 71, 0.28);
+}
+
+.unlock-offer-card__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.unlock-offer-card__text h3 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.unlock-offer-card__text p {
+  margin: 0;
+  max-width: 680px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255, 247, 238, 0.88);
+}
+
+.unlock-offer-card__origin-price {
+  text-decoration: line-through;
+  color: rgba(255, 247, 238, 0.64);
+}
+
+.unlock-offer-card__promo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.unlock-offer-card__promo-strip span,
+.unlock-offer-card__countdown {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  color: rgba(255, 247, 238, 0.92);
+}
+
+.unlock-offer-card__countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.unlock-offer-card__countdown strong {
+  font-size: 15px;
+  color: #ffe08a;
+  letter-spacing: 1px;
+}
+
+.unlock-offer-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.unlock-offer-card__chips span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  color: rgba(255, 247, 238, 0.94);
+}
+
+.unlock-offer-card__action {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.unlock-offer-card__price {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: #ffe08a;
+}
+
+.unlock-offer-card__price-note {
+  font-size: 12px;
+  color: rgba(255, 247, 238, 0.72);
+}
+
+.unlock-offer-card__button {
+  min-width: 200px;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a59, #ff3d54);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 16px 30px rgba(255, 61, 84, 0.32);
+}
+
+.unlock-offer-card__button:hover {
+  background: linear-gradient(135deg, #ff6d4a, #ff304c);
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__content {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__text h3 {
+  font-size: 20px;
+  line-height: 1.35;
+  padding-right: 88px;
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__text p {
+  max-width: none;
+  line-height: 1.7;
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__action {
+  min-width: auto;
+  padding: 16px;
+  border-radius: 16px;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__price {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.unlock-offer-card--sidebar .unlock-offer-card__button {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .chart-panel {
+    padding: 16px;
+  }
+
+  .unlock-offer-card__content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .unlock-offer-card__action {
+    min-width: auto;
+    align-items: stretch;
+  }
+
+  .unlock-offer-card__button {
+    width: 100%;
+  }
+
+  .unlock-offer-card--sidebar .unlock-offer-card__text h3 {
+    padding-right: 72px;
+  }
 }
 
 .mega-compare-btn {

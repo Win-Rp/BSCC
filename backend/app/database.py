@@ -194,6 +194,8 @@ CREATE INDEX IF NOT EXISTS idx_keyword_hits_keyword ON keyword_hits(keyword);
 CREATE INDEX IF NOT EXISTS idx_orders_task_id ON orders(task_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_contact ON orders(contact);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at);
 """
 
 
@@ -221,6 +223,8 @@ def init_db() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with db_session() as conn:
         conn.executescript(SCHEMA)
+        _ensure_column(conn, "orders", "pay_channel", "TEXT NOT NULL DEFAULT 'alipay'")
+        _ensure_column(conn, "orders", "alipay_trade_no", "TEXT")
         for key, value in DEFAULT_SETTINGS.items():
             conn.execute(
                 """
@@ -238,3 +242,9 @@ def init_db() -> None:
             """,
             ("admin", hash_password("admin123"), "管理员", now_iso(), now_iso()),
         )
+
+
+def _ensure_column(conn: sqlite3.Connection, table_name: str, column_name: str, column_definition: str) -> None:
+    columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table_name})").fetchall()}
+    if column_name not in columns:
+        conn.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_definition}")

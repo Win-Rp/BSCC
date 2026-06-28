@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 
 from app.database import db_session
-from app.services.admin import delete_task_data
+from app.services.admin import delete_task_data, purge_deleted_tasks
 from app.utils.time import now_iso
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -35,14 +35,27 @@ def run_cleanup():
     logging.info(f"Cleanup completed. Processed {len(rows)} tasks.")
 
 
+def run_deleted_cleanup():
+    logging.info("Starting cleanup of legacy logically deleted tasks...")
+    result = purge_deleted_tasks(admin_user_id=None)
+    logging.info(
+        "Deleted cleanup completed. Requested %s tasks, purged %s tasks.",
+        result["requested_count"],
+        result["deleted_count"],
+    )
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop", action="store_true", help="Run in continuous loop mode")
     parser.add_argument("--interval", type=int, default=3600, help="Loop interval in seconds (default 1 hour)")
+    parser.add_argument("--purge-deleted", action="store_true", help="Physically purge historical tasks whose status is already marked as deleted")
     args = parser.parse_args()
 
-    if args.loop:
+    if args.purge_deleted:
+        run_deleted_cleanup()
+    elif args.loop:
         logging.info(f"Running in loop mode, interval {args.interval}s")
         while True:
             run_cleanup()

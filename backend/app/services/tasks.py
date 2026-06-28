@@ -155,6 +155,7 @@ def get_summary(task_no: str) -> dict[str, Any]:
             "mode": task["mode"],
             "status": task["status"],
             "unlock_status": task["unlock_status"],
+            "b_file_count": task["b_file_count"],
             "a_file": {"id": a_file["id"], "name": a_file["original_name"]} if a_file else None,
             "results": [
                 {

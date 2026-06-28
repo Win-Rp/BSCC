@@ -44,10 +44,33 @@ export interface TaskSummary {
   mode: "single" | "multi";
   status: string;
   unlock_status: string;
+  b_file_count: number;
   a_file: { id: number; name: string } | null;
   results: SummaryResult[];
   payment_required: boolean;
   expires_at: string;
+}
+
+export interface PromoPricingConfig {
+  original_unit_price_cents: number;
+  promo_unit_price_cents: number;
+  effective_unit_price_cents: number;
+  promo_enabled: boolean;
+  promo_active: boolean;
+  show_countdown: boolean;
+  promo_note: string;
+  promo_badge: string;
+  promo_loss_aversion_text: string;
+  promo_ends_at: string;
+  server_now: string;
+}
+
+export interface PromoPricingSummary extends PromoPricingConfig {
+  b_file_count: number;
+  original_amount_cents: number;
+  effective_amount_cents: number;
+  savings_cents: number;
+  discount_percent: number;
 }
 
 export interface PositionInfo {
@@ -118,7 +141,10 @@ export interface OrderInfo {
   amount_cents: number;
   b_file_count: number;
   qr_code_url: string | null;
+  payment_message?: string | null;
   status: string;
+  pay_channel: "alipay" | "wechat";
+  pricing: PromoPricingSummary;
 }
 
 export interface OrderStatus {
@@ -127,6 +153,7 @@ export interface OrderStatus {
   status: string;
   unlock_status: string;
   paid_at: string | null;
+  pay_channel: "alipay" | "wechat";
 }
 
 export interface RecoverResult {
@@ -174,9 +201,107 @@ export interface AdminLogRow {
   admin_username: string | null;
 }
 
+export interface AdminOverview {
+  totals: {
+    orders: number;
+    orders_pending: number;
+    orders_paid: number;
+    tasks: number;
+    tasks_processing: number;
+    tasks_completed: number;
+    tasks_failed: number;
+    logs: number;
+  };
+  revenue: {
+    paid_amount_cents: number;
+    pending_amount_cents: number;
+  };
+  system: {
+    site_base_url: string;
+    home_tags_count: number;
+    system_notice_enabled: boolean;
+    result_retention_days: number;
+  };
+  payment: {
+    alipay_enabled: boolean;
+    alipay_configured: boolean;
+    alipay_notify_url: string;
+    wechat_enabled: boolean;
+    wechat_configured: boolean;
+    wechat_notify_url: string;
+  };
+  recent_orders: AdminOrderRow[];
+  recent_tasks: AdminTaskRow[];
+  recent_logs: AdminLogRow[];
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface AdminListParams {
+  page: number;
+  page_size: number;
+  status?: string;
+  keyword?: string;
+  created_from?: string;
+  created_to?: string;
+}
+
+export interface AdminTaskBatchDeleteResult {
+  requested_count: number;
+  deleted_count: number;
+  task_nos: string[];
+}
+
 export interface SupportInfo {
   wechat: string | null;
   email: string | null;
+}
+
+export interface PublicSiteConfig {
+  site_title: string;
+  home_tags: string[];
+  system_notice: string;
+  alipay_enabled: boolean;
+  wechat_enabled: boolean;
+  promo: PromoPricingConfig;
+}
+
+export interface AdminSettings {
+  price_per_b_file_cents: number;
+  promo_enabled: boolean;
+  promo_price_per_b_file_cents: number;
+  promo_ends_at: string;
+  promo_note: string;
+  promo_badge: string;
+  promo_countdown_enabled: boolean;
+  promo_loss_aversion_text: string;
+  preview_segment_limit: number;
+  result_retention_days: number;
+  customer_service_wechat: string;
+  customer_service_email: string;
+  system_notice: string;
+  site_base_url: string;
+  site_title: string;
+  home_tags: string[];
+  threshold_exact: number;
+  threshold_rewrite: number;
+  threshold_semantic: number;
+  alipay_enabled: boolean;
+  alipay_gateway: string;
+  alipay_app_id: string;
+  alipay_notify_url: string;
+  alipay_private_key: string;
+  alipay_public_key: string;
+  wechat_enabled: boolean;
+  wechat_app_id: string;
+  wechat_mch_id: string;
+  wechat_api_v2_key: string;
+  wechat_notify_url: string;
 }
 
 export async function createTask(payload: { aFile: File; bFiles: File[]; keywords?: string }) {
@@ -215,22 +340,16 @@ export function getOriginalFileBUrl(taskNo: string, compareResultId: number) {
   return `${API_BASE_URL}/api/tasks/${encodeURIComponent(taskNo)}/file/b/${compareResultId}`;
 }
 
-export function createOrder(taskNo: string, contact: string) {
+export function createOrder(taskNo: string, contact: string, payChannel: "alipay" | "wechat") {
   return request<OrderInfo>("/api/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ task_no: taskNo, contact })
+    body: JSON.stringify({ task_no: taskNo, contact, pay_channel: payChannel })
   });
 }
 
 export function getOrderStatus(orderNo: string) {
   return request<OrderStatus>(`/api/orders/${orderNo}/status`);
-}
-
-export function simulateAlipayNotify(orderNo: string) {
-  return fetch(`${API_BASE_URL}/api/payments/alipay/notify?order_no=${encodeURIComponent(orderNo)}`, {
-    method: "POST"
-  }).then((response) => response.text());
 }
 
 export function recoverTask(payload: { task_no?: string; order_no?: string; contact?: string }) {
@@ -249,14 +368,49 @@ export function adminLogin(username: string, password: string) {
   });
 }
 
-export function getAdminOrders(token: string) {
-  return request<{ items: AdminOrderRow[]; total: number }>("/api/admin/orders", {
+export function changeAdminPassword(token: string, payload: {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}) {
+  return request<{ force_relogin: boolean }>("/api/admin/change-password", {
+    method: "POST",
+    headers: {
+      ...authHeaders(token),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getAdminOrders(token: string, params: AdminListParams) {
+  return request<PaginatedResult<AdminOrderRow>>(`/api/admin/orders?${new URLSearchParams({
+    page: String(params.page),
+    page_size: String(params.page_size),
+    ...(params.status ? { status: params.status } : {}),
+    ...(params.keyword ? { keyword: params.keyword } : {}),
+    ...(params.created_from ? { created_from: params.created_from } : {}),
+    ...(params.created_to ? { created_to: params.created_to } : {})
+  }).toString()}`, {
     headers: authHeaders(token)
   });
 }
 
-export function getAdminTasks(token: string) {
-  return request<{ items: AdminTaskRow[]; total: number }>("/api/admin/tasks", {
+export function getAdminTasks(token: string, params: AdminListParams) {
+  return request<PaginatedResult<AdminTaskRow>>(`/api/admin/tasks?${new URLSearchParams({
+    page: String(params.page),
+    page_size: String(params.page_size),
+    ...(params.status ? { status: params.status } : {}),
+    ...(params.keyword ? { keyword: params.keyword } : {}),
+    ...(params.created_from ? { created_from: params.created_from } : {}),
+    ...(params.created_to ? { created_to: params.created_to } : {})
+  }).toString()}`, {
+    headers: authHeaders(token)
+  });
+}
+
+export function getAdminOverview(token: string) {
+  return request<AdminOverview>("/api/admin/overview", {
     headers: authHeaders(token)
   });
 }
@@ -289,20 +443,39 @@ export function deleteTaskData(token: string, taskNo: string) {
   });
 }
 
-export function getAdminLogs(token: string) {
-  return request<{ items: AdminLogRow[]; total: number }>("/api/admin/logs", {
+export function batchDeleteTaskData(token: string, taskNos: string[]) {
+  return request<AdminTaskBatchDeleteResult>("/api/admin/tasks/data/batch-delete", {
+    method: "POST",
+    headers: {
+      ...authHeaders(token),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ task_nos: taskNos })
+  });
+}
+
+export function getAdminLogs(token: string, params: {
+  page: number;
+  page_size: number;
+  keyword?: string;
+}) {
+  return request<PaginatedResult<AdminLogRow>>(`/api/admin/logs?${new URLSearchParams({
+    page: String(params.page),
+    page_size: String(params.page_size),
+    ...(params.keyword ? { keyword: params.keyword } : {})
+  }).toString()}`, {
     headers: authHeaders(token)
   });
 }
 
 export function getSystemSettings(token?: string) {
-  return request<any>("/api/admin/settings", {
+  return request<AdminSettings>("/api/admin/settings", {
     headers: token ? authHeaders(token) : {}
   });
 }
 
-export function updateSystemSettings(token: string, data: any) {
-  return request<any>("/api/admin/settings", {
+export function updateSystemSettings(token: string, data: AdminSettings) {
+  return request<AdminSettings>("/api/admin/settings", {
     method: "PUT",
     headers: {
       ...authHeaders(token),
@@ -314,6 +487,10 @@ export function updateSystemSettings(token: string, data: any) {
 
 export function getSupport() {
   return request<SupportInfo>("/api/support");
+}
+
+export function getPublicSiteConfig() {
+  return request<PublicSiteConfig>("/api/public/site-config");
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
