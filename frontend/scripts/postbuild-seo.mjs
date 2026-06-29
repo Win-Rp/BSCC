@@ -4,6 +4,15 @@ import path from "node:path";
 const DIST_DIR = path.resolve("dist");
 const SITE_URL = "https://biaoshu.mxitx.com";
 const DEFAULT_SITE_TITLE = "标书查重系统";
+const BAIDU_ANALYTICS_SCRIPT = `    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6b08aa71d6cd089506e0021eb0025483";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>`;
 
 const pages = [
   {
@@ -180,7 +189,8 @@ function buildHeadTags(page) {
     `    <meta name="application-name" content="${DEFAULT_SITE_TITLE}">`,
     `    <link rel="canonical" href="${canonical}">`,
     `    <title>${escapeHtml(page.title)}</title>`,
-    jsonLdTags
+    jsonLdTags,
+    BAIDU_ANALYTICS_SCRIPT
   ]
     .filter(Boolean)
     .join("\n");
@@ -210,7 +220,8 @@ function cleanHead(html) {
     .replace(/<meta property="og:url"[^>]*>\s*/g, "")
     .replace(/<link rel="canonical"[^>]*>\s*/g, "")
     .replace(/<title>[\s\S]*?<\/title>\s*/g, "")
-    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, "");
+    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, "")
+    .replace(/<script>\s*var _hmt = _hmt \|\| \[\];[\s\S]*?<\/script>\s*/g, "");
 }
 
 async function patchPage(page) {
