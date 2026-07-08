@@ -119,8 +119,8 @@ async function main() {
     updatedAt: new Date().toISOString()
   };
 
-  const [major, minor, patch] = packageJson.version.split(".");
-  const displayVersion = `${major}.${minor}.${patch}+build.${buildNumber}`;
+  const [major, minor] = packageJson.version.split(".");
+  const displayVersion = `${major}.${minor}.${buildNumber}`;
 
   await fs.mkdir(generatedDir, { recursive: true });
   await fs.writeFile(
