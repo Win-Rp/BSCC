@@ -1,5 +1,6 @@
 node_modules/
 dist/
+dist-crx/
 *.tsbuildinfo
 *.log
 .DS_Store
