@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import DocumentOriginalPane from "@/components/DocumentOriginalPane.vue";
 import { ArrowLeft, ArrowRight, Document, Back, Menu } from "@element-plus/icons-vue";
+import { useAppI18n } from "@/composables/useAppI18n";
 import {
   getDetail,
   getOriginalFileAUrl,
@@ -17,6 +18,7 @@ import { getTaskNo } from "@/services/session";
 
 const route = useRoute();
 const router = useRouter();
+const { translateText } = useAppI18n();
 const taskNo = ref(String(route.query.task ?? "") || getTaskNo());
 const summary = ref<TaskSummary | null>(null);
 const detail = ref<CompareDetail | null>(null);
@@ -40,7 +42,7 @@ const bFileUrl = computed(() => (
 ));
 const currentResultName = computed(() => {
   const current = resultOptions.value.find((item) => item.id === activeResultId.value);
-  return current?.name ?? detail.value?.b_document.name ?? "对比文档";
+  return current?.name ?? detail.value?.b_document.name ?? translateText("对比文档");
 });
 
 function handleResultChange() {
@@ -74,7 +76,7 @@ function getRowClassName({ rowIndex }: { rowIndex: number }) {
 
 async function loadSummary() {
   if (!taskNo.value) {
-    ElMessage.warning("没有找到任务号，请先上传文件");
+    ElMessage.warning(translateText("没有找到任务号，请先上传文件"));
     await router.push("/upload");
     return;
   }
@@ -92,7 +94,7 @@ async function loadDetail() {
     detail.value = await getDetail(taskNo.value, activeResultId.value);
     activeMatchIndex.value = 0;
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "加载对比详情失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("加载对比详情失败"));
     await router.push({ path: "/results", query: { task: taskNo.value, result: activeResultId.value } });
   }
 }
@@ -108,7 +110,7 @@ onMounted(async () => {
     await loadSummary();
     await loadDetail();
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "加载对比数据失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("加载对比数据失败"));
   }
 });
 </script>
@@ -125,7 +127,7 @@ onMounted(async () => {
           >
             <el-icon><Back /></el-icon>
           </el-button>
-          <h2>原文差异对比</h2>
+          <h2>{{ translateText("原文差异对比") }}</h2>
         </div>
         <div class="compare-title-vs" v-if="detail">
           <span class="compare-title-vs__doc" :title="detail.a_document.name">
@@ -136,12 +138,12 @@ onMounted(async () => {
             <el-icon><Document /></el-icon> {{ currentResultName }}
           </span>
         </div>
-        <p v-else class="loading-text">正在加载原文档...</p>
+        <p v-else class="loading-text">{{ translateText("正在加载原文档...") }}</p>
       </div>
 
       <div class="compare-original-toolbar__controls">
         <div class="control-group file-selector">
-          <span class="control-label">对比目标</span>
+          <span class="control-label">{{ translateText("对比目标") }}</span>
           <el-select v-model="activeResultId" class="compare-original-toolbar__select" @change="handleResultChange">
             <el-option
               v-for="row in resultOptions"
@@ -167,7 +169,7 @@ onMounted(async () => {
             <span class="match-count">
               {{ matches.length ? `${activeMatchIndex + 1} / ${matches.length}` : "0 / 0" }}
             </span>
-            <span class="match-label">处重复</span>
+            <span class="match-label">{{ translateText("处重复") }}</span>
             <el-tag 
               v-if="selectedMatch" 
               :type="selectedMatch.match_type === 'exact' ? 'danger' : 'warning'"
@@ -175,7 +177,7 @@ onMounted(async () => {
               size="small"
               class="match-type-tag"
             >
-              {{ selectedMatch.match_type === 'exact' ? '完全重复' : '改写相似' }}
+              {{ translateText(selectedMatch.match_type === 'exact' ? '完全重复' : '改写相似') }}
             </el-tag>
           </div>
           
@@ -186,14 +188,14 @@ onMounted(async () => {
               @click="goPrevMatch"
             >
               <el-icon><ArrowLeft /></el-icon>
-              上一处
+              {{ translateText("上一处") }}
             </el-button>
             <el-button 
               type="primary" 
               :disabled="!matches.length" 
               @click="goNextMatch"
             >
-              下一处
+              {{ translateText("下一处") }}
               <el-icon><ArrowRight /></el-icon>
             </el-button>
           </el-button-group>
@@ -204,14 +206,14 @@ onMounted(async () => {
     <!-- 原格式文档对比 (恢复原有的平分布局) -->
     <div class="doc-grid doc-grid--original">
       <DocumentOriginalPane
-        :title="detail?.a_document.name ?? 'A 标书'"
+        :title="detail?.a_document.name ?? translateText('A 标书')"
         :file-url="aFileUrl"
         :file-name="detail?.a_document.name ?? ''"
         :active-text="selectedMatch?.a_text ?? ''"
       />
 
       <DocumentOriginalPane
-        :title="detail?.b_document.name ?? 'B 标书'"
+        :title="detail?.b_document.name ?? translateText('B 标书')"
         :file-url="bFileUrl"
         :file-name="detail?.b_document.name ?? ''"
         :active-text="selectedMatch?.b_text ?? ''"
@@ -221,7 +223,7 @@ onMounted(async () => {
     <!-- 重复片段抽屉 -->
     <el-drawer
       v-model="drawerVisible"
-      title="重复片段列表"
+      :title="translateText('重复片段列表')"
       size="400px"
       :with-header="true"
       class="matches-drawer"
@@ -245,7 +247,7 @@ onMounted(async () => {
                     size="small"
                     effect="dark"
                   >
-                    {{ row.match_type === 'exact' ? '完全重复' : '改写相似' }}
+                    {{ translateText(row.match_type === 'exact' ? '完全重复' : '改写相似') }}
                   </el-tag>
                 </div>
                 <div class="match-cell-text">{{ row.a_text }}</div>

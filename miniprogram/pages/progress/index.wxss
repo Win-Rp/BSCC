@@ -1,0 +1,67 @@
+.progress-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.task-meta,
+.status-text,
+.progress-percent,
+.loading-text {
+  margin-top: 14rpx;
+}
+
+.status-text {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.progress-track {
+  margin-top: 24rpx;
+  height: 18rpx;
+  border-radius: 999rpx;
+  background: #e7eef0;
+  overflow: hidden;
+}
+
+.progress-track__bar {
+  height: 100%;
+  background: linear-gradient(135deg, #126e6a, #0b4f4c);
+}
+
+.progress-percent {
+  color: #126e6a;
+  font-weight: 600;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  color: #98a4ae;
+}
+
+.step-item--active {
+  color: #126e6a;
+}
+
+.step-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.error-box {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border-radius: 18rpx;
+  background: rgba(214, 69, 69, 0.08);
+}

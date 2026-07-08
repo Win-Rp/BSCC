@@ -11,15 +11,16 @@
   >
     <template #header>
       <div class="payment-dialog__header">
-        <div class="payment-dialog__eyebrow">{{ hasPromo ? promoBadgeText : "结果解锁窗口" }}</div>
-        <h2>{{ hasPromo ? "现在锁定优惠更划算，完整详情一次看透" : "确认解锁完整详情" }}</h2>
+        <div class="payment-dialog__eyebrow">{{ hasPromo ? promoBadgeText : translateText("结果解锁窗口") }}</div>
+        <h2>{{ hasPromo ? translateText("现在锁定优惠更划算，完整详情一次看透") : translateText("确认解锁完整详情") }}</h2>
         <p v-if="hasPromo">
-          当前活动价 <strong>{{ displayUnitPrice }} / 每份对比文件</strong>，原价
+          {{ translateText("当前活动价") }} <strong>{{ displayUnitPrice }} / {{ translateText("每份对比文件") }}</strong>，{{ translateText("原价总额") }}
           <span class="payment-dialog__origin">{{ displayOriginalUnitPrice }}</span>，
-          现在解锁可立省 {{ promoDiscountText }}。
+          {{ translateText("现在解锁可立省") }} {{ promoDiscountText }}。
         </p>
         <p v-else>
-          当前按 <strong>{{ displayUnitPrice }} / 每份对比文件</strong> 结算，支付后立即开放完整重复片段、格式相似项、元数据对比与关键字命中。
+          {{ translateText("当前按") }} <strong>{{ displayUnitPrice }} / {{ translateText("每份对比文件") }}</strong>
+          {{ translateText("结算，支付后立即开放完整重复片段、格式相似项、元数据对比与关键字命中。") }}
         </p>
       </div>
     </template>
@@ -28,13 +29,13 @@
       <div class="payment-layout__main">
         <section class="payment-hero">
           <div class="payment-hero__main">
-            <div class="payment-hero__flag">{{ hasPromo ? promoBadgeText : "完整解锁" }}</div>
+            <div class="payment-hero__flag">{{ hasPromo ? promoBadgeText : translateText("完整解锁") }}</div>
             <div class="payment-hero__price">
               <div class="payment-hero__price-stack">
                 <div v-if="hasPromo" class="payment-hero__origin-price">{{ displayOriginalUnitPrice }}</div>
                 <strong>{{ displayUnitPrice }}</strong>
               </div>
-              <span>/ 每份 B 文件</span>
+              <span>/ {{ translateText("每份对比文件") }}</span>
             </div>
             <p>
               {{ promoNoteText }}
@@ -43,7 +44,7 @@
               <div class="payment-hero__save">本次可节省 {{ savingsAmountText }}</div>
               <div class="payment-hero__loss">{{ promoLossAversionText }}</div>
               <div v-if="promoSummary?.show_countdown" class="payment-hero__countdown">
-                <span>距优惠结束仅剩</span>
+                <span>{{ translateText("距优惠结束仅剩") }}</span>
                 <strong>{{ countdownText }}</strong>
               </div>
             </div>
@@ -51,42 +52,42 @@
 
           <div class="payment-summary-grid">
             <article class="payment-summary-card">
-              <span>任务号</span>
+              <span>{{ translateText("任务号") }}</span>
               <strong>{{ taskNo || "-" }}</strong>
             </article>
             <article class="payment-summary-card">
-              <span>当前状态</span>
+              <span>{{ translateText("当前状态") }}</span>
               <strong>{{ statusText }}</strong>
             </article>
             <article class="payment-summary-card">
-              <span>解锁范围</span>
-              <strong>{{ order?.b_file_count ?? "全部" }} 份对比文件</strong>
+              <span>{{ translateText("解锁范围") }}</span>
+              <strong>{{ order?.b_file_count ?? translateText("全部") }} {{ translateText("份对比文件") }}</strong>
             </article>
             <article class="payment-summary-card">
-              <span>预计金额</span>
+              <span>{{ translateText("预计金额") }}</span>
               <strong>{{ estimatedAmountText }}</strong>
             </article>
             <article v-if="hasPromo" class="payment-summary-card">
-              <span>原价总额</span>
+              <span>{{ translateText("原价总额") }}</span>
               <strong>{{ originalAmountText }}</strong>
             </article>
             <article v-if="hasPromo" class="payment-summary-card">
-              <span>本次立省</span>
+              <span>{{ translateText("本次立省") }}</span>
               <strong>{{ savingsAmountText }}</strong>
             </article>
           </div>
         </section>
 
         <section class="payment-benefits">
-          <div class="payment-benefits__item">完整重复片段定位</div>
-          <div class="payment-benefits__item">格式相似项明细</div>
-          <div class="payment-benefits__item">元数据对比结果</div>
-          <div class="payment-benefits__item">关键字命中详情</div>
+          <div class="payment-benefits__item">{{ translateText("完整重复片段定位") }}</div>
+          <div class="payment-benefits__item">{{ translateText("格式相似项明细") }}</div>
+          <div class="payment-benefits__item">{{ translateText("元数据对比结果") }}</div>
+          <div class="payment-benefits__item">{{ translateText("关键字命中详情") }}</div>
         </section>
 
         <section class="payment-channel-panel">
           <div class="payment-channel-panel__head">
-            <strong>支付方式</strong>
+            <strong>{{ translateText("支付方式") }}</strong>
             <span>{{ channelHintText }}</span>
           </div>
           <div class="payment-channel-switch">
@@ -97,7 +98,7 @@
               :disabled="!paymentAvailability.alipay"
               @click="selectedChannel = 'alipay'"
             >
-              支付宝
+              {{ translateText("支付宝") }}
             </button>
             <button
               type="button"
@@ -106,16 +107,16 @@
               :disabled="!paymentAvailability.wechat"
               @click="selectedChannel = 'wechat'"
             >
-              微信支付
+              {{ translateText("微信支付") }}
             </button>
           </div>
         </section>
 
         <el-form label-position="top" class="payment-form">
-          <el-form-item label="联系方式">
+          <el-form-item :label="translateText('联系方式')">
             <el-input
               v-model="contact"
-              placeholder="邮箱 / 手机号 / 微信号"
+              :placeholder="translateText('邮箱 / 手机号 / 微信号')"
               maxlength="64"
             />
           </el-form-item>
@@ -123,20 +124,20 @@
 
         <section class="payment-order-panel">
           <div class="payment-order-panel__head">
-            <strong>{{ order ? "待支付订单已生成" : "尚未生成支付订单" }}</strong>
+            <strong>{{ order ? translateText("待支付订单已生成") : translateText("尚未生成支付订单") }}</strong>
             <el-tag :type="orderStatusTagType">{{ orderStatusLabel }}</el-tag>
           </div>
 
           <div v-if="order" class="payment-order-list">
-            <div><span>订单号</span><strong>{{ order.order_no }}</strong></div>
-            <div><span>文件份数</span><strong>{{ order.b_file_count }} 份</strong></div>
-            <div><span>订单金额</span><strong>{{ formatMoney(order.amount_cents) }}</strong></div>
-            <div v-if="hasPromo"><span>原价总额</span><strong>{{ originalAmountText }}</strong></div>
-            <div v-if="hasPromo"><span>本次优惠</span><strong>立省 {{ savingsAmountText }}</strong></div>
-            <div><span>联系方式</span><strong>{{ contact || "-" }}</strong></div>
+            <div><span>{{ translateText("订单号") }}</span><strong>{{ order.order_no }}</strong></div>
+            <div><span>{{ translateText("文件份数") }}</span><strong>{{ order.b_file_count }} {{ translateText("份") }}</strong></div>
+            <div><span>{{ translateText("订单金额") }}</span><strong>{{ formatMoney(order.amount_cents) }}</strong></div>
+            <div v-if="hasPromo"><span>{{ translateText("原价总额") }}</span><strong>{{ originalAmountText }}</strong></div>
+            <div v-if="hasPromo"><span>{{ translateText("本次优惠") }}</span><strong>{{ translateText("立省") }} {{ savingsAmountText }}</strong></div>
+            <div><span>{{ translateText("联系方式") }}</span><strong>{{ contact || "-" }}</strong></div>
           </div>
           <div v-else class="payment-empty-state">
-            填写联系方式后即可锁定当前优惠价并生成支付订单。
+            {{ translateText("填写联系方式后即可锁定当前优惠价并生成支付订单。") }}
           </div>
         </section>
       </div>
@@ -144,7 +145,7 @@
       <aside class="payment-layout__aside">
         <section class="payment-qr-panel">
           <div v-if="order?.payment_message" class="payment-status-banner payment-status-banner--error">
-            <strong>当前失败原因</strong>
+            <strong>{{ translateText("当前失败原因") }}</strong>
             <span>{{ order.payment_message }}</span>
           </div>
 
@@ -152,27 +153,27 @@
             <div class="payment-qr-panel__image-wrap">
               <div class="payment-qr-panel__brand" :class="`payment-qr-panel__brand--${currentPayChannel}`">
                 <span class="payment-qr-panel__brand-dot" :class="`payment-qr-panel__brand-dot--${currentPayChannel}`"></span>
-                {{ payChannelLabel }}扫码支付
+                {{ payChannelLabel }} {{ translateText("扫码支付") }}
               </div>
-              <img :src="qrCodeDataUrl" :alt="`${payChannelLabel}支付二维码`" class="payment-qr-panel__image" />
+              <img :src="qrCodeDataUrl" :alt="`${payChannelLabel} ${translateText('支付二维码')}`" class="payment-qr-panel__image" />
               <div class="payment-qr-panel__scan-line"></div>
-              <div class="payment-qr-panel__caption">请打开{{ scanAppText }}完成付款</div>
+              <div class="payment-qr-panel__caption">{{ translateText("请打开") }}{{ scanAppText }}{{ translateText("完成付款") }}</div>
             </div>
             <div class="payment-qr-panel__tips">
-              <strong>扫码完成支付后，系统会自动为你解锁完整详情</strong>
-              <span>无需手动刷新页面，支付成功后会自动轮询订单状态，并立即开放全部对比结果。</span>
+              <strong>{{ translateText("扫码完成支付后，系统会自动为你解锁完整详情") }}</strong>
+              <span>{{ translateText("无需手动刷新页面，支付成功后会自动轮询订单状态，并立即开放全部对比结果。") }}</span>
               <div class="payment-qr-panel__steps">
-                <div>1. 打开{{ scanAppText }}</div>
-                <div>2. 扫码并确认支付金额</div>
-                <div>3. 等待当前窗口自动完成解锁</div>
+                <div>1. {{ translateText("打开") }}{{ scanAppText }}</div>
+                <div>2. {{ translateText("扫码并确认支付金额") }}</div>
+                <div>3. {{ translateText("等待当前窗口自动完成解锁") }}</div>
               </div>
             </div>
           </div>
           <div v-else-if="order" class="payment-qr-panel__error-card">
             <div class="payment-qr-panel__error-icon">!</div>
             <div class="payment-qr-panel__error-body">
-              <strong>{{ payChannelLabel }}二维码生成失败</strong>
-              <span>{{ order.payment_message || "当前订单尚未返回可用二维码，请检查支付配置或重新生成订单。" }}</span>
+              <strong>{{ payChannelLabel }} {{ translateText("二维码生成失败") }}</strong>
+              <span>{{ order.payment_message || translateText("当前订单尚未返回可用二维码，请检查支付配置或重新生成订单。") }}</span>
               <div class="payment-qr-panel__error-hints">
                 <div>{{ primaryErrorHint }}</div>
                 <div>{{ secondaryErrorHint }}</div>
@@ -180,8 +181,8 @@
             </div>
           </div>
           <div v-else class="payment-qr-panel__placeholder">
-            <strong>等待生成支付二维码</strong>
-            <span>先锁定优惠并创建订单，生成后这里会直接显示可扫码的{{ payChannelLabel }}二维码。</span>
+            <strong>{{ translateText("等待生成支付二维码") }}</strong>
+            <span>{{ translateText("先锁定优惠并创建订单，生成后这里会直接显示可扫码的") }}{{ payChannelLabel }}{{ translateText("二维码。") }}</span>
           </div>
         </section>
       </aside>
@@ -189,7 +190,7 @@
 
     <template #footer>
       <div class="payment-footer">
-        <el-button class="payment-footer__ghost" @click="visible = false">我再想想</el-button>
+        <el-button class="payment-footer__ghost" @click="visible = false">{{ translateText("我再想想") }}</el-button>
         <el-button
           v-if="!order"
           type="danger"
@@ -197,15 +198,15 @@
           :loading="creating"
           @click="handleCreateOrder"
         >
-          {{ hasPromo ? `锁定优惠并生成${payChannelLabel}订单` : `生成${payChannelLabel}订单` }}
+          {{ hasPromo ? `${translateText("锁定优惠并生成")}${payChannelLabel}${translateText("订单")}` : `${translateText("生成")}${payChannelLabel}${translateText("订单")}` }}
         </el-button>
         <template v-else>
-          <el-button class="payment-footer__ghost" :loading="checking" @click="checkPaymentStatus">刷新支付状态</el-button>
+          <el-button class="payment-footer__ghost" :loading="checking" @click="checkPaymentStatus">{{ translateText("刷新支付状态") }}</el-button>
           <el-button class="payment-footer__ghost" :loading="creating" @click="handleRegenerateOrder">
-            重新生成新二维码
+            {{ translateText("重新生成新二维码") }}
           </el-button>
           <el-button type="danger" class="payment-footer__primary" :loading="paying" @click="handlePaid">
-            我已完成支付，立即校验
+            {{ translateText("我已完成支付，立即校验") }}
           </el-button>
         </template>
       </div>
@@ -217,6 +218,7 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import QRCode from "qrcode";
+import { useAppI18n } from "@/composables/useAppI18n";
 import {
   createOrder,
   getOrderStatus,
@@ -236,6 +238,7 @@ const emit = defineEmits<{
 }>();
 
 const contact = ref("");
+const { locale, translateText } = useAppI18n();
 const creating = ref(false);
 const checking = ref(false);
 const paying = ref(false);
@@ -249,6 +252,10 @@ let pollTimer: number | undefined;
 let countdownTimer: number | undefined;
 const countdownNow = ref(Date.now());
 
+function text(source: string, params?: Record<string, string | number>) {
+  return translateText(source).replace(/\{(\w+)\}/g, (_, key) => String(params?.[key] ?? ""));
+}
+
 const visible = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit("update:modelValue", value)
@@ -257,35 +264,35 @@ const visible = computed({
 const dialogWidth = computed(() => (order.value ? "980px" : "640px"));
 const taskNo = computed(() => props.taskNo);
 const currentPayChannel = computed(() => order.value?.pay_channel ?? selectedChannel.value);
-const payChannelLabel = computed(() => currentPayChannel.value === "wechat" ? "微信支付" : "支付宝");
-const scanAppText = computed(() => currentPayChannel.value === "wechat" ? "微信扫一扫" : "支付宝扫一扫");
+const payChannelLabel = computed(() => currentPayChannel.value === "wechat" ? translateText("微信支付") : translateText("支付宝"));
+const scanAppText = computed(() => currentPayChannel.value === "wechat" ? "WeChat" : "Alipay");
 const channelHintText = computed(() => {
   if (paymentAvailability.value.alipay && paymentAvailability.value.wechat) {
-    return "支持支付宝与微信 Native 扫码";
+    return translateText("支持支付宝与微信 Native 扫码");
   }
-  if (paymentAvailability.value.wechat) return "当前仅启用微信 Native 扫码支付";
-  return "当前仅启用支付宝扫码支付";
+  if (paymentAvailability.value.wechat) return translateText("当前仅启用微信 Native 扫码支付");
+  return translateText("当前仅启用支付宝扫码支付");
 });
 const primaryErrorHint = computed(() => {
   if (currentPayChannel.value === "wechat") {
-    return "请优先检查：AppID、商户号、APIv2 Key、异步通知地址";
+    return translateText("请优先检查：AppID、商户号、APIv2 Key、异步通知地址");
   }
-  return "请优先检查：App ID、应用私钥、支付宝公钥、异步通知地址";
+  return translateText("请优先检查：App ID、应用私钥、支付宝公钥、异步通知地址");
 });
 const secondaryErrorHint = computed(() => {
   if (currentPayChannel.value === "wechat") {
-    return "如果刚修改过微信配置，建议重新生成订单获取新的 code_url";
+    return translateText("如果刚修改过微信配置，建议重新生成订单获取新的 code_url");
   }
-  return "如果刚修改过支付宝配置，建议重新生成订单以获取新的扫码串";
+  return translateText("如果刚修改过支付宝配置，建议重新生成订单以获取新的扫码串");
 });
 const statusText = computed(() => {
-  if (!order.value) return "待创建";
-  if (orderStatus.value?.status === "paid") return "已支付";
-  return "待支付";
+  if (!order.value) return translateText("待创建");
+  if (orderStatus.value?.status === "paid") return translateText("已支付");
+  return translateText("待支付");
 });
 const orderStatusLabel = computed(() => {
-  if (!order.value) return "未生成";
-  return orderStatus.value?.status === "paid" ? "已支付" : "待支付";
+  if (!order.value) return translateText("未生成");
+  return orderStatus.value?.status === "paid" ? translateText("已支付") : translateText("待支付");
 });
 const orderStatusTagType = computed(() => {
   if (!order.value) return "info";
@@ -296,34 +303,38 @@ const promoSummary = computed<PromoPricingSummary | null>(() => {
   return buildPromoSummary(siteConfig.value?.promo, props.bFileCount || 1);
 });
 const hasPromo = computed(() => Boolean(promoSummary.value && (promoSummary.value.promo_active || promoSummary.value.savings_cents > 0)));
-const displayUnitPrice = computed(() => promoSummary.value ? formatMoney(promoSummary.value.effective_unit_price_cents) : "待计算");
-const displayOriginalUnitPrice = computed(() => promoSummary.value ? formatMoney(promoSummary.value.original_unit_price_cents) : "待计算");
+const displayUnitPrice = computed(() => promoSummary.value ? formatMoney(promoSummary.value.effective_unit_price_cents) : translateText("待计算"));
+const displayOriginalUnitPrice = computed(() => promoSummary.value ? formatMoney(promoSummary.value.original_unit_price_cents) : translateText("待计算"));
 const estimatedAmountText = computed(() => {
-  if (!promoSummary.value) return "生成订单后显示";
+  if (!promoSummary.value) return translateText("生成订单后显示");
   return formatMoney(order.value?.amount_cents ?? promoSummary.value.effective_amount_cents);
 });
 const originalAmountText = computed(() => formatMoney(promoSummary.value?.original_amount_cents ?? 0));
 const savingsAmountText = computed(() => formatMoney(promoSummary.value?.savings_cents ?? 0));
 const promoDiscountText = computed(() => `${promoSummary.value?.discount_percent ?? 0}%`);
-const promoLossAversionText = computed(() => hasPromo.value ? (promoSummary.value?.promo_loss_aversion_text || "错过后将恢复原价") : "支付后立即解锁完整详情与原文对比");
-const promoNoteText = computed(() => hasPromo.value ? (promoSummary.value?.promo_note || "支付后立即解锁完整详情与原文对比") : "支付后立即解锁完整详情与原文对比");
-const promoBadgeText = computed(() => promoSummary.value?.promo_badge || "限时特惠");
+const promoLossAversionText = computed(() => hasPromo.value ? (promoSummary.value?.promo_loss_aversion_text || translateText("错过后将恢复原价")) : translateText("支付后立即解锁完整详情与原文对比"));
+const promoNoteText = computed(() => hasPromo.value ? (promoSummary.value?.promo_note || translateText("支付后立即解锁完整详情与原文对比")) : translateText("支付后立即解锁完整详情与原文对比"));
+const promoBadgeText = computed(() => promoSummary.value?.promo_badge || translateText("限时特惠"));
 const serverOffsetMs = computed(() => buildServerOffsetMs(promoSummary.value?.server_now));
 const countdownText = computed(() => formatCountdown(getRemainingMs(promoSummary.value, serverOffsetMs.value, countdownNow.value)));
 
 async function handleCreateOrder() {
   if (!props.taskNo) {
-    ElMessage.warning("缺少任务号，无法创建订单");
+    ElMessage.warning(translateText("缺少任务号，无法创建订单"));
     return;
   }
 
   if (!paymentAvailability.value[selectedChannel.value]) {
-    ElMessage.warning(`当前未启用${selectedChannel.value === "wechat" ? "微信支付" : "支付宝"}，请先在后台开启配置`);
+    ElMessage.warning(
+      selectedChannel.value === "wechat"
+        ? translateText("当前未启用微信支付，请先在后台开启配置")
+        : translateText("当前未启用支付宝，请先在后台开启配置")
+    );
     return;
   }
 
   if (!contact.value.trim()) {
-    ElMessage.warning("请填写联系方式，便于根据订单排查问题");
+    ElMessage.warning(translateText("请填写联系方式，便于根据订单排查问题"));
     return;
   }
 
@@ -333,13 +344,13 @@ async function handleCreateOrder() {
     order.value = null;
     orderStatus.value = null;
     qrCodeDataUrl.value = "";
-    order.value = await createOrder(props.taskNo, contact.value.trim(), selectedChannel.value);
+    order.value = await createOrder(props.taskNo, contact.value.trim(), selectedChannel.value, locale.value);
     await syncQrCode(order.value?.qr_code_url ?? null);
     saveOrderNo(order.value.order_no);
     await checkPaymentStatus();
     startPolling();
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "创建订单失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("创建订单失败"));
   } finally {
     creating.value = false;
   }
@@ -352,10 +363,10 @@ async function handlePaid() {
   try {
     await checkPaymentStatus();
     if (orderStatus.value?.status !== "paid") {
-      ElMessage.warning("暂未确认支付成功，请完成付款后稍等片刻再点击校验");
+      ElMessage.warning(translateText("暂未确认支付成功，请完成付款后稍等片刻再点击校验"));
     }
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "支付状态更新失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("支付状态更新失败"));
   } finally {
     paying.value = false;
   }
@@ -376,13 +387,13 @@ async function checkPaymentStatus() {
     orderStatus.value = await getOrderStatus(order.value.order_no);
     if (orderStatus.value.status === "paid") {
       window.clearInterval(pollTimer);
-      ElMessage.success("支付成功，本次任务已解锁完整详情");
+      ElMessage.success(translateText("支付成功，本次任务已解锁完整详情"));
       visible.value = false;
       emit("paid");
     }
   } catch (error) {
     window.clearInterval(pollTimer);
-    ElMessage.error(error instanceof Error ? error.message : "查询支付状态失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("查询支付状态失败"));
   } finally {
     checking.value = false;
   }
@@ -405,26 +416,37 @@ async function syncQrCode(payload: string | null) {
     });
   } catch (error) {
     qrCodeDataUrl.value = "";
-    ElMessage.error(error instanceof Error ? error.message : "生成支付二维码失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("生成支付二维码失败"));
   }
 }
 
 async function handleRegenerateOrder() {
   await handleCreateOrder();
   if (order.value?.order_no) {
-    ElMessage.success("已重新生成支付二维码，旧订单已自动关闭");
+    ElMessage.success(translateText("已重新生成支付二维码，旧订单已自动关闭"));
   }
 }
 
 async function loadPaymentConfig() {
   try {
-    siteConfig.value = await getPublicSiteConfig();
+    siteConfig.value = await getPublicSiteConfig(locale.value);
     paymentAvailability.value = {
       alipay: Boolean(siteConfig.value.alipay_enabled),
       wechat: Boolean(siteConfig.value.wechat_enabled)
     };
     if (!paymentAvailability.value[selectedChannel.value]) {
       selectedChannel.value = paymentAvailability.value.wechat ? "wechat" : "alipay";
+    }
+    if (order.value && siteConfig.value?.promo) {
+      order.value = {
+        ...order.value,
+        pricing: {
+          ...order.value.pricing,
+          promo_note: siteConfig.value.promo.promo_note,
+          promo_badge: siteConfig.value.promo.promo_badge,
+          promo_loss_aversion_text: siteConfig.value.promo.promo_loss_aversion_text,
+        }
+      };
     }
   } catch {
     siteConfig.value = null;
@@ -462,6 +484,11 @@ watch(() => props.taskNo, () => {
 
 watch(() => order.value?.qr_code_url, (value) => {
   void syncQrCode(value ?? null);
+});
+
+watch(locale, () => {
+  if (!visible.value) return;
+  void loadPaymentConfig();
 });
 
 onBeforeUnmount(() => {

@@ -22,7 +22,13 @@ from app.services.wechatpay_service import (
 )
 
 
-def create_order(task_no: str, contact: str, pay_channel: str = "alipay", client_ip: str = "127.0.0.1") -> dict[str, Any]:
+def create_order(
+    task_no: str,
+    contact: str,
+    pay_channel: str = "alipay",
+    client_ip: str = "127.0.0.1",
+    locale: str | None = None,
+) -> dict[str, Any]:
     if not contact.strip():
         raise ValueError("VALIDATION_ERROR")
     pay_channel = (pay_channel or "alipay").strip().lower()
@@ -44,7 +50,7 @@ def create_order(task_no: str, contact: str, pay_channel: str = "alipay", client
             (task["id"],),
         ).fetchone()
         if existing_paid:
-            return _order_payload(existing_paid, task, pricing_settings)
+            return _order_payload(existing_paid, task, pricing_settings, locale=locale)
 
         pending_orders = conn.execute(
             "SELECT order_no, pay_channel, created_at FROM orders WHERE task_id = ? AND status = 'pending'",
@@ -61,7 +67,7 @@ def create_order(task_no: str, contact: str, pay_channel: str = "alipay", client
                 """,
                 (now_iso(), "用户重新生成支付二维码，旧订单已自动关闭", now_iso(), task["id"]),
             )
-        pricing_payload = build_order_pricing_payload(pricing_settings, task["b_file_count"])
+        pricing_payload = build_order_pricing_payload(pricing_settings, task["b_file_count"], locale=locale)
         unit_price = pricing_payload["effective_unit_price_cents"]
         amount = pricing_payload["effective_amount_cents"]
         amount_yuan = amount / 100.0
@@ -119,7 +125,7 @@ def create_order(task_no: str, contact: str, pay_channel: str = "alipay", client
         )
         conn.execute("UPDATE tasks SET contact = ?, updated_at = ? WHERE id = ?", (contact, now_iso(), task["id"]))
         order = conn.execute("SELECT * FROM orders WHERE order_no = ?", (order_no,)).fetchone()
-        return _order_payload(order, task, pricing_settings)
+        return _order_payload(order, task, pricing_settings, locale=locale)
 
 
 def get_order_status(order_no: str) -> dict[str, Any]:
@@ -187,7 +193,7 @@ def mark_order_paid(order_no: str, admin_user_id: int | None = None) -> dict[str
     return get_order_status(order_no)
 
 
-def _order_payload(order, task, pricing_settings: dict[str, Any]) -> dict[str, Any]:
+def _order_payload(order, task, pricing_settings: dict[str, Any], *, locale: str | None = None) -> dict[str, Any]:
     return {
         "order_no": order["order_no"],
         "task_no": task["task_no"],
@@ -202,6 +208,7 @@ def _order_payload(order, task, pricing_settings: dict[str, Any]) -> dict[str, A
             order["b_file_count"],
             effective_unit_price_cents=order["unit_price_cents"],
             effective_amount_cents=order["amount_cents"],
+            locale=locale,
         ),
     }
 

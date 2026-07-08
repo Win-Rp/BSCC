@@ -1,0 +1,9 @@
+<view class="unlock-bar" wx:if="{{viewModel}}">
+  <view class="unlock-bar__content">
+    <view class="unlock-bar__title">{{unlocked ? '已解锁完整详情' : '完整详情解锁'}}</view>
+    <view class="unlock-bar__desc">{{viewModel.note}}</view>
+    <view class="unlock-bar__meta">对比文件数：{{viewModel.bFileCount}}<text wx:if="{{orderNo}}"> ｜订单号：{{orderNo}}</text></view>
+  </view>
+  <button wx:if="{{unlocked}}" class="btn-secondary unlock-bar__button" size="mini" bindtap="handleView">查看详情</button>
+  <button wx:else class="btn-primary unlock-bar__button" size="mini" bindtap="handleUnlock">去订单页</button>
+</view>

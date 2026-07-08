@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "prebuild": "node ./scripts/prepare-build-meta.mjs",
     "build": "vue-tsc --noEmit && tsc -p tsconfig.node.json --noEmit && vite-ssg build && node ./scripts/postbuild-seo.mjs",
+    "build:crx": "node ./scripts/prepare-build-meta.mjs && vite build -c vite.crx.config.ts",
     "preview": "vite preview --host 127.0.0.1",
     "type-check": "vue-tsc --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
   "dependencies": {
-    "@unhead/vue": "^3.1.6",
     "@element-plus/icons-vue": "^2.3.1",
+    "@unhead/vue": "^3.1.6",
     "docx-preview": "^0.3.7",
     "echarts": "^6.1.0",
     "element-plus": "^2.10.4",
@@ -23,10 +25,14 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.7.1",
+    "@types/chrome": "^0.2.2",
     "@types/node": "^24.0.7",
     "@types/qrcode": "^1.5.6",
     "@vitejs/plugin-vue": "^6.0.0",
     "typescript": "~5.8.3",
+    "unplugin-auto-import": "^21.0.0",
+    "unplugin-vue-components": "^32.1.0",
     "vite": "^7.0.0",
     "vite-ssg": "^28.3.0",
     "vue-tsc": "^2.2.10"

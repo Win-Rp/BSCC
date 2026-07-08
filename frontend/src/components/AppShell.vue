@@ -1,15 +1,15 @@
 <template>
   <div class="page-shell">
     <div v-if="systemNotice" class="shell-notice-float">
-      <span class="shell-notice-float__label">系统公告</span>
+      <span class="shell-notice-float__label">{{ t("shell.systemNotice") }}</span>
       <span class="shell-notice-float__text">{{ systemNotice }}</span>
     </div>
 
     <nav class="shell-topbar">
       <div class="shell-topbar__logo" @click="router.push('/')" style="cursor: pointer;">
-        <span class="shell-topbar__brand">{{ siteTitle || '标书查重系统' }}</span>
+        <span class="shell-topbar__brand">{{ localizedSiteTitle }}</span>
         <div class="feature-tags">
-          <el-tag v-for="tag in homeTags" :key="tag" type="success" effect="light" round>
+          <el-tag v-for="tag in localizedHomeTags" :key="tag" type="success" effect="light" round>
             {{ tag }}
           </el-tag>
         </div>
@@ -24,6 +24,25 @@
         >
           {{ item.label }}
         </router-link>
+      </div>
+      <div class="shell-topbar__meta">
+        <div class="shell-lang-switcher">
+          <span class="shell-lang-switcher__label">{{ t("shell.language") }}</span>
+          <el-select
+            :model-value="locale"
+            size="small"
+            class="shell-lang-switcher__select"
+            @change="handleLocaleChange"
+          >
+            <el-option
+              v-for="option in localeOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </div>
+        <span class="shell-build-version">{{ t("shell.version") }} {{ buildVersion }}</span>
       </div>
     </nav>
 
@@ -54,11 +73,11 @@
           v-if="supportWechatQrVisible"
           class="floating-raw-qr"
           :src="supportWechatQrSrc"
-          alt="客服微信二维码"
+          :alt="t('shell.qrFallback')"
           @error="supportWechatQrVisible = false"
         />
         <div v-else class="floating-popover-content">
-          <span class="floating-popover__fallback" style="text-align: center; display: block;">图片未就绪</span>
+          <span class="floating-popover__fallback" style="text-align: center; display: block;">{{ t("shell.qrFallback") }}</span>
         </div>
       </el-popover>
 
@@ -75,9 +94,9 @@
           </div>
         </template>
         <div class="floating-popover-content">
-          <span class="floating-popover__eyebrow">客服邮箱</span>
+          <span class="floating-popover__eyebrow">{{ t("shell.email.eyebrow") }}</span>
           <strong class="floating-popover__email">{{ supportEmail }}</strong>
-          <span class="floating-popover__desc">适合发送问题截图、需求说明与联调信息</span>
+          <span class="floating-popover__desc">{{ t("shell.email.desc") }}</span>
         </div>
       </el-popover>
     </div>
@@ -96,27 +115,39 @@ import { useRouter, useRoute } from "vue-router";
 import StepperNav from "./StepperNav.vue";
 import { Loading } from "@element-plus/icons-vue";
 import { isTaskProcessing } from "@/composables/useTaskState";
+import { useAppI18n, type AppLocale } from "@/composables/useAppI18n";
+import { BUILD_META } from "@/generated/buildMeta";
 import { getPublicSiteConfig, getSupport } from "@/services/api";
 import { applyRouteSeo, type RouteSeoMeta } from "@/utils/seo";
 
 const router = useRouter();
 const route = useRoute();
+const { locale, localeOptions, defaultHomeTags, localizeDeep, setLocale, t, translateText } = useAppI18n();
 
-const siteTitle = ref("标书查重系统");
-const homeTags = ref(['无需登陆', '基础免费', '不限页数', '不限大小', '开箱即用']);
-const systemNotice = ref("");
+const rawSiteTitle = ref("标书查重系统");
+const rawHomeTags = ref<string[]>(["无需登陆", "基础免费", "不限页数", "不限大小", "开箱即用"]);
+const rawSystemNotice = ref("");
 const supportWechat = ref("");
 const supportEmail = ref("");
 const supportWechatQrSrc = "/support-wechat-qr.png";
 const supportWechatQrVisible = ref(true);
-const menuItems = [
-  { label: "主页", to: "/" },
-  { label: "上传查重", to: "/upload" },
-  { label: "免费查重", to: "/free" },
-  { label: "标书检查", to: "/check" },
-  { label: "标书合规", to: "/compliance" },
-  { label: "文档", to: "/docs" }
-];
+const buildVersion = BUILD_META.displayVersion;
+const localizedSiteTitle = computed(() => translateText(rawSiteTitle.value || t("app.defaultSiteTitle")));
+const localizedHomeTags = computed(() => {
+  if (!rawHomeTags.value.length) {
+    return defaultHomeTags.value;
+  }
+  return rawHomeTags.value.map((tag) => translateText(tag));
+});
+const systemNotice = computed(() => translateText(rawSystemNotice.value));
+const menuItems = computed(() => [
+  { label: t("shell.menu.home"), to: "/" },
+  { label: t("shell.menu.upload"), to: "/upload" },
+  { label: t("shell.menu.free"), to: "/free" },
+  { label: t("shell.menu.check"), to: "/check" },
+  { label: t("shell.menu.compliance"), to: "/compliance" },
+  { label: t("shell.menu.docs"), to: "/docs" }
+]);
 
 onMounted(async () => {
   try {
@@ -126,24 +157,26 @@ onMounted(async () => {
     ]);
 
     if (siteConfig?.site_title) {
-      siteTitle.value = siteConfig.site_title;
+      rawSiteTitle.value = siteConfig.site_title;
     }
     if (siteConfig?.home_tags?.length > 0) {
-      homeTags.value = siteConfig.home_tags;
+      rawHomeTags.value = localizeDeep(siteConfig.home_tags);
     }
-    systemNotice.value = siteConfig?.system_notice?.trim() ?? "";
+    rawSystemNotice.value = siteConfig?.system_notice?.trim() ?? "";
     supportWechat.value = supportInfo?.wechat?.trim() ?? "";
     supportEmail.value = supportInfo?.email?.trim() ?? "";
   } catch {
     // 公开配置接口异常时，回退为默认标签。
+    rawSiteTitle.value = "标书查重系统";
+    rawHomeTags.value = ["无需登陆", "基础免费", "不限页数", "不限大小", "开箱即用"];
   }
 });
 
 watch(
-  [siteTitle, () => route.fullPath],
+  [localizedSiteTitle, () => route.fullPath, locale],
   () => {
-    applyRouteSeo(route.meta.seo as RouteSeoMeta | undefined, {
-      siteTitle: siteTitle.value,
+    applyRouteSeo(localizeDeep(route.meta.seo as RouteSeoMeta | undefined), {
+      siteTitle: localizedSiteTitle.value,
       currentPath: route.path
     });
   },
@@ -160,16 +193,16 @@ const showStepper = computed(() => ["upload", "results", "compare"].includes(Str
 
 const navSteps = computed(() => {
   const steps: Array<{ label: string; value: string; subLabel: string; icon?: any }> = [
-    { label: "上传工作台", value: "upload", subLabel: "提交标书文件" }
+    { label: t("shell.step.upload"), value: "upload", subLabel: t("shell.step.uploadSub") }
   ];
 
   if (isTaskProcessing.value && route.name === 'results') {
-    steps.push({ label: "AI 查重中", value: "processing", subLabel: "智能比对中", icon: Loading });
+    steps.push({ label: t("shell.step.processing"), value: "processing", subLabel: t("shell.step.processingSub"), icon: Loading });
   }
 
   steps.push(
-    { label: "结果总览", value: "results", subLabel: "查看查重排行" },
-    { label: "对比证据", value: "compare", subLabel: "原文差异对比" }
+    { label: t("shell.step.results"), value: "results", subLabel: t("shell.step.resultsSub") },
+    { label: t("shell.step.compare"), value: "compare", subLabel: t("shell.step.compareSub") }
   );
 
   return steps;
@@ -179,4 +212,8 @@ const handleNavChange = (value: string) => {
   if (value === 'processing') return;
   router.push({ name: value });
 };
+
+function handleLocaleChange(value: AppLocale) {
+  setLocale(value);
+}
 </script>

@@ -25,7 +25,7 @@
       class="glass-card seo-section-card"
     >
       <div class="seo-section-head">
-        <span class="section-eyebrow">Key Points</span>
+        <span class="section-eyebrow">{{ t("seo.keyPoints") }}</span>
         <h2>{{ page.cardSection.title }}</h2>
       </div>
       <div class="seo-card-grid" :class="gridClass(page.cardSection.columns)">
@@ -48,7 +48,7 @@
         class="glass-card seo-section-card"
       >
         <div class="seo-section-head">
-          <span class="section-eyebrow">Insight</span>
+          <span class="section-eyebrow">{{ t("seo.insight") }}</span>
           <h2>{{ section.title }}</h2>
         </div>
         <div class="seo-paragraph-stack">
@@ -63,7 +63,7 @@
       class="glass-card seo-section-card"
     >
       <div class="seo-section-head">
-        <span class="section-eyebrow">Workflow</span>
+        <span class="section-eyebrow">{{ t("seo.workflow") }}</span>
         <h2>{{ page.stepSection.title }}</h2>
       </div>
       <div class="seo-step-grid">
@@ -83,7 +83,7 @@
       class="glass-card seo-section-card"
     >
       <div class="seo-section-head">
-        <span class="section-eyebrow">FAQ</span>
+        <span class="section-eyebrow">{{ t("seo.faq") }}</span>
         <h2>{{ page.faqSection.title }}</h2>
       </div>
       <div class="seo-faq-list">
@@ -100,7 +100,7 @@
       class="glass-card seo-section-card"
     >
       <div class="seo-section-head">
-        <span class="section-eyebrow">Related</span>
+        <span class="section-eyebrow">{{ t("seo.related") }}</span>
         <h2>{{ page.relatedSection.title }}</h2>
       </div>
       <div class="seo-card-grid seo-card-grid--three">
@@ -112,7 +112,7 @@
         >
           <strong>{{ link.title }}</strong>
           <p>{{ link.text }}</p>
-          <span class="seo-link-card__cta">查看页面</span>
+          <span class="seo-link-card__cta">{{ t("seo.viewPage") }}</span>
         </article>
       </div>
     </el-card>
@@ -123,11 +123,13 @@
 import { computed } from "vue";
 import { useHead } from "@unhead/vue";
 import { useRoute, useRouter } from "vue-router";
+import { useAppI18n } from "@/composables/useAppI18n";
 import { getSeoPage } from "@/content/seoPages";
 import { createHeadConfig, resolveRouteSeo } from "@/utils/seo";
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useAppI18n();
 
 const page = computed(() => getSeoPage(String(route.name || "home")));
 const routeSeo = computed(() =>

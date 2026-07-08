@@ -4,7 +4,7 @@
     <div v-if="isProcessing" class="processing-overlay">
       <div class="processing-content">
         <el-icon class="is-loading processing-icon"><Loading /></el-icon>
-        <h2>正在处理您的任务</h2>
+        <h2>{{ translateText("正在处理您的任务") }}</h2>
         <p>{{ processingMessage }}</p>
         
         <div class="task-recovery-tip">
@@ -12,15 +12,15 @@
             <template #title>
               <div class="recovery-title">
                 <el-icon><InfoFilled /></el-icon>
-                查重耗时较长？您可以离开页面稍后查看
+                {{ translateText("查重耗时较长？您可以离开页面稍后查看") }}
               </div>
             </template>
             <div class="recovery-desc">
-              请复制并保存下方任务号，7天内随时可凭此任务号找回查重结果。
+              {{ translateText("请复制并保存下方任务号，7天内随时可凭此任务号找回查重结果。") }}
             </div>
             <div class="task-id-box">
               <span class="task-id-text">{{ taskNo }}</span>
-              <el-button size="small" type="primary" plain @click="copyTaskLink">复制任务ID</el-button>
+              <el-button size="small" type="primary" plain @click="copyTaskLink">{{ translateText("复制任务ID") }}</el-button>
             </div>
           </el-alert>
         </div>
@@ -33,16 +33,16 @@
         <template #header>
           <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <h2 style="margin: 0;">查重排行与数据可视化</h2>
-              <el-tooltip content="结果将为您保留7天，您可随时凭任务号找回" placement="top">
+              <h2 style="margin: 0;">{{ translateText("查重排行与数据可视化") }}</h2>
+              <el-tooltip :content="translateText('结果将为您保留7天，您可随时凭任务号找回')" placement="top">
                 <el-tag type="info" class="task-id-tag" @click="copyTaskLink" style="margin: 0;">
-                  任务号：{{ taskNo }}
+                  {{ translateText("任务号") }}：{{ taskNo }}
                   <el-icon class="copy-icon"><CopyDocument /></el-icon>
                 </el-tag>
               </el-tooltip>
             </div>
             <el-tag :type="summary?.payment_required ? 'warning' : 'success'">
-              {{ summary?.payment_required ? "待支付解锁" : "完整详情可用" }}
+              {{ summary?.payment_required ? translateText("待支付解锁") : translateText("完整详情可用") }}
             </el-tag>
           </div>
         </template>
@@ -52,11 +52,11 @@
             <el-card shadow="never" class="glass-card" style="margin-bottom: 32px;">
               <div class="detail-section__head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                 <div style="display: flex; align-items: center;">
-                  <h3 style="display: inline-block; margin: 0 16px 0 0;">总体查重结果</h3>
+                  <h3 style="display: inline-block; margin: 0 16px 0 0;">{{ translateText("总体查重结果") }}</h3>
                 </div>
                 
                 <el-tag v-if="summary?.a_file" type="info" effect="plain" style="margin: 0;">
-                  主标书：{{ summary.a_file.name }}
+                  {{ translateText("主标书") }}：{{ summary.a_file.name }}
                 </el-tag>
               </div>
             
@@ -67,39 +67,39 @@
               highlight-current-row
             >
             <el-table-column prop="rank" label="#" width="50" />
-            <el-table-column prop="name" label="B 文件" min-width="180" show-overflow-tooltip />
-            <el-table-column prop="score" label="总相似度" width="90">
+            <el-table-column prop="name" :label="translateText('B 文件')" min-width="180" show-overflow-tooltip />
+            <el-table-column prop="score" :label="translateText('总相似度')" width="90">
               <template #default="{ row }">
                 <strong>{{ row.score }}%</strong>
               </template>
             </el-table-column>
-            <el-table-column prop="breakdown" label="风险摘要" min-width="180" />
-            <el-table-column label="重复片段数" min-width="180">
+            <el-table-column prop="breakdown" :label="translateText('风险摘要')" min-width="180" />
+            <el-table-column :label="translateText('重复片段数')" min-width="180">
               <template #default="{ row }">
                 <div class="match-counts">
                   <el-tag size="small" type="danger" effect="plain" v-if="row.exactCount > 0">
-                    完全: {{ row.exactCount }}
+                    {{ translateText("完全") }}: {{ row.exactCount }}
                   </el-tag>
                   <el-tag size="small" type="warning" effect="plain" v-if="row.rewriteCount > 0">
-                    改写: {{ row.rewriteCount }}
+                    {{ translateText("改写") }}: {{ row.rewriteCount }}
                   </el-tag>
                   <el-tag size="small" type="info" effect="plain" v-if="row.semanticCount > 0">
-                    语义: {{ row.semanticCount }}
+                    {{ translateText("语义") }}: {{ row.semanticCount }}
                   </el-tag>
                   <span v-if="!row.exactCount && !row.rewriteCount && !row.semanticCount" class="no-match">
-                    无
+                    {{ translateText("无") }}
                   </span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="风险等级" width="90">
+            <el-table-column :label="translateText('风险等级')" width="90">
               <template #default="{ row }">
                 <el-tag :type="row.levelType" effect="light">{{ row.level }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="90" fixed="right">
+            <el-table-column :label="translateText('操作')" width="90" fixed="right">
               <template #default="{ row }">
-                <el-button link type="primary" @click.stop="handleSelectResult(row)">查看</el-button>
+                <el-button link type="primary" @click.stop="handleSelectResult(row)">{{ translateText("查看") }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -110,34 +110,34 @@
                   <template v-if="detailAvailable">
               <div class="explain-table">
               <h3>
-                重复片段摘录 
+                {{ translateText("重复片段摘录") }}
                 <span class="table-subtitle" v-if="totalMatches > 0">
-                  (共 {{ totalMatches }} 处，预览前 {{ matchRows.length }} 处)
+                  ({{ text("共 {total} 处，预览前 {count} 处", { total: totalMatches, count: matchRows.length }) }})
                 </span>
               </h3>
-              <el-table :data="matchRows" border empty-text="当前未返回重复片段">
-                <el-table-column label="类型" width="100">
+              <el-table :data="matchRows" border :empty-text="translateText('当前未返回重复片段')">
+                <el-table-column :label="translateText('类型')" width="100">
                   <template #default="{ row }">
                     <el-tag 
                       :type="row.match_type === 'exact' ? 'danger' : 'warning'"
                       size="small"
                       effect="dark"
                     >
-                      {{ row.match_type === 'exact' ? '完全重复' : '改写相似' }}
+                      {{ translateText(row.match_type === 'exact' ? '完全重复' : '改写相似') }}
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="a_text" label="主标书 A 片段" min-width="260">
+                <el-table-column prop="a_text" :label="translateText('主标书 A 片段')" min-width="260">
                   <template #default="{ row }">
                     <div class="text-snippet">{{ row.a_text }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="b_text" label="对比标书 B 片段" min-width="260">
+                <el-table-column prop="b_text" :label="translateText('对比标书 B 片段')" min-width="260">
                   <template #default="{ row }">
                     <div class="text-snippet">{{ row.b_text }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="相似度" width="90">
+                <el-table-column :label="translateText('相似度')" width="90">
                   <template #default="{ row }">
                     {{ toPercent(row.similarity) }}%
                   </template>
@@ -146,7 +146,7 @@
               
               <div class="table-footer-action">
                   <el-button class="mega-compare-btn" @click="goCompare">
-                    <span class="mega-compare-btn__main">进入对比页查看全部明细</span>
+                    <span class="mega-compare-btn__main">{{ translateText("进入对比页查看全部明细") }}</span>
                     <el-icon class="mega-compare-btn__icon"><ArrowRight /></el-icon>
                   </el-button>
                 </div>
@@ -154,16 +154,16 @@
 
             <div class="explain-table">
               <h3 class="table-title-with-help">
-                <span>格式相似项 ({{ formatRows.length }})</span>
+                <span>{{ translateText("格式相似项") }} ({{ formatRows.length }})</span>
                 <el-tooltip
-                  content="“句子数量”和“段落数量”是系统解析后的结构统计值，用来判断两份文档的组织方式是否接近，不直接表示正文内容是否相同。"
+                  :content="translateText('“句子数量”和“段落数量”是系统解析后的结构统计值，用来判断两份文档的组织方式是否接近，不直接表示正文内容是否相同。')"
                   placement="top"
                 >
                   <el-icon class="table-title-with-help__icon"><QuestionFilled /></el-icon>
                 </el-tooltip>
               </h3>
-              <el-table :data="formatRows" border empty-text="未发现格式相似">
-                <el-table-column label="检测项" width="160">
+              <el-table :data="formatRows" border :empty-text="translateText('未发现格式相似')">
+                <el-table-column :label="translateText('检测项')" width="160">
                   <template #default="{ row }">
                     <div class="table-item-name">
                       <span>{{ row.item_name }}</span>
@@ -173,22 +173,22 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="a_value" label="A 标书" min-width="160" />
-                <el-table-column prop="b_value" label="B 标书" min-width="160" />
-                <el-table-column label="相似度" width="120">
+                <el-table-column prop="a_value" :label="translateText('A 标书')" min-width="160" />
+                <el-table-column prop="b_value" :label="translateText('B 文件')" min-width="160" />
+                <el-table-column :label="translateText('相似度')" width="120">
                   <template #default="{ row }">{{ toPercent(row.similarity) }}%</template>
                 </el-table-column>
-                <el-table-column prop="description" label="说明" min-width="200" />
+                <el-table-column prop="description" :label="translateText('说明')" min-width="200" />
               </el-table>
             </div>
 
             <div class="explain-table">
-              <h3>元数据对比 ({{ metadataRows.length }})</h3>
-              <el-table :data="metadataRows" border empty-text="未提取到元数据">
-                <el-table-column prop="field_name" label="属性" width="160" />
-                <el-table-column prop="a_value" label="A 标书" min-width="160" />
-                <el-table-column prop="b_value" label="B 标书" min-width="160" />
-                <el-table-column label="判断" width="120">
+              <h3>{{ translateText("元数据对比") }} ({{ metadataRows.length }})</h3>
+              <el-table :data="metadataRows" border :empty-text="translateText('未提取到元数据')">
+                <el-table-column prop="field_name" :label="translateText('属性')" width="160" />
+                <el-table-column prop="a_value" :label="translateText('A 标书')" min-width="160" />
+                <el-table-column prop="b_value" :label="translateText('B 文件')" min-width="160" />
+                <el-table-column :label="translateText('判断')" width="120">
                   <template #default="{ row }">
                     <el-tag :type="metadataTagType(row.similarity_type)">{{ metadataLabel(row.similarity_type) }}</el-tag>
                   </template>
@@ -197,13 +197,13 @@
             </div>
 
             <div class="explain-table">
-              <h3>关键字命中 ({{ keywordRows.length }})</h3>
-              <el-table :data="keywordRows" border empty-text="当前未返回关键字详情">
-                <el-table-column prop="keyword" label="关键字" width="130" />
-                <el-table-column prop="hit_text" label="命中文本" min-width="220" />
-                <el-table-column label="位置" width="160">
+              <h3>{{ translateText("关键字命中") }} ({{ keywordRows.length }})</h3>
+              <el-table :data="keywordRows" border :empty-text="translateText('当前未返回关键字详情')">
+                <el-table-column prop="keyword" :label="translateText('关键字')" width="130" />
+                <el-table-column prop="hit_text" :label="translateText('命中文本')" min-width="220" />
+                <el-table-column :label="translateText('位置')" width="160">
                   <template #default="{ row }">
-                    第 {{ row.position.paragraph }} 段 / 第 {{ row.position.sentence }} 句
+                    {{ text("第 {paragraph} 段 / 第 {sentence} 句", { paragraph: row.position.paragraph, sentence: row.position.sentence }) }}
                   </template>
                 </el-table-column>
               </el-table>
@@ -212,40 +212,40 @@
             <template v-else-if="lockedDetail">
               <div class="explain-table">
                 <h3>
-                  重复片段摘录
+                  {{ translateText("重复片段摘录") }}
                   <span class="table-subtitle" v-if="totalMatches > 0">
-                    (已展示前 {{ matchRows.length }} 处预览)
+                    ({{ text("已展示前 {count} 处预览", { count: matchRows.length }) }})
                   </span>
                 </h3>
                 <el-alert
                   type="warning"
                   :closable="false"
-                  title="当前任务尚未支付，以下为免费重复片段预览，完整详情解锁后可查看全部明细。"
+                  :title="translateText('当前任务尚未支付，以下为免费重复片段预览，完整详情解锁后可查看全部明细。')"
                   style="margin-bottom: 16px;"
                 />
-                <el-table :data="matchRows" border empty-text="当前暂无可展示的重复片段预览">
-                  <el-table-column label="类型" width="100">
+                <el-table :data="matchRows" border :empty-text="translateText('当前暂无可展示的重复片段预览')">
+                  <el-table-column :label="translateText('类型')" width="100">
                     <template #default="{ row }">
                       <el-tag
                         :type="row.match_type === 'exact' ? 'danger' : 'warning'"
                         size="small"
                         effect="dark"
                       >
-                        {{ row.match_type === 'exact' ? '完全重复' : '改写相似' }}
+                        {{ translateText(row.match_type === 'exact' ? '完全重复' : '改写相似') }}
                       </el-tag>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="a_text" label="主标书 A 片段" min-width="260">
+                  <el-table-column prop="a_text" :label="translateText('主标书 A 片段')" min-width="260">
                     <template #default="{ row }">
                       <div class="text-snippet">{{ row.a_text }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="b_text" label="对比标书 B 片段" min-width="260">
+                  <el-table-column prop="b_text" :label="translateText('对比标书 B 片段')" min-width="260">
                     <template #default="{ row }">
                       <div class="text-snippet">{{ row.b_text }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column label="相似度" width="90">
+                  <el-table-column :label="translateText('相似度')" width="90">
                     <template #default="{ row }">
                       {{ toPercent(row.similarity) }}%
                     </template>
@@ -254,29 +254,29 @@
               </div>
 
               <div class="explain-table">
-                <h3>格式相似项</h3>
+                <h3>{{ translateText("格式相似项") }}</h3>
                 <div class="locked-group">
-                  <el-empty description="支付解锁后显示格式相似项明细" />
+                  <el-empty :description="translateText('支付解锁后显示格式相似项明细')" />
                 </div>
               </div>
 
               <div class="explain-table">
-                <h3>元数据对比</h3>
+                <h3>{{ translateText("元数据对比") }}</h3>
                 <div class="locked-group">
-                  <el-empty description="支付解锁后显示元数据对比结果" />
+                  <el-empty :description="translateText('支付解锁后显示元数据对比结果')" />
                 </div>
               </div>
 
               <div class="explain-table">
-                <h3>关键字命中</h3>
+                <h3>{{ translateText("关键字命中") }}</h3>
                 <div class="locked-group">
-                  <el-empty description="支付解锁后显示关键字命中详情" />
+                  <el-empty :description="translateText('支付解锁后显示关键字命中详情')" />
                 </div>
               </div>
 
             </template>
             <template v-else-if="!summary?.payment_required">
-              <el-empty description="当前结果没有详情" />
+              <el-empty :description="translateText('当前结果没有详情')" />
             </template>
           </div>
         </el-card>
@@ -287,42 +287,44 @@
           <div class="unlock-offer-card__badge">{{ promoBadgeText }}</div>
           <div class="unlock-offer-card__content">
             <div class="unlock-offer-card__text">
-              <h3>{{ hasPromo ? "先锁定优惠，再看完整详情" : "支付后立即查看完整详情" }}</h3>
+              <h3>{{ hasPromo ? translateText("先锁定优惠，再看完整详情") : translateText("支付后立即查看完整详情") }}</h3>
               <p>
-                完整解锁全部重复片段、格式相似项、元数据对比与关键字命中。
+                {{ translateText("完整解锁全部重复片段、格式相似项、元数据对比与关键字命中。") }}
                 <template v-if="hasPromo && promoSummary">
-                  当前仅需 <strong>{{ formatMoney(promoSummary.effective_unit_price_cents) }} / 每份对比文件</strong>，
-                  原价 <span class="unlock-offer-card__origin-price">{{ formatMoney(promoSummary.original_unit_price_cents) }}</span>，
-                  本次任务可立省 <strong>{{ formatMoney(promoSummary.savings_cents) }}</strong>。
+                  {{ text("当前仅需 {price} / 每份对比文件，原价 {origin}，本次任务可立省 {save}。", {
+                    price: formatMoney(promoSummary.effective_unit_price_cents),
+                    origin: formatMoney(promoSummary.original_unit_price_cents),
+                    save: formatMoney(promoSummary.savings_cents)
+                  }) }}
                 </template>
                 <template v-else>
-                  当前按标准价格解锁，支付后立即开放全部详情与后续回看权限。
+                  {{ translateText("当前按标准价格解锁，支付后立即开放全部详情与后续回看权限。") }}
                 </template>
               </p>
               <div v-if="hasPromo" class="unlock-offer-card__promo-strip">
-                <span>原价总额 {{ formatMoney(promoSummary?.original_amount_cents ?? 0) }}</span>
-                <span>现价 {{ formatMoney(promoSummary?.effective_amount_cents ?? 0) }}</span>
-                <span>立省 {{ promoDiscountText }}</span>
+                <span>{{ translateText("原价总额") }} {{ formatMoney(promoSummary?.original_amount_cents ?? 0) }}</span>
+                <span>{{ translateText("现价") }} {{ formatMoney(promoSummary?.effective_amount_cents ?? 0) }}</span>
+                <span>{{ translateText("立省") }} {{ promoDiscountText }}</span>
               </div>
               <div v-if="showPromoCountdown" class="unlock-offer-card__countdown">
-                <span>距优惠结束仅剩</span>
+                <span>{{ translateText("距优惠结束仅剩") }}</span>
                 <strong>{{ promoCountdownText }}</strong>
               </div>
               <div class="unlock-offer-card__chips">
                 <span>{{ promoNoteText }}</span>
-                <span>结果保留期内随时回看</span>
+                <span>{{ translateText("结果保留期内随时回看") }}</span>
                 <span>{{ promoLossAversionText }}</span>
               </div>
             </div>
             <div class="unlock-offer-card__action">
               <div class="unlock-offer-card__price">
-                {{ promoSummary ? formatMoney(promoSummary.effective_amount_cents) : "生成订单后显示" }}
+                {{ promoSummary ? formatMoney(promoSummary.effective_amount_cents) : translateText("生成订单后显示") }}
               </div>
               <div v-if="promoSummary" class="unlock-offer-card__price-note">
-                {{ summary?.b_file_count || 0 }} 份对比文件
+                {{ summary?.b_file_count || 0 }} {{ translateText("份对比文件") }}
               </div>
               <el-button type="danger" class="unlock-offer-card__button" @click="paymentVisible = true">
-                {{ hasPromo ? "立即锁定优惠" : "立即支付解锁" }}
+                {{ hasPromo ? translateText("立即锁定优惠") : translateText("立即支付解锁") }}
               </el-button>
             </div>
           </div>
@@ -331,15 +333,15 @@
         <el-card shadow="never" class="glass-card side-stack__chart-card">
           <div class="detail-section__head side-stack__head">
             <div>
-              <h3>数据可视化</h3>
-              <p>从总体风险到单份标书画像，右侧集中查看关键指标。</p>
+              <h3>{{ translateText("数据可视化") }}</h3>
+              <p>{{ translateText("从总体风险到单份标书画像，右侧集中查看关键指标。") }}</p>
             </div>
           </div>
 
           <div class="chart-panel">
             <div class="chart-panel__head">
-              <span class="chart-panel__eyebrow">总览</span>
-              <h4>总体相似度排行</h4>
+              <span class="chart-panel__eyebrow">{{ translateText("总览") }}</span>
+              <h4>{{ translateText("总体相似度排行") }}</h4>
             </div>
             <div class="chart-container chart-container--rank">
               <v-chart class="chart" :option="rankChartOption" autoresize />
@@ -349,9 +351,9 @@
           <template v-if="detailAvailable">
             <div class="chart-panel chart-panel--soft">
               <div class="chart-panel__head">
-                <span class="chart-panel__eyebrow">当前选中</span>
-                <h4>风险画像分析</h4>
-                <p>{{ selectedResult?.b_file_name || "查看当前对比标书的多维相似度分布" }}</p>
+                <span class="chart-panel__eyebrow">{{ translateText("当前选中") }}</span>
+                <h4>{{ translateText("风险画像分析") }}</h4>
+                <p>{{ selectedResult?.b_file_name || translateText("查看当前对比标书的多维相似度分布") }}</p>
               </div>
               <div class="chart-container chart-container--radar">
                 <v-chart class="chart" :option="detailRadarOption" autoresize />
@@ -362,9 +364,9 @@
           <template v-if="detailAvailable && keywordRows.length > 0">
             <div class="chart-panel chart-panel--soft">
               <div class="chart-panel__head">
-                <span class="chart-panel__eyebrow">命中分析</span>
-                <h4>关键字分布</h4>
-                <p>聚合展示当前选中结果中的高频命中词。</p>
+                <span class="chart-panel__eyebrow">{{ translateText("命中分析") }}</span>
+                <h4>{{ translateText("关键字分布") }}</h4>
+                <p>{{ translateText("聚合展示当前选中结果中的高频命中词。") }}</p>
               </div>
               <div class="chart-container chart-container--keyword">
                 <v-chart class="chart" :option="keywordChartOption" autoresize />
@@ -382,7 +384,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import {
@@ -396,6 +398,7 @@ import {
 import type { EChartsOption } from "echarts";
 import VChart from "vue-echarts";
 import PaymentDialog from "@/components/PaymentDialog.vue";
+import { useAppI18n } from "@/composables/useAppI18n";
 import {
   getPreview,
   getPublicSiteConfig,
@@ -429,6 +432,7 @@ interface RankRow {
 
 const router = useRouter();
 const route = useRoute();
+const { locale, translateText } = useAppI18n();
 const summary = ref<TaskSummary | null>(null);
 const publicSiteConfig = ref<PublicSiteConfig | null>(null);
 const selectedResultId = ref<number>(Number(route.query.result || 0));
@@ -437,11 +441,15 @@ const previewMatches = ref<MatchSegment[]>([]);
 const paymentVisible = ref(false);
 const loadingDetail = ref(false);
 isProcessing.value = true;
-const processingMessage = ref("正在查询任务状态...");
+const processingMessage = ref(translateText("正在查询任务状态..."));
 const detailError = ref("");
 let pollTimer: number | undefined;
 let promoTimer: number | undefined;
 const promoNow = ref(Date.now());
+
+function text(source: string, params?: Record<string, string | number>) {
+  return translateText(source).replace(/\{(\w+)\}/g, (_, key) => String(params?.[key] ?? ""));
+}
 
 const taskNo = computed(() => String(route.query.task ?? "") || getTaskNo());
 const selectedResult = computed(() => {
@@ -453,10 +461,10 @@ const detailMessage = computed(() => {
   if (loadingDetail.value) return "";
   if (detailError.value) return detailError.value;
   if (!detailAvailable.value && summary.value?.payment_required) {
-    return "当前任务尚未解锁完整详情，可先查看摘要排行与免费预览。";
+    return translateText("当前任务尚未解锁完整详情，可先查看摘要排行与免费预览。");
   }
   if (!detailAvailable.value) {
-    return "当前结果尚未返回完整详情，可稍后刷新。";
+    return translateText("当前结果尚未返回完整详情，可稍后刷新。");
   }
   return "";
 });
@@ -472,9 +480,9 @@ const matchRows = computed(() => {
 const totalMatches = computed(() => selectedDetail.value?.matches.length ?? previewMatches.value.length);
 const promoSummary = computed<PromoPricingSummary | null>(() => buildPromoSummary(publicSiteConfig.value?.promo, summary.value?.b_file_count || 1));
 const hasPromo = computed(() => Boolean(promoSummary.value?.promo_active));
-const promoBadgeText = computed(() => promoSummary.value?.promo_badge || "限时特惠");
-const promoNoteText = computed(() => hasPromo.value ? (promoSummary.value?.promo_note || "完整明细立即开放") : "完整明细立即开放");
-const promoLossAversionText = computed(() => hasPromo.value ? (promoSummary.value?.promo_loss_aversion_text || "错过后将恢复原价") : "支付后立即开放完整详情");
+const promoBadgeText = computed(() => promoSummary.value?.promo_badge || translateText("限时特惠"));
+const promoNoteText = computed(() => hasPromo.value ? (promoSummary.value?.promo_note || translateText("完整明细立即开放")) : translateText("完整明细立即开放"));
+const promoLossAversionText = computed(() => hasPromo.value ? (promoSummary.value?.promo_loss_aversion_text || translateText("错过后将恢复原价")) : translateText("支付后立即开放完整详情"));
 const promoDiscountText = computed(() => `${promoSummary.value?.discount_percent ?? 0}%`);
 const promoServerOffsetMs = computed(() => buildServerOffsetMs(publicSiteConfig.value?.promo.server_now));
 const showPromoCountdown = computed(() => Boolean(promoSummary.value?.show_countdown && getRemainingMs(promoSummary.value, promoServerOffsetMs.value, promoNow.value) > 0));
@@ -531,7 +539,7 @@ const detailRadarOption = computed<EChartsOption>(() => {
 
   return {
     title: {
-      text: "多维相似度分析",
+      text: translateText("多维相似度分析"),
       left: "center",
       textStyle: { fontSize: 14, fontWeight: "normal", color: "#333" }
     },
@@ -540,18 +548,18 @@ const detailRadarOption = computed<EChartsOption>(() => {
     },
     radar: {
       indicator: [
-        { name: "完全重复", max: 100 },
-        { name: "改写相似", max: 100 },
-        { name: "语义相似", max: 100 },
-        { name: "格式相似", max: 100 },
-        { name: "元数据相似", max: 100 }
+        { name: translateText("完全重复"), max: 100 },
+        { name: translateText("改写相似"), max: 100 },
+        { name: translateText("语义相似"), max: 100 },
+        { name: translateText("格式相似"), max: 100 },
+        { name: translateText("元数据相似"), max: 100 }
       ],
       center: ["50%", "55%"],
       radius: "60%"
     },
     series: [
       {
-        name: "相似度多维分析",
+        name: translateText("相似度多维分析"),
         type: "radar",
         data: [
           {
@@ -596,13 +604,13 @@ const keywordChartOption = computed<EChartsOption>(() => {
 
   return {
     title: {
-      text: "关键字命中统计",
+      text: translateText("关键字命中统计"),
       left: "center",
       textStyle: { fontSize: 14, fontWeight: "normal", color: "#333" }
     },
     tooltip: {
       trigger: "item",
-      formatter: "{b}: {c} 次 ({d}%)"
+      formatter: `{b}: {c} ${translateText("次")} ({d}%)`
     },
     legend: {
       orient: "horizontal",
@@ -611,7 +619,7 @@ const keywordChartOption = computed<EChartsOption>(() => {
     },
     series: [
       {
-        name: "命中次数",
+        name: translateText("命中次数"),
         type: "pie",
         radius: ["40%", "70%"],
         center: ["50%", "50%"],
@@ -650,7 +658,7 @@ function handleSelectResult(row: RankRow) {
 
 async function loadSummary() {
   if (!taskNo.value) {
-    ElMessage.warning("没有找到任务号，请先上传文件");
+    ElMessage.warning(translateText("没有找到任务号，请先上传文件"));
     await router.push("/upload");
     return;
   }
@@ -664,7 +672,7 @@ async function loadSummary() {
 }
 
 async function loadPublicSiteConfig() {
-  publicSiteConfig.value = await getPublicSiteConfig();
+  publicSiteConfig.value = await getPublicSiteConfig(locale.value);
 }
 
 async function loadEvidence(forceMessage = false) {
@@ -690,7 +698,7 @@ async function loadEvidence(forceMessage = false) {
     previewMatches.value = response.matches ?? [];
   } catch (error) {
     selectedDetail.value = null;
-    detailError.value = error instanceof Error ? error.message : "详情加载失败";
+    detailError.value = error instanceof Error ? error.message : translateText("详情加载失败");
     if (forceMessage && !summary.value?.payment_required) {
       ElMessage.error(detailError.value);
     }
@@ -707,9 +715,9 @@ async function handlePaid() {
 
 function copyTaskLink() {
   navigator.clipboard.writeText(taskNo.value).then(() => {
-    ElMessage.success("任务ID已复制，您可在上传界面点击“找回历史任务结果”进行查看");
+    ElMessage.success(translateText("任务ID已复制，您可在上传界面点击“找回历史任务结果”进行查看"));
   }).catch(() => {
-    ElMessage.success(`任务号: ${taskNo.value}`);
+    ElMessage.success(`${translateText("任务号")}: ${taskNo.value}`);
   });
 }
 
@@ -732,8 +740,12 @@ function toRankRow(row: SummaryResult, rank: number): RankRow {
     rank,
     name: row.b_file_name,
     score,
-    breakdown: `完全 ${toPercent(row.exact_similarity)}% / 改写 ${toPercent(row.rewrite_similarity)}% / 语义 ${toPercent(row.semantic_similarity)}%`,
-    level: score >= 70 ? "高风险" : score >= 40 ? "中风险" : "低风险",
+    breakdown: text("完全 {exact}% / 改写 {rewrite}% / 语义 {semantic}%", {
+      exact: toPercent(row.exact_similarity),
+      rewrite: toPercent(row.rewrite_similarity),
+      semantic: toPercent(row.semantic_similarity)
+    }),
+    level: score >= 70 ? translateText("高风险") : score >= 40 ? translateText("中风险") : translateText("低风险"),
     levelType: score >= 70 ? "danger" : score >= 40 ? "warning" : "success",
     exactCount: (row as any).exact_count || 0,
     rewriteCount: (row as any).rewrite_count || 0,
@@ -743,7 +755,12 @@ function toRankRow(row: SummaryResult, rank: number): RankRow {
 }
 
 function metadataLabel(type: string) {
-  return { same: "相同", similar: "相近", different: "不同", missing: "缺失" }[type] ?? type;
+  return {
+    same: translateText("相同"),
+    similar: translateText("相近"),
+    different: translateText("不同"),
+    missing: translateText("缺失")
+  }[type] ?? type;
 }
 
 function metadataTagType(type: string) {
@@ -752,11 +769,11 @@ function metadataTagType(type: string) {
 
 function formatItemHelp(name: string) {
   const mapping: Record<string, string> = {
-    "句子数量": "表示系统把文档解析后得到多少个可比对句子块，比较的是结构规模是否接近，不是直接比较句子内容。",
-    "段落数量": "表示系统解析后识别出多少个结构段落，PDF 和 Word 的解析方式不同，因此这个值更偏结构参考。",
-    "页数": "表示解析得到的文档页数，用来判断版式规模是否接近。",
-    "标题层级": "表示系统识别到的标题结构数量，用来判断目录和章节组织是否接近。",
-    "目录结构": "表示系统识别到的目录痕迹数量，用来辅助判断整体结构是否相似。"
+    "句子数量": translateText("表示系统把文档解析后得到多少个可比对句子块，比较的是结构规模是否接近，不是直接比较句子内容。"),
+    "段落数量": translateText("表示系统解析后识别出多少个结构段落，PDF 和 Word 的解析方式不同，因此这个值更偏结构参考。"),
+    "页数": translateText("表示解析得到的文档页数，用来判断版式规模是否接近。"),
+    "标题层级": translateText("表示系统识别到的标题结构数量，用来判断目录和章节组织是否接近。"),
+    "目录结构": translateText("表示系统识别到的目录痕迹数量，用来辅助判断整体结构是否相似。")
   };
   return mapping[name] ?? "";
 }
@@ -767,7 +784,7 @@ async function pollTaskStatus() {
     const status = await getTaskStatus(taskNo.value);
     if (status.status === "failed") {
       isProcessing.value = true;
-      processingMessage.value = status.error_message || "任务执行失败，请检查文件内容后重新发起。";
+      processingMessage.value = status.error_message || translateText("任务执行失败，请检查文件内容后重新发起。");
       window.clearInterval(pollTimer);
       return;
     }
@@ -781,17 +798,17 @@ async function pollTaskStatus() {
     }
 
     // 仍在处理中
-    processingMessage.value = status.message || "后端正在处理，请稍候...";
+    processingMessage.value = status.message || translateText("后端正在处理，请稍候...");
   } catch (error) {
     window.clearInterval(pollTimer);
-    processingMessage.value = "查询任务状态失败";
-    ElMessage.error(error instanceof Error ? error.message : "查询任务状态失败");
+    processingMessage.value = translateText("查询任务状态失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("查询任务状态失败"));
   }
 }
 
 onMounted(async () => {
   if (!taskNo.value) {
-    ElMessage.warning("请先上传文件创建任务");
+    ElMessage.warning(translateText("请先上传文件创建任务"));
     await router.replace("/upload");
     return;
   }
@@ -806,19 +823,26 @@ onMounted(async () => {
     }, 1000);
     // 开始轮询，替代原有的 Progress 逻辑
     await pollTaskStatus();
-    if (isProcessing.value && !processingMessage.value.includes("失败")) {
+    if (isProcessing.value && processingMessage.value !== translateText("任务执行失败，请检查文件内容后重新发起。")) {
       pollTimer = window.setInterval(() => {
         void pollTaskStatus();
       }, 2000);
     }
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "加载失败");
+    ElMessage.error(error instanceof Error ? error.message : translateText("加载失败"));
   }
 });
 
 onUnmounted(() => {
   window.clearInterval(pollTimer);
   window.clearInterval(promoTimer);
+});
+
+watch(locale, () => {
+  if (!taskNo.value) return;
+  void loadPublicSiteConfig().catch(() => {
+    publicSiteConfig.value = null;
+  });
 });
 </script>
 

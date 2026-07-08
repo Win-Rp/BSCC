@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from typing import Any
 
@@ -17,6 +18,37 @@ PRICING_SETTING_KEYS = (
     "promo_loss_aversion_text",
 )
 
+SUPPORTED_LOCALES = ("zh-CN", "zh-TW", "en", "ja", "ko", "fr", "de")
+PROMO_I18N_DEFAULTS: dict[str, dict[str, str]] = {
+    "promo_note": {
+        "zh-CN": "限时活动，仅限当前批次查重任务",
+        "zh-TW": "限時活動，僅限當前批次查重任務",
+        "en": "Limited-time offer for the current similarity-check batch only",
+        "ja": "期間限定オファー。現在のチェックバッチのみ対象です",
+        "ko": "현재 검사 배치에만 적용되는 기간 한정 혜택입니다",
+        "fr": "Offre limitée valable uniquement pour ce lot de vérification",
+        "de": "Zeitlich begrenztes Angebot nur für die aktuelle Prüfrunde",
+    },
+    "promo_badge": {
+        "zh-CN": "限时特惠",
+        "zh-TW": "限時特惠",
+        "en": "Limited-time offer",
+        "ja": "期間限定特価",
+        "ko": "기간 한정 특가",
+        "fr": "Offre limitée",
+        "de": "Zeitlich begrenztes Angebot",
+    },
+    "promo_loss_aversion_text": {
+        "zh-CN": "错过后将恢复原价",
+        "zh-TW": "錯過後將恢復原價",
+        "en": "Miss it and the price returns to normal",
+        "ja": "この機会を逃すと通常価格に戻ります",
+        "ko": "놓치면 정상가로 돌아갑니다",
+        "fr": "Une fois l'offre passée, le tarif normal revient",
+        "de": "Wenn Sie das Angebot verpassen, gilt wieder der Normalpreis",
+    },
+}
+
 
 def load_pricing_settings(conn) -> dict[str, str]:
     rows = conn.execute(
@@ -30,8 +62,10 @@ def load_pricing_settings(conn) -> dict[str, str]:
     return {row["key"]: row["value"] for row in rows}
 
 
-def build_public_pricing_payload(raw: dict[str, Any], current_time: datetime | None = None) -> dict[str, Any]:
-    pricing = _normalize_pricing(raw, current_time=current_time)
+def build_public_pricing_payload(
+    raw: dict[str, Any], current_time: datetime | None = None, *, locale: str | None = None
+) -> dict[str, Any]:
+    pricing = _normalize_pricing(raw, current_time=current_time, locale=locale)
     return {
         "original_unit_price_cents": pricing["original_unit_price_cents"],
         "promo_unit_price_cents": pricing["promo_unit_price_cents"],
@@ -54,8 +88,9 @@ def build_order_pricing_payload(
     effective_unit_price_cents: int | None = None,
     effective_amount_cents: int | None = None,
     current_time: datetime | None = None,
+    locale: str | None = None,
 ) -> dict[str, Any]:
-    pricing = _normalize_pricing(raw, current_time=current_time)
+    pricing = _normalize_pricing(raw, current_time=current_time, locale=locale)
     safe_b_file_count = max(int(b_file_count or 1), 1)
     original_amount_cents = pricing["original_unit_price_cents"] * safe_b_file_count
     actual_unit_price = (
@@ -71,7 +106,7 @@ def build_order_pricing_payload(
     savings_cents = max(original_amount_cents - actual_amount_cents, 0)
     discount_percent = round((savings_cents / original_amount_cents) * 100) if original_amount_cents else 0
     return {
-        **build_public_pricing_payload(raw, current_time=current_time),
+        **build_public_pricing_payload(raw, current_time=current_time, locale=locale),
         "b_file_count": safe_b_file_count,
         "effective_unit_price_cents": actual_unit_price,
         "original_amount_cents": original_amount_cents,
@@ -81,8 +116,11 @@ def build_order_pricing_payload(
     }
 
 
-def _normalize_pricing(raw: dict[str, Any], current_time: datetime | None = None) -> dict[str, Any]:
+def _normalize_pricing(
+    raw: dict[str, Any], current_time: datetime | None = None, *, locale: str | None = None
+) -> dict[str, Any]:
     current = current_time or now()
+    normalized_locale = _normalize_locale(locale)
     original_unit_price_cents = max(_to_int(raw.get("price_per_b_file_cents"), 1000), 1)
     promo_unit_price_cents = max(_to_int(raw.get("promo_price_per_b_file_cents"), 100), 1)
     promo_enabled = _to_bool(raw.get("promo_enabled"), False)
@@ -101,9 +139,11 @@ def _normalize_pricing(raw: dict[str, Any], current_time: datetime | None = None
         "promo_enabled": promo_enabled,
         "promo_active": promo_active,
         "show_countdown": promo_active and _to_bool(raw.get("promo_countdown_enabled"), True) and bool(parsed_promo_end),
-        "promo_note": str(raw.get("promo_note") or "").strip(),
-        "promo_badge": str(raw.get("promo_badge") or "限时特惠").strip() or "限时特惠",
-        "promo_loss_aversion_text": str(raw.get("promo_loss_aversion_text") or "错过后将恢复原价").strip() or "错过后将恢复原价",
+        "promo_note": _resolve_localized_setting("promo_note", raw.get("promo_note"), normalized_locale),
+        "promo_badge": _resolve_localized_setting("promo_badge", raw.get("promo_badge"), normalized_locale),
+        "promo_loss_aversion_text": _resolve_localized_setting(
+            "promo_loss_aversion_text", raw.get("promo_loss_aversion_text"), normalized_locale
+        ),
         "promo_ends_at": parsed_promo_end.isoformat(timespec="seconds") if parsed_promo_end else "",
         "server_now": current.isoformat(timespec="seconds"),
     }
@@ -138,3 +178,70 @@ def _parse_datetime(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=TZ)
     return parsed
+
+
+def _normalize_locale(value: str | None) -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized.startswith(("zh-tw", "zh-hk", "zh-mo")):
+        return "zh-TW"
+    if normalized.startswith("zh"):
+        return "zh-CN"
+    if normalized.startswith("ja"):
+        return "ja"
+    if normalized.startswith("ko"):
+        return "ko"
+    if normalized.startswith("fr"):
+        return "fr"
+    if normalized.startswith("de"):
+        return "de"
+    return "en"
+
+
+def _resolve_localized_setting(key: str, value: Any, locale: str) -> str:
+    defaults = PROMO_I18N_DEFAULTS.get(key, {})
+    raw_text = str(value or "").strip()
+    if not raw_text:
+        return defaults.get(locale) or defaults.get("en") or ""
+
+    try:
+        parsed = json.loads(raw_text)
+    except json.JSONDecodeError:
+        parsed = None
+
+    if isinstance(parsed, dict):
+        localized = _pick_localized_text(parsed, locale)
+        if localized:
+            return localized
+
+    if raw_text == defaults.get("zh-CN"):
+        return defaults.get(locale) or defaults.get("en") or raw_text
+
+    return raw_text
+
+
+def _pick_localized_text(payload: dict[str, Any], locale: str) -> str:
+    exact = str(payload.get(locale) or "").strip()
+    if exact:
+        return exact
+
+    if locale == "zh-TW":
+        for alias in ("zh-TW", "zh_HK", "zh-HK", "zh_Hant", "zh-Hant"):
+            candidate = str(payload.get(alias) or "").strip()
+            if candidate:
+                return candidate
+
+    for fallback in ("zh-CN", "en", "zh", "default"):
+        candidate = str(payload.get(fallback) or "").strip()
+        if candidate:
+            return candidate
+
+    for key in SUPPORTED_LOCALES:
+        candidate = str(payload.get(key) or "").strip()
+        if candidate:
+            return candidate
+
+    for candidate in payload.values():
+        text = str(candidate or "").strip()
+        if text:
+            return text
+    return ""

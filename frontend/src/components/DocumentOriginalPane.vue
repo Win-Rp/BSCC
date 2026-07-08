@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import VuePdfEmbed, { usePdfDocument, usePdfSearch } from "vue-pdf-embed";
 import { renderAsync } from "docx-preview";
 import Mark from "mark.js";
+import { useAppI18n } from "@/composables/useAppI18n";
 
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
@@ -13,6 +14,7 @@ const props = defineProps<{
   fileName: string;
   activeText: string;
 }>();
+const { translateText } = useAppI18n();
 
 const docxHost = ref<HTMLElement | null>(null);
 const isRenderingDocx = ref(false);
@@ -235,10 +237,10 @@ onBeforeUnmount(() => {
     <header>{{ title }}</header>
 
     <div v-if="isPdf" class="original-pane__viewer original-pane__viewer--pdf">
-      <div v-if="isLoadingPdf" class="original-pane__empty">正在加载 PDF 原文档...</div>
+      <div v-if="isLoadingPdf" class="original-pane__empty">{{ translateText("正在加载 PDF 原文档...") }}</div>
       <div v-else-if="pdfError" class="original-pane__empty">
         <p>{{ pdfError }}</p>
-        <p class="original-pane__hint">请确认后端已启用原文件接口，必要时重启当前开发服务。</p>
+        <p class="original-pane__hint">{{ translateText("请确认后端已启用原文件接口，必要时重启当前开发服务。") }}</p>
       </div>
       <VuePdfEmbed
         v-else
@@ -251,13 +253,13 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else-if="isDocx" class="original-pane__viewer original-pane__viewer--docx">
-      <div v-if="isRenderingDocx" class="original-pane__empty">正在渲染 Word 原文档...</div>
+      <div v-if="isRenderingDocx" class="original-pane__empty">{{ translateText("正在渲染 Word 原文档...") }}</div>
       <div v-else-if="docxError" class="original-pane__empty">{{ docxError }}</div>
       <div ref="docxHost" class="docx-host" :class="{ 'is-hidden': isRenderingDocx || Boolean(docxError) }" />
     </div>
 
     <div v-else class="original-pane__empty">
-      当前格式暂不支持原样渲染，请下载原文件查看。
+      {{ translateText("当前格式暂不支持原样渲染，请下载原文件查看。") }}
     </div>
   </article>
 </template>

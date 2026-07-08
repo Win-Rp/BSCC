@@ -5,6 +5,7 @@ class OrderCreate(BaseModel):
     task_no: str
     contact: str
     pay_channel: str | None = "alipay"
+    locale: str | None = None
 
 
 class RecoverRequest(BaseModel):

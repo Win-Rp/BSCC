@@ -1,0 +1,72 @@
+{
+  "project": {
+    "name": "BSCC 微信小程序原型",
+    "path": "d:\\Office\\Rp\\Dev\\BSCC\\bscc-mini-program-prototype",
+    "operation": "create",
+    "deviceType": "mobile",
+    "language": "zh-CN",
+    "styleDefinitionBrief": "将标书查重 Web 版业务重构为更适合微信小程序的移动端审查工作台，强调单手操作、吸底行动区、轻量筛选与段落式信息阅读。",
+    "styleContinuityAnchors": {
+      "colorSystem": "以深青绿为主色，配合浅背景与明确的风险语义色，建立可信、克制的业务工具感。",
+      "shapeSystem": "整体控制在 10/12/16px 的圆角体系，避免桌面版的厚重模块感。",
+      "typographySystem": "中文无衬线移动端排版，标题 16-17px，正文 13-14px，强调信息扫读效率。",
+      "spacingSystem": "页面以 12/16px 间距为基准，模块间留白清晰，减少不必要嵌套。",
+      "componentLanguage": "重点使用任务摘要、文件卡片、排行榜、证据块、恢复卡片、吸底操作条与小程序 tabbar。",
+      "surfaceAndDepth": "主要依靠白底、浅边框和轻阴影做层级，只有吸底操作区与解锁抽屉略微增强浮层感。",
+      "interactionTone": "交互风格偏轻量直接，通过吸底按钮、pill 筛选和轻抽屉表达关键动作。"
+    }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "cssFilePath": "d:\\Office\\Rp\\Dev\\BSCC\\bscc-mini-program-prototype\\colors_and_type.css",
+    "brandPrefix": "bscc",
+    "themeMode": "light"
+  },
+  "pages": [
+    {
+      "nodeId": "page-home-upload",
+      "title": "发起查重",
+      "htmlSrc": "pages/home-upload.html",
+      "pageType": "task-driven",
+      "businessScenario": "上传 A/B 标书、填写关键字并发起查重任务。",
+      "visualNorthStar": "第一屏快速发起任务，保留小程序原生感与清晰的任务状态入口。",
+      "miniProgramStyle": true
+    },
+    {
+      "nodeId": "page-task-progress",
+      "title": "任务进度",
+      "htmlSrc": "pages/task-progress.html",
+      "pageType": "task-driven",
+      "businessScenario": "展示任务处理状态、文件进度与异常提示。",
+      "visualNorthStar": "减少用户等待焦虑，用移动端步骤流清楚传达当前阶段。",
+      "miniProgramStyle": true
+    },
+    {
+      "nodeId": "page-results-overview",
+      "title": "查重结果",
+      "htmlSrc": "pages/results-overview.html",
+      "pageType": "information-dense",
+      "businessScenario": "呈现 1 对多查重结果摘要、风险排行、免费预览与解锁入口。",
+      "visualNorthStar": "用户一眼看清风险高低与继续解锁的价值。",
+      "miniProgramStyle": true
+    },
+    {
+      "nodeId": "page-compare-evidence",
+      "title": "对比证据",
+      "htmlSrc": "pages/compare-evidence.html",
+      "pageType": "information-dense",
+      "businessScenario": "查看 A/B 证据片段、命中类型和当前定位说明。",
+      "visualNorthStar": "将桌面双栏证据阅读转译成移动端上下分段式审阅。",
+      "miniProgramStyle": true
+    },
+    {
+      "nodeId": "page-task-recovery",
+      "title": "任务恢复",
+      "htmlSrc": "pages/task-recovery.html",
+      "pageType": "task-driven",
+      "businessScenario": "根据任务号、订单号或联系方式恢复查重结果。",
+      "visualNorthStar": "这是高信任入口，页面要简洁稳定且帮助信息明确。",
+      "miniProgramStyle": true
+    }
+  ]
+}

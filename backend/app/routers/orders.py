@@ -20,7 +20,15 @@ router = APIRouter(tags=["orders"])
 def create_order(payload: OrderCreate, request: Request):
     try:
         client_ip = request.client.host if request.client else "127.0.0.1"
-        return ok(order_service.create_order(payload.task_no, payload.contact, payload.pay_channel or "alipay", client_ip))
+        return ok(
+            order_service.create_order(
+                payload.task_no,
+                payload.contact,
+                payload.pay_channel or "alipay",
+                client_ip,
+                payload.locale,
+            )
+        )
     except ValueError as exc:
         code = str(exc)
         message_map = {

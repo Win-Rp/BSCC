@@ -1,0 +1,100 @@
+function padNumber(value) {
+  return String(value).padStart(2, "0");
+}
+
+function formatPercent(value) {
+  const number = Number(value || 0);
+  return `${(number * 100).toFixed(2)}%`;
+}
+
+function formatMoney(cents) {
+  const amount = Number(cents || 0) / 100;
+  return `¥${amount.toFixed(2)}`;
+}
+
+function formatDateTime(input) {
+  if (!input) {
+    return "-";
+  }
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) {
+    return input;
+  }
+  return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
+}
+
+function splitKeywords(value) {
+  return String(value || "")
+    .split(/[\n,，]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function joinKeywords(value) {
+  return splitKeywords(value).join(",");
+}
+
+function getStatusText(status) {
+  const map = {
+    uploaded: "文件已上传",
+    queued: "任务排队中",
+    parsing: "正在解析文档",
+    checking: "正在查重",
+    awaiting_payment: "查重完成，等待支付解锁",
+    completed: "查重完成",
+    failed: "任务失败",
+    deleted: "任务数据已删除"
+  };
+  return map[status] || status || "-";
+}
+
+function getUnlockStatusText(status) {
+  const map = {
+    free: "免费可看",
+    locked: "待解锁",
+    unlocked: "已解锁"
+  };
+  return map[status] || status || "-";
+}
+
+function getMatchTypeText(type) {
+  const map = {
+    exact: "完全重复",
+    rewrite: "改写相似",
+    semantic: "语义相似",
+    keyword: "关键字命中"
+  };
+  return map[type] || type || "-";
+}
+
+function getRiskLevel(score) {
+  const value = Number(score || 0);
+  if (value >= 0.8) {
+    return { text: "高风险", type: "danger" };
+  }
+  if (value >= 0.5) {
+    return { text: "中风险", type: "warning" };
+  }
+  return { text: "低风险", type: "safe" };
+}
+
+function ellipsis(text, maxLength) {
+  const value = String(text || "");
+  if (!maxLength || value.length <= maxLength) {
+    return value;
+  }
+  return `${value.slice(0, maxLength)}...`;
+}
+
+module.exports = {
+  formatPercent,
+  formatMoney,
+  formatDateTime,
+  splitKeywords,
+  joinKeywords,
+  getStatusText,
+  getUnlockStatusText,
+  getMatchTypeText,
+  getRiskLevel,
+  ellipsis
+};

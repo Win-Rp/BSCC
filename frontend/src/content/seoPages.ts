@@ -1,4 +1,5 @@
 import type { RouteSeoMeta } from "@/utils/seo";
+import { localizeDeep } from "@/composables/useAppI18n";
 
 export type SeoPageKey =
   | "home"
@@ -649,5 +650,5 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
 };
 
 export function getSeoPage(key: string) {
-  return seoPages[key as SeoPageKey] || seoPages.home;
+  return localizeDeep(seoPages[key as SeoPageKey] || seoPages.home);
 }

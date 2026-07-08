@@ -26,7 +26,7 @@ def support():
 
 
 @router.get("/public/site-config")
-def public_site_config():
+def public_site_config(locale: str | None = None):
     with db_session() as conn:
         rows = conn.execute(
             """
@@ -56,7 +56,7 @@ def public_site_config():
             "system_notice": settings.get("system_notice", ""),
             "alipay_enabled": str(settings.get("alipay_enabled", "false")).lower() == "true",
             "wechat_enabled": str(settings.get("wechat_enabled", "false")).lower() == "true",
-            "promo": build_public_pricing_payload(settings),
+            "promo": build_public_pricing_payload(settings, locale=locale),
         }
     )
 

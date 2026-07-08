@@ -1,5 +1,5 @@
 <template>
-  <nav class="stepper-timeline" aria-label="Progress">
+  <nav class="stepper-timeline" :aria-label="t('stepper.progress')">
     <div
       v-for="(step, index) in steps"
       :key="step.value"
@@ -34,6 +34,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Check } from '@element-plus/icons-vue';
+import { useAppI18n } from "@/composables/useAppI18n";
 
 interface Step {
   label: string;
@@ -51,6 +52,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'change', value: string): void;
 }>();
+const { t } = useAppI18n();
 
 const activeIndex = computed(() => 
   props.steps.findIndex(s => s.value === props.activeValue)

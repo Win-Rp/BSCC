@@ -1,0 +1,79 @@
+.upload-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.hero-card__title {
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.hero-card__desc {
+  margin-top: 10rpx;
+  color: #68727d;
+}
+
+.hero-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.hero-card__notice {
+  margin-top: 20rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 18rpx;
+  background: #f7f8ea;
+  color: #7a6216;
+  font-size: 24rpx;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.file-picker,
+.submit-btn,
+.recovery-btn {
+  width: 100%;
+}
+
+.file-line {
+  padding: 18rpx 20rpx;
+  border-radius: 18rpx;
+  background: #f7fafb;
+  border: 1rpx solid #e2e8ec;
+}
+
+.file-line--multi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.file-name {
+  flex: 1;
+  word-break: break-all;
+}
+
+.file-remove {
+  color: #d64545;
+  font-size: 24rpx;
+}
+
+.rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  color: #68727d;
+  font-size: 24rpx;
+}
+
+.submit-error {
+  font-size: 24rpx;
+}

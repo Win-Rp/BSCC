@@ -1,0 +1,85 @@
+<view class="page order-page">
+  <view class="card">
+    <view class="section-title">订单创建与支付轮询</view>
+    <view class="section-desc">当前后端能力为下单 + 状态轮询，不调用小程序原生支付。创建订单后请按系统提示完成支付，本页会自动刷新解锁状态。</view>
+    <view class="task-line">任务号：{{taskNo || '未获取到任务号'}}</view>
+
+    <view class="field">
+      <view class="field__label">联系方式</view>
+      <input class="input" placeholder="建议填写邮箱或手机号" value="{{contact}}" data-field="contact" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field__label">支付通道</view>
+      <radio-group bindchange="handleChannelChange">
+        <label class="channel-item" wx:for="{{channels}}" wx:key="value">
+          <radio value="{{item.value}}" checked="{{payChannel === item.value}}" color="#126E6A" />
+          <text>{{item.label}}</text>
+        </label>
+      </radio-group>
+    </view>
+
+    <view class="danger" wx:if="{{errorText}}">{{errorText}}</view>
+    <button class="btn-primary create-btn" loading="{{loading}}" bindtap="createOrder">创建订单</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">支付步骤提示</view>
+    <view class="step-list">
+      <view class="step-item">
+        <text class="step-index">1</text>
+        <view class="step-text">创建订单，确认订单号与支付方式。</view>
+      </view>
+      <view class="step-item">
+        <text class="step-index">2</text>
+        <view class="step-text">按系统提示完成支付，如有二维码请扫码继续。</view>
+      </view>
+      <view class="step-item">
+        <text class="step-index">3</text>
+        <view class="step-text">返回本页等待自动刷新，或点击“手动刷新状态”确认是否已解锁。</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{orderCard}}">
+    <view class="section-title">订单信息</view>
+    <view class="order-head">
+      <view class="order-line">订单号：{{orderCard.orderNo}}</view>
+      <button class="btn-secondary order-copy-btn" size="mini" bindtap="copyOrderNo">复制订单号</button>
+    </view>
+    <view class="order-line">支付方式：{{orderCard.payChannelText}}</view>
+    <view class="order-line">B 文件数：{{orderCard.bFileCount}}</view>
+    <view class="order-line">应付金额：{{orderCard.amountText}}</view>
+    <view class="order-line">订单状态：{{orderCard.statusText}}</view>
+    <view class="order-line" wx:if="{{orderCard.pricing}}">后端定价说明：每份按服务端定价实时计算</view>
+    <image wx:if="{{orderCard.qrCodeURL}}" class="qr-image" mode="aspectFit" src="{{orderCard.qrCodeURL}}" />
+    <view class="qr-empty" wx:else>当前订单暂未返回支付二维码，请根据系统提示完成支付，或稍后手动刷新状态。</view>
+    <view class="muted">{{orderCard.paymentMessage}}</view>
+  </view>
+
+  <view class="card" wx:if="{{statusCard}}">
+    <view class="section-title">支付状态</view>
+    <view class="order-head">
+      <view class="order-line">订单号：{{statusCard.orderNo}}</view>
+      <button class="btn-secondary order-copy-btn" size="mini" bindtap="copyOrderNo">复制订单号</button>
+    </view>
+    <view class="order-line">通道：{{statusCard.payChannelText}}</view>
+    <view class="order-line">订单状态：{{statusCard.statusText}}</view>
+    <view class="order-line">解锁状态：{{statusCard.unlockStatusText}}</view>
+    <view class="order-line">支付时间：{{statusCard.paidAt}}</view>
+    <view class="muted" wx:if="{{statusCard.status}}">原始状态：{{statusCard.status}}<text wx:if="{{statusCard.unlockStatus}}"> / {{statusCard.unlockStatus}}</text></view>
+    <view class="muted" wx:if="{{polling}}">正在轮询支付结果，请勿重复创建订单。</view>
+    <view class="status-actions">
+      <button class="btn-primary" loading="{{refreshing}}" bindtap="handleRefreshStatus">手动刷新状态</button>
+      <button class="btn-secondary" bindtap="gotoResults">返回结果页</button>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{supportInfo && (supportInfo.wechat || supportInfo.email)}}">
+    <view class="section-title">客服支持</view>
+    <view class="order-line" wx:if="{{supportInfo.wechat}}">微信：{{supportInfo.wechat}}</view>
+    <view class="order-line" wx:if="{{supportInfo.email}}">邮箱：{{supportInfo.email}}</view>
+  </view>
+
+  <button class="btn-secondary create-btn" wx:if="{{!statusCard}}" bindtap="gotoResults">返回结果页</button>
+</view>

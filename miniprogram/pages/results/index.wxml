@@ -1,0 +1,106 @@
+<view class="page results-page">
+  <view class="card" wx:if="{{summaryMeta}}">
+    <view class="section-title">任务结果</view>
+    <view class="summary-head">
+      <view class="summary-item">
+        <text class="summary-label">任务号</text>
+        <text class="summary-value">{{summaryMeta.taskNo}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-label">模式</text>
+        <text class="summary-value">{{summaryMeta.modeText}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-label">B 文件数量</text>
+        <text class="summary-value">{{summaryMeta.bFileCount}}</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-label">解锁状态</text>
+        <text class="summary-value">{{summaryMeta.unlockText}}</text>
+      </view>
+    </view>
+    <view class="summary-lines">
+      <view class="summary-line"><text class="summary-line__label">A 文件</text>{{summaryMeta.aFileName}}</view>
+      <view class="summary-line"><text class="summary-line__label">当前 B 文件</text>{{summaryMeta.selectedBFileName}}</view>
+      <view class="summary-line"><text class="summary-line__label">当前结果</text>{{summaryMeta.currentResultText}}</view>
+      <view class="summary-line"><text class="summary-line__label">结果保留至</text>{{summaryMeta.expiresAt}}</view>
+    </view>
+  </view>
+
+  <unlock-bar
+    wx:if="{{summary}}"
+    summary="{{summary}}"
+    unlocked="{{isUnlocked}}"
+    orderNo="{{orderNo}}"
+    bind:unlock="gotoOrder"
+    bind:view="gotoCompare"
+  />
+
+  <view class="card" wx:if="{{overview.length}}">
+    <view class="section-title">总览指标</view>
+    <view class="overview-grid">
+      <view class="overview-item" wx:for="{{overview}}" wx:key="label">
+        <text class="overview-label">{{item.label}}</text>
+        <text class="overview-value">{{item.value}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">结果列表</view>
+    <view class="empty" wx:if="{{!loading && (!summary || !summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
+    <view class="result-list" wx:if="{{summary && summary.results && summary.results.length}}">
+      <result-card
+        wx:for="{{summary.results}}"
+        wx:key="compare_result_id"
+        result="{{item}}"
+        selected="{{item.compare_result_id === selectedResultId}}"
+        locked="{{summary.payment_required && !isUnlocked}}"
+        unlocked="{{isUnlocked}}"
+        bind:preview="handlePreview"
+        bind:detail="handleDetail"
+        bind:unlock="gotoOrder"
+      />
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">免费预览</view>
+    <view class="muted" wx:if="{{previewLoading}}">正在加载预览片段…</view>
+    <view class="empty" wx:if="{{!previewLoading && !previewList.length}}">当前结果暂无可展示的预览片段。</view>
+    <view class="preview-list" wx:if="{{previewList.length}}">
+      <view class="preview-item" wx:for="{{previewList}}" wx:key="id">
+        <view class="preview-item__meta">
+          <text class="tag">{{item.typeText}}</text>
+          <text class="preview-item__ratio">{{item.similarityText}}</text>
+        </view>
+        <view class="preview-item__block">
+          <text class="preview-item__label">A：</text>
+          <text>{{item.aText}}</text>
+        </view>
+        <view class="preview-item__block">
+          <text class="preview-item__label">B：</text>
+          <text>{{item.bText}}</text>
+        </view>
+        <view class="preview-item__pos">{{item.positionText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{summary}}">
+    <view class="section-title">操作区</view>
+    <view class="section-desc">
+      {{isUnlocked ? '当前结果已解锁，可直接进入对比页查看完整详情。' : '当前结果未解锁，可先打开原文或进入对比页查看预览片段。'}}
+    </view>
+    <view class="result-actions">
+      <button class="btn-secondary" bindtap="handleOpenAFile">打开 A 标书</button>
+      <button class="btn-secondary" bindtap="handleOpenBFile" disabled="{{!selectedResultId}}">打开当前 B 标书</button>
+      <button class="btn-primary" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
+        {{isUnlocked ? '进入对比页' : '进入对比页（预览）'}}
+      </button>
+    </view>
+    <button class="btn-secondary recovery-btn" bindtap="gotoRecovery">恢复任务</button>
+  </view>
+
+  <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
+</view>

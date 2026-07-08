@@ -1,0 +1,150 @@
+{
+  "data": [
+    {
+      "id": "page-home-upload",
+      "title": "发起查重",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782691200000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home-upload.html",
+        "interactions": [
+          {
+            "domId": "cta-progress",
+            "targetPageId": "page-task-progress"
+          },
+          {
+            "domId": "tab-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-recovery",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-task-progress",
+      "title": "任务进度",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782691200000,
+      "canvasData": {
+        "x": 420,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-progress.html",
+        "interactions": [
+          {
+            "domId": "back-home",
+            "targetPageId": "page-home-upload",
+            "hideEdge": true
+          },
+          {
+            "domId": "cta-results",
+            "targetPageId": "page-results-overview"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-results-overview",
+      "title": "查重结果",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782691200000,
+      "canvasData": {
+        "x": 840,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/results-overview.html",
+        "interactions": [
+          {
+            "domId": "cta-compare",
+            "targetPageId": "page-compare-evidence"
+          },
+          {
+            "domId": "tab-home",
+            "targetPageId": "page-home-upload",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-recovery",
+            "targetPageId": "page-task-recovery",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-compare-evidence",
+      "title": "对比证据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782691200000,
+      "canvasData": {
+        "x": 1260,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/compare-evidence.html",
+        "interactions": [
+          {
+            "domId": "back-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          },
+          {
+            "domId": "cta-recovery",
+            "targetPageId": "page-task-recovery"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-task-recovery",
+      "title": "任务恢复",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1782691200000,
+      "canvasData": {
+        "x": 1680,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/task-recovery.html",
+        "interactions": [
+          {
+            "domId": "tab-home",
+            "targetPageId": "page-home-upload",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-results",
+            "targetPageId": "page-results-overview",
+            "hideEdge": true
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "mobile",
+    "projectName": "BSCC 微信小程序原型"
+  }
+}

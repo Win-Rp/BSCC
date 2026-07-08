@@ -1,0 +1,55 @@
+<view class="page upload-page">
+  <view class="card hero-card">
+    <view class="hero-card__title">{{siteTitle}}</view>
+    <view class="hero-card__desc">适用于投标文本快速查重、风险预览与结果恢复。</view>
+    <view class="hero-card__tags">
+      <text class="tag hero-card__tag" wx:for="{{homeTags}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="hero-card__notice" wx:if="{{systemNotice}}">系统公告：{{systemNotice}}</view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">上传主标书 A</view>
+    <view class="section-desc">主标书作为基准文档参与对比。</view>
+    <button class="btn-secondary file-picker" bindtap="chooseAFile">
+      {{aFile ? '重新选择 A 文件' : '选择 A 文件'}}
+    </button>
+    <view class="file-line" wx:if="{{aFile}}">
+      <text class="file-name">{{aFile.name}}</text>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">上传对比标书 B</view>
+    <view class="section-desc">支持 1 至 10 份对比文件，系统会自动形成 1 对多结果排行。</view>
+    <button class="btn-secondary file-picker" bindtap="chooseBFiles">选择 B 文件</button>
+    <view class="file-list" wx:if="{{bFiles.length}}">
+      <view class="file-line file-line--multi" wx:for="{{bFiles}}" wx:key="path">
+        <text class="file-name">{{index + 1}}. {{item.name}}</text>
+        <text class="file-remove" data-index="{{index}}" bindtap="removeBFile">移除</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">关键字辅助筛查</view>
+    <view class="section-desc">支持逗号或换行分隔，提交后会在详情中展示命中位置。</view>
+    <textarea
+      class="textarea"
+      placeholder="例如：工期、履约、运维、质保"
+      maxlength="-1"
+      value="{{keywords}}"
+      bindinput="handleKeywordsInput"
+    />
+  </view>
+
+  <view class="card section">
+    <view class="section-title">提交前说明</view>
+    <view class="rule-list">
+      <view class="rule-item" wx:for="{{rules}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+    </view>
+    <view class="danger submit-error" wx:if="{{errorText}}">{{errorText}}</view>
+    <button class="btn-primary submit-btn" loading="{{loading}}" bindtap="submitTask">{{submitText}}</button>
+    <button class="btn-secondary recovery-btn" bindtap="gotoRecovery">恢复历史任务</button>
+  </view>
+</view>

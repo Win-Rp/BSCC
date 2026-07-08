@@ -1,0 +1,37 @@
+<view class="page recovery-page">
+  <view class="card">
+    <view class="section-title">恢复任务或订单</view>
+    <view class="section-desc">支持按任务号、订单号、联系方式组合恢复历史结果。</view>
+
+    <view class="field">
+      <view class="field__label">任务号</view>
+      <input class="input" placeholder="例如：T202606250001" value="{{taskNo}}" data-field="taskNo" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field__label">订单号</view>
+      <input class="input" placeholder="例如：O202606250001" value="{{orderNo}}" data-field="orderNo" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field__label">联系方式</view>
+      <input class="input" placeholder="邮箱或手机号，用于辅助校验" value="{{contact}}" data-field="contact" bindinput="handleInput" />
+    </view>
+
+    <view class="danger" wx:if="{{errorText}}">{{errorText}}</view>
+    <button class="btn-primary submit-btn" loading="{{loading}}" bindtap="submitRecovery">查询并恢复</button>
+  </view>
+
+  <view class="card" wx:if="{{result}}">
+    <view class="section-title">恢复结果</view>
+    <view class="result-line">任务号：{{result.taskNo}}</view>
+    <view class="result-line">订单号：{{result.orderNo}}</view>
+    <view class="result-line">任务状态：{{result.taskStatusText}}</view>
+    <view class="result-line">解锁状态：{{result.unlockStatusText}}</view>
+    <view class="result-line">订单状态：{{result.orderStatusText}}</view>
+    <view class="result-line">结果保留至：{{result.expiresAt}}</view>
+    <button class="btn-secondary submit-btn" bindtap="openRecoveredTask">
+      {{result.canViewDetail ? '进入结果页' : '进入订单页'}}
+    </button>
+  </view>
+</view>

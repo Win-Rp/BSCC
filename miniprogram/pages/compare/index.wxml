@@ -1,0 +1,128 @@
+<view class="page compare-page">
+  <view class="card">
+    <view class="section-title">文档对比</view>
+    <view class="muted">任务号：{{taskNo}}</view>
+    <picker mode="selector" range="{{compareOptions}}" range-key="label" value="{{compareIndex}}" bindchange="handleCompareChange">
+      <view class="picker-box">当前 B 文档：{{currentCompareLabel || '请选择'}}</view>
+    </picker>
+    <view class="doc-actions">
+      <button class="btn-secondary" size="mini" bindtap="handleOpenAFile">打开 A 原文</button>
+      <button class="btn-secondary" size="mini" bindtap="handleOpenBFile" disabled="{{!currentResultId}}">打开 B 原文</button>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="filter-scroll">
+    <view class="filter-list">
+      <view
+        class="filter-chip {{activeFilter === item.key ? 'filter-chip--active' : ''}}"
+        wx:for="{{filterTabs}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="handleFilterChange"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="card" wx:if="{{locked}}">
+    <view class="section-title">完整详情待解锁</view>
+    <view class="section-desc">当前接口协议为 Native 下单与状态轮询，不走小程序原生支付。请先创建订单并按系统提示完成支付，页面会自动刷新解锁状态。</view>
+    <view class="lock-tip">可先查看预览片段，支付完成后自动解锁完整对比。</view>
+    <button class="btn-primary lock-btn" bindtap="gotoOrder">前往订单页</button>
+    <view class="section-title compare-subtitle">免费预览</view>
+    <view class="empty" wx:if="{{!previewList.length}}">暂无可展示的预览内容。</view>
+    <view class="preview-list" wx:if="{{previewList.length}}">
+      <view class="preview-item" wx:for="{{previewList}}" wx:key="id">
+        <view class="preview-item__meta">
+          <text class="tag">{{item.typeText}}</text>
+          <text class="preview-item__ratio">{{item.similarityText}}</text>
+        </view>
+        <view class="preview-item__block"><text class="preview-item__label">A：</text>{{item.aText}}</view>
+        <view class="preview-item__block"><text class="preview-item__label">B：</text>{{item.bText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{!locked && detailData}}">
+    <view class="card">
+      <view class="section-title">命中片段</view>
+      <view class="hit-overview" wx:if="{{hitSummary}}">
+        <view class="hit-overview__item">
+          <text class="hit-overview__label">当前筛选数量</text>
+          <text class="hit-overview__value">{{hitSummary.countText}}</text>
+        </view>
+        <view class="hit-overview__item">
+          <text class="hit-overview__label">当前命中类型</text>
+          <text class="hit-overview__value">{{hitSummary.typeText}}</text>
+        </view>
+        <view class="hit-overview__item">
+          <text class="hit-overview__label">当前相似度</text>
+          <text class="hit-overview__value">{{hitSummary.similarityText}}</text>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{!filteredItems.length}}">当前筛选条件下暂无命中内容。</view>
+      <view class="match-list" wx:if="{{filteredItems.length}}">
+        <view
+          class="match-item {{activeMatchIndex === index ? 'match-item--active' : ''}}"
+          wx:for="{{filteredItems}}"
+          wx:key="id"
+          data-index="{{index}}"
+          bindtap="selectMatch"
+        >
+          <view class="match-item__head">
+            <text class="tag">{{item.typeText}}</text>
+            <text class="match-item__ratio">{{item.similarityText}}</text>
+          </view>
+          <view class="match-item__title">{{item.title}}</view>
+          <view class="match-item__excerpt">{{item.aText || item.bText}}</view>
+          <view class="match-item__pos">{{item.positionText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{activeMatch}}">
+      <view class="section-title">详情区</view>
+      <view class="detail-block">
+        <view class="detail-label">A 片段</view>
+        <view class="detail-text">{{activeMatch.aText || '当前命中主要定位在 B 文档侧。'}}</view>
+      </view>
+      <view class="detail-block">
+        <view class="detail-label">B 片段</view>
+        <view class="detail-text">{{activeMatch.bText || '当前命中主要定位在 A 文档侧。'}}</view>
+      </view>
+      <view class="detail-meta">{{activeMatch.positionText}}</view>
+    </view>
+
+    <view class="doc-grid">
+      <view class="card doc-panel">
+        <view class="section-title">A 文档</view>
+        <view class="muted doc-name">{{detailData.a_document.name}}</view>
+        <scroll-view scroll-y class="doc-scroll">
+          <view class="doc-block {{item.highlight}}" wx:for="{{aBlocks}}" wx:key="id">
+            <view class="doc-block__meta">P{{item.page}} / 段{{item.paragraph}} / 句{{item.sentence}}</view>
+            <view>{{item.text}}</view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="card doc-panel">
+        <view class="section-title">B 文档</view>
+        <view class="muted doc-name">{{detailData.b_document.name}}</view>
+        <scroll-view scroll-y class="doc-scroll">
+          <view class="doc-block {{item.highlight}}" wx:for="{{bBlocks}}" wx:key="id">
+            <view class="doc-block__meta">P{{item.page}} / 段{{item.paragraph}} / 句{{item.sentence}}</view>
+            <view>{{item.text}}</view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </block>
+
+  <view class="actions">
+    <button class="btn-secondary" bindtap="gotoResults">返回结果页</button>
+    <button class="btn-primary" bindtap="gotoOrder">订单与解锁</button>
+  </view>
+
+  <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
+</view>

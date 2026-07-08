@@ -1,0 +1,103 @@
+.order-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.task-line,
+.order-line {
+  margin-top: 12rpx;
+}
+
+.order-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.field + .field {
+  margin-top: 20rpx;
+}
+
+.field__label {
+  margin-bottom: 10rpx;
+  color: #68727d;
+  font-size: 24rpx;
+}
+
+.channel-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.channel-item + .channel-item {
+  margin-top: 12rpx;
+}
+
+.create-btn {
+  width: 100%;
+  margin-top: 24rpx;
+}
+
+.order-copy-btn {
+  flex-shrink: 0;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.step-item {
+  display: flex;
+  gap: 16rpx;
+  align-items: flex-start;
+}
+
+.step-index {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 999rpx;
+  text-align: center;
+  line-height: 40rpx;
+  font-size: 24rpx;
+  color: #126e6a;
+  background: #edf8f7;
+}
+
+.step-text {
+  flex: 1;
+  color: #44515c;
+  font-size: 26rpx;
+}
+
+.qr-image {
+  width: 360rpx;
+  height: 360rpx;
+  margin: 20rpx auto;
+  display: block;
+  border-radius: 18rpx;
+  background: #f7fafb;
+}
+
+.qr-empty {
+  margin: 20rpx 0;
+  padding: 24rpx;
+  border-radius: 18rpx;
+  background: #f7fafb;
+  color: #68727d;
+  font-size: 24rpx;
+}
+
+.status-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.status-actions button {
+  flex: 1;
+}

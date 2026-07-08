@@ -1,0 +1,27 @@
+<view class="page progress-page">
+  <view class="card">
+    <view class="section-title">任务进度</view>
+    <view class="task-meta">任务号：{{taskNo || '未获取到任务号'}}</view>
+    <view class="status-text">{{statusText}}</view>
+
+    <view class="progress-track">
+      <view class="progress-track__bar" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="progress-percent">{{progress}}%</view>
+
+    <view class="step-list">
+      <view class="step-item {{item.active ? 'step-item--active' : ''}}" wx:for="{{steps}}" wx:key="key">
+        <view class="step-dot"></view>
+        <text class="step-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="danger error-box" wx:if="{{errorMessage}}">{{errorMessage}}</view>
+    <view class="muted loading-text" wx:if="{{loading}}">正在同步任务状态，请稍候…</view>
+  </view>
+
+  <view class="actions">
+    <button class="btn-secondary" bindtap="gotoUpload">返回上传页</button>
+    <button class="btn-primary" bindtap="gotoResults">查看结果页</button>
+  </view>
+</view>

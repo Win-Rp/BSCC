@@ -1,0 +1,35 @@
+.unlock-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: linear-gradient(135deg, rgba(18, 110, 106, 0.1), rgba(11, 79, 76, 0.16));
+  border: 1rpx solid rgba(18, 110, 106, 0.16);
+  border-radius: 24rpx;
+  padding: 24rpx;
+}
+
+.unlock-bar__content {
+  flex: 1;
+}
+
+.unlock-bar__title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0b4f4c;
+}
+
+.unlock-bar__desc {
+  margin-top: 8rpx;
+  color: #35535f;
+  font-size: 24rpx;
+}
+
+.unlock-bar__meta {
+  margin-top: 10rpx;
+  color: #68727d;
+  font-size: 22rpx;
+}
+
+.unlock-bar__button {
+  min-width: 180rpx;
+}

@@ -1,0 +1,41 @@
+<view class="result-card {{selected ? 'result-card--selected' : ''}}">
+  <view wx:if="{{viewModel}}">
+    <view class="result-card__header">
+      <view class="result-card__name">{{viewModel.bFileName}}</view>
+      <view class="tag tag-{{viewModel.riskType}}">{{viewModel.riskText}}</view>
+    </view>
+
+    <view class="result-card__score-row">
+      <view>
+        <view class="result-card__label">总相似度</view>
+        <view class="result-card__score">{{viewModel.totalSimilarity}}</view>
+      </view>
+      <view class="result-card__meta">
+        <text>完全重复 {{viewModel.exactSimilarity}}</text>
+        <text>改写相似 {{viewModel.rewriteSimilarity}}</text>
+        <text>语义相似 {{viewModel.semanticSimilarity}}</text>
+      </view>
+    </view>
+
+    <view class="result-card__stats">
+      <view class="result-card__stat">
+        <text class="result-card__stat-value">{{viewModel.keywordHitCount}}</text>
+        <text class="result-card__stat-label">关键字命中</text>
+      </view>
+      <view class="result-card__stat">
+        <text class="result-card__stat-value">{{viewModel.matchedSentenceCount}}</text>
+        <text class="result-card__stat-label">重复句子</text>
+      </view>
+      <view class="result-card__stat">
+        <text class="result-card__stat-value">{{viewModel.matchedParagraphCount}}</text>
+        <text class="result-card__stat-label">重复段落</text>
+      </view>
+    </view>
+
+    <view class="result-card__actions">
+      <button class="btn-secondary" size="mini" bindtap="handlePreview">免费预览</button>
+      <button wx:if="{{!locked || unlocked}}" class="btn-primary" size="mini" bindtap="handleDetail">查看详情</button>
+      <button wx:else class="btn-primary" size="mini" bindtap="handleUnlock">去解锁</button>
+    </view>
+  </view>
+</view>

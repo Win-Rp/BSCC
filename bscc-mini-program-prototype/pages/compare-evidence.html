@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标书查重 - 对比证据</title>
+    <style id="theme-vars">
+:root {
+  --bscc-bg-page: #F5F7F8;
+  --bscc-bg-card: #FFFFFF;
+  --bscc-bg-muted: #EEF3F4;
+  --bscc-bg-soft: #F8FBFB;
+  --bscc-text: #1F2933;
+  --bscc-text-secondary: #68727D;
+  --bscc-text-tertiary: #8B98A4;
+  --bscc-primary: #126E6A;
+  --bscc-primary-deep: #0B4F4C;
+  --bscc-primary-soft: rgba(18, 110, 106, 0.10);
+  --bscc-border: #DDE3E7;
+  --bscc-risk-high: #D64545;
+  --bscc-risk-high-soft: rgba(214, 69, 69, 0.12);
+  --bscc-risk-medium: #D97706;
+  --bscc-risk-medium-soft: rgba(217, 119, 6, 0.12);
+  --bscc-semantic: #2563EB;
+  --bscc-semantic-soft: rgba(37, 99, 235, 0.12);
+  --bscc-keyword: #7C3AED;
+  --bscc-keyword-soft: rgba(124, 58, 237, 0.12);
+  --bscc-success: #0F8F5D;
+  --bscc-success-soft: rgba(15, 143, 93, 0.12);
+  --bscc-system-border: rgba(15, 23, 42, 0.10);
+  --bscc-system-bg: rgba(255, 255, 255, 0.92);
+  --bscc-system-text: #111827;
+  --bscc-shadow-sm: 0 6px 16px rgba(31, 41, 51, 0.05);
+  --bscc-shadow-md: 0 10px 20px rgba(31, 41, 51, 0.05);
+  --bscc-radius-xs: 10px;
+  --bscc-radius-sm: 14px;
+  --bscc-radius-md: 12px;
+  --bscc-radius-lg: 16px;
+  --bscc-safe-top: env(safe-area-inset-top, 0px);
+  --bscc-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--bscc-bg-page);
+  color: var(--bscc-text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.bscc-app-shell {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bscc-bg-page);
+}
+
+.bscc-surface {
+  background: var(--bscc-bg-card);
+  border: 1px solid var(--bscc-border);
+  border-radius: var(--bscc-radius-md);
+  box-shadow: var(--bscc-shadow-sm);
+}
+
+.bscc-title-xl {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.bscc-title-lg {
+  font-size: 20px;
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bscc-title-md {
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bscc-caption {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--bscc-text-secondary);
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.bscc-wechat-top {
+  padding-top: calc(10px + var(--bscc-safe-top));
+}
+
+.bscc-divider {
+  border-color: var(--bscc-border);
+}
+
+.bscc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bscc-tabbar-safe {
+  padding-bottom: calc(10px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom {
+  padding-bottom: calc(132px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom-lg {
+  padding-bottom: calc(208px + var(--bscc-safe-bottom));
+}
+
+.bscc-soft-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.bscc-soft-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--bscc-primary);
+    --color-border: var(--bscc-border);
+  }
+  @layer base {
+    body { background: var(--bscc-background); color: var(--bscc-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="bg-[var(--bscc-bg-page)] text-[var(--bscc-text)]">
+  <div class="bscc-app-shell min-h-screen">
+    <div class="bscc-wechat-top sticky top-0 z-30 bg-[var(--bscc-bg-page)]/95 backdrop-blur-sm">
+      <div class="px-4">
+        <div class="flex items-center justify-between px-1 text-[12px] font-medium text-[var(--bscc-text)]">
+          <span>09:48</span>
+          <div class="flex items-center gap-1.5 text-[var(--bscc-text-secondary)]">
+            <i data-lucide="signal-high" class="h-3.5 w-3.5"></i>
+            <i data-lucide="wifi" class="h-3.5 w-3.5"></i>
+            <i data-lucide="battery-full" class="h-3.5 w-3.5"></i>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center justify-between pb-3">
+          <button data-dom-id="back-results" class="flex h-10 w-[88px] items-center gap-1 text-[14px] font-medium text-[var(--bscc-text)]">
+            <i data-lucide="chevron-left" class="h-4.5 w-4.5"></i>
+            返回
+          </button>
+          <div class="text-center">
+            <h1 class="text-[17px] font-semibold leading-none text-[var(--bscc-text)]">对比证据</h1>
+          </div>
+          <div class="flex h-8 w-[88px] items-center justify-center rounded-full border border-[var(--bscc-system-border)] bg-[var(--bscc-system-bg)] text-[var(--bscc-system-text)]" aria-label="小程序菜单">
+            <button class="flex h-full flex-1 items-center justify-center" aria-label="更多">
+              <i data-lucide="more-horizontal" class="h-4 w-4"></i>
+            </button>
+            <span class="h-4 w-px bg-[var(--bscc-system-border)]" aria-hidden="true"></span>
+            <button class="flex h-full flex-1 items-center justify-center" aria-label="关闭">
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="px-4 pb-8 pt-3">
+      <section class="rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">B 文件切换</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">当前展示排行榜第 1 名，可切换到其他 B 文件继续核验</p>
+          </div>
+          <span class="rounded-full bg-[var(--bscc-primary-soft)] px-2.5 py-1 text-[12px] font-semibold text-[var(--bscc-primary)]">B1 已选中</span>
+        </div>
+        <div class="bscc-soft-scroll mt-4 flex gap-2 overflow-x-auto pb-1">
+          <button class="shrink-0 rounded-full bg-[var(--bscc-primary)] px-3.5 py-2 text-[12px] font-semibold text-white">B1 商务响应</button>
+          <button class="shrink-0 rounded-full border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] px-3.5 py-2 text-[12px] text-[var(--bscc-text-secondary)]">B2 技术方案</button>
+          <button class="shrink-0 rounded-full border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] px-3.5 py-2 text-[12px] text-[var(--bscc-text-secondary)]">B3 资格文件</button>
+          <button class="shrink-0 rounded-full border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] px-3.5 py-2 text-[12px] text-[var(--bscc-text-secondary)]">B4 附件说明</button>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-[14px] bg-[var(--bscc-semantic-soft)] text-[var(--bscc-semantic)]">
+            <i data-lucide="filter" class="h-4.5 w-4.5"></i>
+          </span>
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">命中类型筛选</h2>
+            <p class="text-[12px] leading-5 text-[var(--bscc-text-secondary)]">移动端优先采用轻量 pill 筛选，不做复杂表格切换</p>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="rounded-full bg-[var(--bscc-primary)] px-3 py-2 text-[12px] font-semibold text-white">全部 12</span>
+          <span class="rounded-full bg-[var(--bscc-risk-high-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--bscc-risk-high)]">完全重复 4</span>
+          <span class="rounded-full bg-[var(--bscc-risk-medium-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--bscc-risk-medium)]">改写相似 3</span>
+          <span class="rounded-full bg-[var(--bscc-semantic-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--bscc-semantic)]">语义相似 3</span>
+          <span class="rounded-full bg-[var(--bscc-keyword-soft)] px-3 py-2 text-[12px] font-semibold text-[var(--bscc-keyword)]">关键词命中 2</span>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-primary)] bg-[var(--bscc-primary-soft)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[var(--bscc-bg-card)] text-[var(--bscc-primary)]">
+            <i data-lucide="map-pinned" class="h-5 w-5"></i>
+          </span>
+          <div class="min-w-0">
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">当前定位证据</h2>
+            <p class="mt-1 text-[13px] leading-6 text-[var(--bscc-text-secondary)]">已同步到 M-08：点击 A 侧句子后，B 侧定位到相同证据段，并展示页码、段落和命中类型。</p>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-3 gap-2">
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-card)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">命中编号</p>
+            <p class="mt-1 text-[13px] font-semibold">M-08</p>
+          </div>
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-card)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">A 位置</p>
+            <p class="mt-1 text-[13px] font-semibold">P14 · 段03</p>
+          </div>
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-card)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">B 位置</p>
+            <p class="mt-1 text-[13px] font-semibold">P13 · 段04</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">证据内容</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">移动端改为上下堆叠，避免桌面式左右硬分栏</p>
+          </div>
+          <div class="rounded-full bg-[var(--bscc-bg-soft)] px-2.5 py-1 text-[12px] font-medium text-[var(--bscc-text-secondary)]">当前类型：改写相似</div>
+        </div>
+
+        <article class="mt-4 rounded-[var(--bscc-radius-sm)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-soft)] p-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[12px] bg-[var(--bscc-bg-card)] text-[var(--bscc-primary)]">
+                <i data-lucide="file-text" class="h-4.5 w-4.5"></i>
+              </span>
+              <div>
+                <p class="text-[14px] font-semibold text-[var(--bscc-text)]">A 端原文</p>
+                <p class="text-[12px] text-[var(--bscc-text-secondary)]">第 14 页 · 第 03 段 · 第 02 句</p>
+              </div>
+            </div>
+            <span class="rounded-full bg-[var(--bscc-primary-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--bscc-primary)]">已选中</span>
+          </div>
+          <p class="mt-3 text-[14px] leading-7 text-[var(--bscc-text)]">为提升园区运营效率，系统需要围绕 <mark class="rounded-[6px] bg-[var(--bscc-risk-medium-soft)] px-1 text-[var(--bscc-text)]">集中设备监控、事件联动和能耗追踪</mark> 形成一体化工作台，并保留人工复核轨迹。</p>
+        </article>
+
+        <article class="mt-3 rounded-[var(--bscc-radius-sm)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-soft)] p-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-8 w-8 items-center justify-center rounded-[12px] bg-[var(--bscc-bg-card)] text-[var(--bscc-semantic)]">
+                <i data-lucide="file-search" class="h-4.5 w-4.5"></i>
+              </span>
+              <div>
+                <p class="text-[14px] font-semibold text-[var(--bscc-text)]">B 端对照</p>
+                <p class="text-[12px] text-[var(--bscc-text-secondary)]">第 13 页 · 第 04 段 · 第 02 句</p>
+              </div>
+            </div>
+            <span class="rounded-full bg-[var(--bscc-risk-medium-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--bscc-risk-medium)]">同步定位</span>
+          </div>
+          <p class="mt-3 text-[14px] leading-7 text-[var(--bscc-text)]">为保障运维效率，平台需要把 <mark class="rounded-[6px] bg-[var(--bscc-risk-medium-soft)] px-1 text-[var(--bscc-text)]">设备集中监管、联动处置和能源分析</mark> 汇总到同一审阅界面，并保留审批痕迹。</p>
+        </article>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-[14px] bg-[var(--bscc-risk-medium-soft)] text-[var(--bscc-risk-medium)]">
+            <i data-lucide="message-square-more" class="h-4.5 w-4.5"></i>
+          </span>
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">当前证据解释</h2>
+            <p class="text-[12px] leading-5 text-[var(--bscc-text-secondary)]">帮助审查人员快速判断是原句照搬、改写规避还是语义重合</p>
+          </div>
+        </div>
+        <ul class="mt-4 space-y-3">
+          <li class="flex items-start gap-3">
+            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-risk-medium)]"></span>
+            <p class="text-[13px] leading-6 text-[var(--bscc-text-secondary)]">A 与 B 的句子骨架一致，均围绕设备整合、联动处置和能耗分析形成工作闭环。</p>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-risk-medium)]"></span>
+            <p class="text-[13px] leading-6 text-[var(--bscc-text-secondary)]">“集中监控 / 集中监管”“事件联动 / 联动处置”属于典型同义替换，存在规避式改写特征。</p>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--bscc-risk-medium)]"></span>
+            <p class="text-[13px] leading-6 text-[var(--bscc-text-secondary)]">当前命中建议先保留证据，再回到结果页结合其他 B 文件整体判断是否需要解锁完整详情。</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">继续查看或恢复</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">支持继续浏览下一条证据，也支持稍后通过恢复页找回当前进度</p>
+          </div>
+          <span class="rounded-full bg-[var(--bscc-bg-soft)] px-2.5 py-1 text-[12px] font-medium text-[var(--bscc-text-secondary)]">任务保留 7 天</span>
+        </div>
+        <div class="mt-4 grid gap-3">
+          <button class="inline-flex items-center justify-center gap-2 rounded-[18px] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] px-4 py-3.5 text-[14px] font-semibold text-[var(--bscc-text)]">
+            继续查看下一条
+            <i data-lucide="chevrons-down" class="h-4 w-4 text-[var(--bscc-text-secondary)]"></i>
+          </button>
+          <button data-dom-id="cta-recovery" class="inline-flex items-center justify-center gap-2 rounded-[18px] bg-[var(--bscc-primary)] px-4 py-3.5 text-[14px] font-semibold text-white">
+            去任务恢复
+            <i data-lucide="history" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <style>
+    [data-dom-id="back-results"],
+    [data-dom-id="cta-recovery"] {
+      transition: transform 160ms ease;
+    }
+
+    [data-dom-id="back-results"]:hover,
+    [data-dom-id="cta-recovery"]:hover {
+      transform: translateY(-1px);
+    }
+  </style>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

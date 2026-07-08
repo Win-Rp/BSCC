@@ -1,0 +1,24 @@
+.recovery-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.field + .field {
+  margin-top: 20rpx;
+}
+
+.field__label {
+  margin-bottom: 10rpx;
+  color: #68727d;
+  font-size: 24rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 24rpx;
+}
+
+.result-line + .result-line {
+  margin-top: 12rpx;
+}

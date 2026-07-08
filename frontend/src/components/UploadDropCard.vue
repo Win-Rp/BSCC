@@ -13,7 +13,7 @@
         class="upload-drop-card__clear"
         @click.stop="emit('update:files', [])"
       >
-        清空
+        {{ t("uploadCard.clear") }}
       </el-button>
     </div>
 
@@ -31,12 +31,12 @@
       <div class="upload-drop-card__zone">
         <el-icon class="upload-drop-card__icon"><UploadFilled /></el-icon>
         <strong>{{ files.length ? selectedText : emptyTitle }}</strong>
-        <span>{{ files.length ? "可继续拖入替换，系统不会自动上传。" : "拖拽文件到此处，或点击选择文件。" }}</span>
+        <span>{{ files.length ? t("uploadCard.replaceHint") : t("uploadCard.dropHint") }}</span>
       </div>
     </el-upload>
 
     <ul class="upload-drop-card__list">
-      <li v-if="!files.length" class="is-empty">尚未选择文件</li>
+      <li v-if="!files.length" class="is-empty">{{ t("uploadCard.empty") }}</li>
       <li v-for="file in files" :key="file.name + file.size">
         <div class="file-item-left">
           <svg v-if="isWord(file.name)" class="file-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -63,6 +63,7 @@
 import type { UploadFile, UploadFiles } from "element-plus";
 import { UploadFilled } from "@element-plus/icons-vue";
 import { computed } from "vue";
+import { useAppI18n } from "@/composables/useAppI18n";
 
 const props = defineProps<{
   mark: string;
@@ -76,17 +77,18 @@ const props = defineProps<{
 const emit = defineEmits<{
   "update:files": [files: File[]];
 }>();
+const { t } = useAppI18n();
 
 const accept = ".docx,.pdf";
-const emptyTitle = computed(() => props.multiple ? "批量导入对比文件" : "导入主文档");
+const emptyTitle = computed(() => props.multiple ? t("uploadCard.importBatch") : t("uploadCard.importPrimary"));
 const selectedText = computed(() => {
   if (!props.files.length) {
     return "";
   }
   if (props.files.length === 1) {
-    return props.files[0].name;
+    return t("uploadCard.selectedSingle", { name: props.files[0].name });
   }
-  return `已选择 ${props.files.length} 份文件`;
+  return t("uploadCard.selectedMulti", { count: props.files.length });
 });
 
 function handleChange(_file: UploadFile, uploadFiles: UploadFiles) {

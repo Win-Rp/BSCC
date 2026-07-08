@@ -340,11 +340,11 @@ export function getOriginalFileBUrl(taskNo: string, compareResultId: number) {
   return `${API_BASE_URL}/api/tasks/${encodeURIComponent(taskNo)}/file/b/${compareResultId}`;
 }
 
-export function createOrder(taskNo: string, contact: string, payChannel: "alipay" | "wechat") {
+export function createOrder(taskNo: string, contact: string, payChannel: "alipay" | "wechat", locale?: string) {
   return request<OrderInfo>("/api/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ task_no: taskNo, contact, pay_channel: payChannel })
+    body: JSON.stringify({ task_no: taskNo, contact, pay_channel: payChannel, ...(locale ? { locale } : {}) })
   });
 }
 
@@ -489,8 +489,9 @@ export function getSupport() {
   return request<SupportInfo>("/api/support");
 }
 
-export function getPublicSiteConfig() {
-  return request<PublicSiteConfig>("/api/public/site-config");
+export function getPublicSiteConfig(locale?: string) {
+  const query = locale ? `?locale=${encodeURIComponent(locale)}` : "";
+  return request<PublicSiteConfig>(`/api/public/site-config${query}`);
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

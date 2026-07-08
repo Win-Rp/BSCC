@@ -4,11 +4,11 @@
       <template #header>
         <div class="card-header">
           <div>
-            <h2>任务创建工作台</h2>
-            <p>上传主标书 A 与对比标书 B 即可快速进行查重比对。</p>
+            <h2>{{ t("upload.title") }}</h2>
+            <p>{{ t("upload.subtitle") }}</p>
           </div>
           <el-button link type="primary" @click="recoverDialogVisible = true">
-            找回历史任务结果
+            {{ t("upload.recover") }}
           </el-button>
         </div>
       </template>
@@ -18,22 +18,22 @@
           <UploadDropCard
             v-model:files="aFiles"
             mark="A"
-            title="主标书 A"
-            description="建议上传最终提交版本，仅允许 1 份。"
+            :title="t('upload.aTitle')"
+            :description="t('upload.aDesc')"
             variant="a-box"
           />
           <UploadDropCard
             v-model:files="bFiles"
             mark="B"
-            title="对比标书 B"
-            description="支持 1-10 份，超过 1 份按 1 对多流程处理。"
+            :title="t('upload.bTitle')"
+            :description="t('upload.bDesc')"
             variant="b-box"
             multiple
           />
         </div>
 
         <el-form label-position="top" class="keyword-form">
-          <el-form-item label="关键字查重">
+          <el-form-item :label="t('upload.keywordLabel')">
             <el-select
               v-model="keywordsList"
               multiple
@@ -41,7 +41,7 @@
               allow-create
               default-first-option
               :reserve-keyword="false"
-              placeholder="输入关键字后按回车添加（示例：围标、独家授权）"
+              :placeholder="t('upload.keywordPlaceholder')"
               class="keyword-select"
             />
           </el-form-item>
@@ -56,28 +56,28 @@
             @click="startCheck"
           >
             <el-icon class="submit-icon" v-if="!submitting"><Search /></el-icon>
-            开始智能查重
+            {{ t("upload.start") }}
           </el-button>
         </div>
       </section>
     </el-card>
 
     <!-- 找回任务弹窗 -->
-    <el-dialog v-model="recoverDialogVisible" title="找回查重结果" width="400px" center>
+    <el-dialog v-model="recoverDialogVisible" :title="t('upload.recoverDialogTitle')" width="400px" center>
       <div class="recover-dialog-content">
-        <p class="recover-tip">请输入系统生成的以 <strong>T</strong> 开头的任务编号</p>
+        <p class="recover-tip">{{ t("upload.recoverTip") }}</p>
         <el-input 
           v-model="recoverTaskId" 
-          placeholder="例如：T20260626xxxx" 
+          :placeholder="t('upload.recoverPlaceholder')" 
           clearable 
           @keyup.enter="handleRecover"
         />
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="recoverDialogVisible = false">取消</el-button>
+          <el-button @click="recoverDialogVisible = false">{{ t("upload.cancel") }}</el-button>
           <el-button type="primary" @click="handleRecover" :disabled="!recoverTaskId.trim()">
-            立即找回
+            {{ t("upload.recoverNow") }}
           </el-button>
         </span>
       </template>
@@ -92,14 +92,16 @@ import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 import UploadDropCard from "@/components/UploadDropCard.vue";
+import { useAppI18n } from "@/composables/useAppI18n";
 import { createTask } from "@/services/api";
 import { saveTaskNo } from "@/services/session";
 import { createHeadConfig, resolveRouteSeo } from "@/utils/seo";
 
 const router = useRouter();
+const { localizeDeep, t } = useAppI18n();
 useHead(
   createHeadConfig(
-    resolveRouteSeo(
+    localizeDeep(resolveRouteSeo(
       {
         title: "标书查重工具入口_上传投标文件开始检查_{siteTitle}",
         description:
@@ -107,7 +109,7 @@ useHead(
         keywords: ["标书查重入口", "投标文件查重", "标书检查工具", "围标风险排查"]
       },
       { currentPath: "/upload" }
-    )
+    ))
   ) as any
 );
 const keywordsList = ref<string[]>([]);
@@ -127,23 +129,23 @@ function handleRecover() {
 
 async function startCheck() {
   if (!aFiles.value[0]) {
-    ElMessage.warning("请先选择主标书 A");
+    ElMessage.warning(t("upload.warnings.missingA"));
     return;
   }
 
   if (!bFiles.value.length) {
-    ElMessage.warning("请至少选择 1 份 B 标书");
+    ElMessage.warning(t("upload.warnings.missingB"));
     return;
   }
 
   if (bFiles.value.length > 10) {
-    ElMessage.warning("B 标书最多选择 10 份");
+    ElMessage.warning(t("upload.warnings.exceedB"));
     return;
   }
 
   const invalidFile = [...aFiles.value, ...bFiles.value].find((file) => !isSupportedFile(file));
   if (invalidFile) {
-    ElMessage.error(`${invalidFile.name} 暂不支持，请上传 DOCX 或可复制文本 PDF`);
+    ElMessage.error(t("upload.warnings.unsupported", { name: invalidFile.name }));
     return;
   }
 
@@ -157,7 +159,7 @@ async function startCheck() {
     saveTaskNo(task.task_no);
     await router.push({ path: "/results", query: { task: task.task_no } });
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "创建任务失败");
+    ElMessage.error(error instanceof Error ? error.message : t("upload.warnings.createFailed"));
   } finally {
     submitting.value = false;
   }

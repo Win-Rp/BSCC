@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标书查重 - 查重结果</title>
+    <style id="theme-vars">
+:root {
+  --bscc-bg-page: #F5F7F8;
+  --bscc-bg-card: #FFFFFF;
+  --bscc-bg-muted: #EEF3F4;
+  --bscc-bg-soft: #F8FBFB;
+  --bscc-text: #1F2933;
+  --bscc-text-secondary: #68727D;
+  --bscc-text-tertiary: #8B98A4;
+  --bscc-primary: #126E6A;
+  --bscc-primary-deep: #0B4F4C;
+  --bscc-primary-soft: rgba(18, 110, 106, 0.10);
+  --bscc-border: #DDE3E7;
+  --bscc-risk-high: #D64545;
+  --bscc-risk-high-soft: rgba(214, 69, 69, 0.12);
+  --bscc-risk-medium: #D97706;
+  --bscc-risk-medium-soft: rgba(217, 119, 6, 0.12);
+  --bscc-semantic: #2563EB;
+  --bscc-semantic-soft: rgba(37, 99, 235, 0.12);
+  --bscc-keyword: #7C3AED;
+  --bscc-keyword-soft: rgba(124, 58, 237, 0.12);
+  --bscc-success: #0F8F5D;
+  --bscc-success-soft: rgba(15, 143, 93, 0.12);
+  --bscc-system-border: rgba(15, 23, 42, 0.10);
+  --bscc-system-bg: rgba(255, 255, 255, 0.92);
+  --bscc-system-text: #111827;
+  --bscc-shadow-sm: 0 6px 16px rgba(31, 41, 51, 0.05);
+  --bscc-shadow-md: 0 10px 20px rgba(31, 41, 51, 0.05);
+  --bscc-radius-xs: 10px;
+  --bscc-radius-sm: 14px;
+  --bscc-radius-md: 12px;
+  --bscc-radius-lg: 16px;
+  --bscc-safe-top: env(safe-area-inset-top, 0px);
+  --bscc-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--bscc-bg-page);
+  color: var(--bscc-text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.bscc-app-shell {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bscc-bg-page);
+}
+
+.bscc-surface {
+  background: var(--bscc-bg-card);
+  border: 1px solid var(--bscc-border);
+  border-radius: var(--bscc-radius-md);
+  box-shadow: var(--bscc-shadow-sm);
+}
+
+.bscc-title-xl {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.bscc-title-lg {
+  font-size: 20px;
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bscc-title-md {
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bscc-caption {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--bscc-text-secondary);
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.bscc-wechat-top {
+  padding-top: calc(10px + var(--bscc-safe-top));
+}
+
+.bscc-divider {
+  border-color: var(--bscc-border);
+}
+
+.bscc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bscc-tabbar-safe {
+  padding-bottom: calc(10px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom {
+  padding-bottom: calc(132px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom-lg {
+  padding-bottom: calc(208px + var(--bscc-safe-bottom));
+}
+
+.bscc-soft-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.bscc-soft-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--bscc-primary);
+    --color-border: var(--bscc-border);
+  }
+  @layer base {
+    body { background: var(--bscc-background); color: var(--bscc-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="bg-[var(--bscc-bg-page)] text-[var(--bscc-text)]">
+  <div class="bscc-app-shell min-h-screen">
+    <div class="bscc-wechat-top sticky top-0 z-30 bg-[var(--bscc-bg-page)]/95 backdrop-blur-sm">
+      <div class="px-4">
+        <div class="flex items-center justify-between px-1 text-[12px] font-medium text-[var(--bscc-text)]">
+          <span>09:46</span>
+          <div class="flex items-center gap-1.5 text-[var(--bscc-text-secondary)]">
+            <i data-lucide="signal-high" class="h-3.5 w-3.5"></i>
+            <i data-lucide="wifi" class="h-3.5 w-3.5"></i>
+            <i data-lucide="battery-full" class="h-3.5 w-3.5"></i>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center justify-between pb-3">
+          <div class="flex h-10 w-[88px] items-center justify-start">
+            <span class="text-[14px] font-medium text-transparent">占位</span>
+          </div>
+          <h1 class="text-[17px] font-semibold leading-none text-[var(--bscc-text)]">查重结果</h1>
+          <div class="flex h-8 w-[88px] items-center justify-center rounded-full border border-[var(--bscc-system-border)] bg-[var(--bscc-system-bg)] text-[var(--bscc-system-text)]" aria-label="小程序菜单">
+            <button class="flex h-full flex-1 items-center justify-center" aria-label="更多">
+              <i data-lucide="more-horizontal" class="h-4 w-4"></i>
+            </button>
+            <span class="h-4 w-px bg-[var(--bscc-system-border)]" aria-hidden="true"></span>
+            <button class="flex h-full flex-1 items-center justify-center" aria-label="关闭">
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="bscc-page-safe-bottom-lg px-4 pt-3">
+      <section class="rounded-[var(--bscc-radius-lg)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-md)]">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-[12px] tracking-[0.08em] text-[var(--bscc-text-secondary)]">总重复率摘要</p>
+            <p class="mt-2 text-[34px] font-bold leading-none text-[var(--bscc-risk-high)]">78%</p>
+            <p class="mt-2 text-[13px] leading-6 text-[var(--bscc-text-secondary)]">当前选中 B1 与 A 文件在目录、报价条目和承诺文本上均存在高强度重合，建议优先查看证据定位。</p>
+          </div>
+          <span class="rounded-full bg-[var(--bscc-risk-high-soft)] px-3 py-1 text-[12px] font-semibold text-[var(--bscc-risk-high)]">高风险</span>
+        </div>
+        <div class="mt-4 grid grid-cols-3 gap-2">
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">B 文件数</p>
+            <p class="mt-1 text-[13px] font-semibold text-[var(--bscc-text)]">4 份</p>
+          </div>
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">免费预览</p>
+            <p class="mt-1 text-[13px] font-semibold text-[var(--bscc-text)]">3 段</p>
+          </div>
+          <div class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">解锁状态</p>
+            <p class="mt-1 text-[13px] font-semibold text-[var(--bscc-text)]">待支付</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">任务信息</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">1 对多场景保留任务号、排序规则与恢复入口</p>
+          </div>
+          <span class="rounded-full bg-[var(--bscc-primary-soft)] px-2.5 py-1 text-[12px] font-semibold text-[var(--bscc-primary)]">可恢复</span>
+        </div>
+        <dl class="mt-4 space-y-3">
+          <div class="flex items-center justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+            <dt class="text-[13px] text-[var(--bscc-text-secondary)]">任务号</dt>
+            <dd class="text-[13px] font-semibold text-[var(--bscc-text)]">BSCC-20260629-0148</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+            <dt class="text-[13px] text-[var(--bscc-text-secondary)]">提交模式</dt>
+            <dd class="text-[13px] font-semibold text-[var(--bscc-text)]">A vs 4 份 B 文件</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-b border-[var(--bscc-border)] pb-3">
+            <dt class="text-[13px] text-[var(--bscc-text-secondary)]">排序规则</dt>
+            <dd class="text-[13px] font-semibold text-[var(--bscc-text)]">按总重复率降序</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-[13px] text-[var(--bscc-text-secondary)]">保留时间</dt>
+            <dd class="text-[13px] font-semibold text-[var(--bscc-text)]">截至 07-06 23:59</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">B 文件风险排行</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">先看排名和摘要，再决定是否进入完整对比</p>
+          </div>
+          <span class="text-[12px] font-medium text-[var(--bscc-text-secondary)]">共 4 份</span>
+        </div>
+        <div class="mt-4 space-y-3">
+          <article class="rounded-[var(--bscc-radius-sm)] border border-[var(--bscc-risk-high)] bg-[var(--bscc-risk-high-soft)] px-3 py-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white text-[11px] font-bold text-[var(--bscc-risk-high)]">1</span>
+                  <p class="truncate text-[13px] font-semibold text-[var(--bscc-text)]">南桥路网提升项目_B1_商务响应文件.docx</p>
+                </div>
+                <p class="mt-2 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">目录结构与报价条目高度贴合，关键词命中集中在履约承诺、保函与安全文明措施费。</p>
+              </div>
+              <div class="shrink-0 text-right">
+                <p class="text-[18px] font-bold leading-none text-[var(--bscc-risk-high)]">78%</p>
+                <p class="mt-1 text-[11px] text-[var(--bscc-risk-high)]">高风险</p>
+              </div>
+            </div>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] border border-[var(--bscc-risk-high)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--bscc-bg-card)] text-[11px] font-bold text-[var(--bscc-risk-high)]">2</span>
+                  <p class="truncate text-[13px] font-semibold text-[var(--bscc-text)]">轨道区间施工_B2_技术方案.pdf</p>
+                </div>
+                <p class="mt-2 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">重复集中在技术响应、项目组织与设备清单说明，语义相似度偏高。</p>
+              </div>
+              <div class="shrink-0 text-right">
+                <p class="text-[18px] font-bold leading-none text-[var(--bscc-risk-high)]">72%</p>
+                <p class="mt-1 text-[11px] text-[var(--bscc-risk-high)]">高风险</p>
+              </div>
+            </div>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--bscc-bg-card)] text-[11px] font-bold text-[var(--bscc-risk-medium)]">3</span>
+                  <p class="truncate text-[13px] font-semibold text-[var(--bscc-text)]">城区雨污分流工程_B3_资格文件.docx</p>
+                </div>
+                <p class="mt-2 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">通用承诺语句较多，整体结构差异尚可，建议作为次级核查对象。</p>
+              </div>
+              <div class="shrink-0 text-right">
+                <p class="text-[18px] font-bold leading-none text-[var(--bscc-risk-medium)]">54%</p>
+                <p class="mt-1 text-[11px] text-[var(--bscc-risk-medium)]">中风险</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">免费预览片段</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">未支付状态下保留摘要级片段，帮助判断是否需要继续审阅</p>
+          </div>
+          <span class="rounded-full bg-[var(--bscc-bg-soft)] px-2.5 py-1 text-[12px] font-medium text-[var(--bscc-text-secondary)]">3 段</span>
+        </div>
+        <div class="mt-4 space-y-3">
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-[var(--bscc-risk-high-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--bscc-risk-high)]">完全重复</span>
+              <span class="text-[11px] font-medium text-[var(--bscc-text-secondary)]">92%</span>
+            </div>
+            <p class="mt-2 text-[13px] leading-6 text-[var(--bscc-text)]">A 文件“报价组成表”中的费用说明与 B1 对应段落基本一致，仅序号和金额位置有差别。</p>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-[var(--bscc-risk-medium-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--bscc-risk-medium)]">改写相似</span>
+              <span class="text-[11px] font-medium text-[var(--bscc-text-secondary)]">68%</span>
+            </div>
+            <p class="mt-2 text-[13px] leading-6 text-[var(--bscc-text)]">资格承诺部分做了词语替换，但质量目标、工期承诺与项目团队结构仍高度接近。</p>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-bg-soft)] px-3 py-3">
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-[var(--bscc-keyword-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--bscc-keyword)]">关键词命中</span>
+              <span class="text-[11px] font-medium text-[var(--bscc-text-secondary)]">12 次</span>
+            </div>
+            <p class="mt-2 text-[13px] leading-6 text-[var(--bscc-text)]">“联合体投标”“履约保函”“安全文明措施费”等专业词在相近位置反复出现。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt-3 rounded-[var(--bscc-radius-md)] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] p-4 shadow-[var(--bscc-shadow-sm)]">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-[16px] font-semibold text-[var(--bscc-text)]">指标拆解</h2>
+            <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">按查重类型拆分，便于移动端快速扫读</p>
+          </div>
+          <span class="text-[12px] font-medium text-[var(--bscc-text-secondary)]">当前选中 B1</span>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-risk-high-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">完全重复</p>
+            <p class="mt-1 text-[18px] font-bold text-[var(--bscc-risk-high)]">42%</p>
+            <p class="mt-1 text-[12px] text-[var(--bscc-text-secondary)]">目录、报价表与通用承诺</p>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-risk-medium-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">改写相似</p>
+            <p class="mt-1 text-[18px] font-bold text-[var(--bscc-risk-medium)]">21%</p>
+            <p class="mt-1 text-[12px] text-[var(--bscc-text-secondary)]">措辞替换、句序重排</p>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-semantic-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">语义相似</p>
+            <p class="mt-1 text-[18px] font-bold text-[var(--bscc-semantic)]">15%</p>
+            <p class="mt-1 text-[12px] text-[var(--bscc-text-secondary)]">业务动作链与结构一致</p>
+          </article>
+          <article class="rounded-[var(--bscc-radius-sm)] bg-[var(--bscc-keyword-soft)] px-3 py-3">
+            <p class="text-[11px] text-[var(--bscc-text-secondary)]">关键词命中</p>
+            <p class="mt-1 text-[18px] font-bold text-[var(--bscc-keyword)]">12 次</p>
+            <p class="mt-1 text-[12px] text-[var(--bscc-text-secondary)]">专业术语与风险词重复</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="fixed inset-x-0 bottom-[74px] z-40">
+      <div class="mx-auto max-w-[430px] px-4">
+        <section class="overflow-hidden rounded-[24px] border border-[var(--bscc-border)] bg-[rgba(255,255,255,0.96)] shadow-[var(--bscc-shadow-md)] backdrop-blur-sm">
+          <div class="px-4 pt-3">
+            <div class="mx-auto h-1.5 w-10 rounded-full bg-[var(--bscc-border)]"></div>
+          </div>
+          <div class="px-4 pb-4 pt-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-[14px] font-semibold text-[var(--bscc-text)]">解锁完整 1 对多详情</p>
+                <p class="mt-1 text-[12px] leading-5 text-[var(--bscc-text-secondary)]">继续查看全部 B 文件完整证据、段落定位与上下文对照</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[18px] font-bold text-[var(--bscc-primary)]">¥ 68</p>
+                <p class="text-[11px] text-[var(--bscc-text-secondary)]">含 4 份 B 文件</p>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button data-dom-id="cta-compare" class="inline-flex flex-1 items-center justify-center gap-2 rounded-[18px] bg-[var(--bscc-primary)] px-4 py-3 text-[14px] font-semibold text-white">
+                查看对比预览
+                <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+              </button>
+              <button class="inline-flex items-center justify-center rounded-[18px] border border-[var(--bscc-border)] bg-[var(--bscc-bg-card)] px-4 py-3 text-[14px] font-semibold text-[var(--bscc-text)]">
+                立即解锁
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="fixed inset-x-0 bottom-0 z-50">
+      <div class="mx-auto max-w-[430px] px-3 bscc-tabbar-safe">
+        <nav class="grid grid-cols-3 gap-2 rounded-[22px] border border-[var(--bscc-border)] bg-[rgba(255,255,255,0.96)] px-2 py-2 shadow-[var(--bscc-shadow-md)] backdrop-blur-sm">
+          <button data-dom-id="tab-home" class="flex flex-col items-center gap-1 rounded-[16px] px-2 py-2 text-[11px] text-[var(--bscc-text-secondary)]">
+            <i data-lucide="scan-search" class="h-4.5 w-4.5"></i>
+            查重
+          </button>
+          <button class="flex flex-col items-center gap-1 rounded-[16px] bg-[var(--bscc-primary-soft)] px-2 py-2 text-[11px] font-semibold text-[var(--bscc-primary)]">
+            <i data-lucide="bar-chart-3" class="h-4.5 w-4.5"></i>
+            结果
+          </button>
+          <button data-dom-id="tab-recovery" class="flex flex-col items-center gap-1 rounded-[16px] px-2 py-2 text-[11px] text-[var(--bscc-text-secondary)]">
+            <i data-lucide="refresh-cw" class="h-4.5 w-4.5"></i>
+            恢复
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      .fixed button {
+        transition: none !important;
+      }
+    }
+  </style>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

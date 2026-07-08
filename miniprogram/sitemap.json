@@ -1,0 +1,9 @@
+{
+  "desc": "BSCC 标书查重小程序页面索引",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}

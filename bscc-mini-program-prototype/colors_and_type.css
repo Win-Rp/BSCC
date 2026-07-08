@@ -1,0 +1,169 @@
+:root {
+  --bscc-bg-page: #F5F7F8;
+  --bscc-bg-card: #FFFFFF;
+  --bscc-bg-muted: #EEF3F4;
+  --bscc-bg-soft: #F8FBFB;
+  --bscc-text: #1F2933;
+  --bscc-text-secondary: #68727D;
+  --bscc-text-tertiary: #8B98A4;
+  --bscc-primary: #126E6A;
+  --bscc-primary-deep: #0B4F4C;
+  --bscc-primary-soft: rgba(18, 110, 106, 0.10);
+  --bscc-border: #DDE3E7;
+  --bscc-risk-high: #D64545;
+  --bscc-risk-high-soft: rgba(214, 69, 69, 0.12);
+  --bscc-risk-medium: #D97706;
+  --bscc-risk-medium-soft: rgba(217, 119, 6, 0.12);
+  --bscc-semantic: #2563EB;
+  --bscc-semantic-soft: rgba(37, 99, 235, 0.12);
+  --bscc-keyword: #7C3AED;
+  --bscc-keyword-soft: rgba(124, 58, 237, 0.12);
+  --bscc-success: #0F8F5D;
+  --bscc-success-soft: rgba(15, 143, 93, 0.12);
+  --bscc-system-border: rgba(15, 23, 42, 0.10);
+  --bscc-system-bg: rgba(255, 255, 255, 0.92);
+  --bscc-system-text: #111827;
+  --bscc-shadow-sm: 0 6px 16px rgba(31, 41, 51, 0.05);
+  --bscc-shadow-md: 0 10px 20px rgba(31, 41, 51, 0.05);
+  --bscc-radius-xs: 10px;
+  --bscc-radius-sm: 14px;
+  --bscc-radius-md: 12px;
+  --bscc-radius-lg: 16px;
+  --bscc-safe-top: env(safe-area-inset-top, 0px);
+  --bscc-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--bscc-bg-page);
+  color: var(--bscc-text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.bscc-app-shell {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bscc-bg-page);
+}
+
+.bscc-surface {
+  background: var(--bscc-bg-card);
+  border: 1px solid var(--bscc-border);
+  border-radius: var(--bscc-radius-md);
+  box-shadow: var(--bscc-shadow-sm);
+}
+
+.bscc-title-xl {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.bscc-title-lg {
+  font-size: 20px;
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bscc-title-md {
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.bscc-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bscc-caption {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--bscc-text-secondary);
+}
+
+.bscc-mono {
+  font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.bscc-wechat-top {
+  padding-top: calc(10px + var(--bscc-safe-top));
+}
+
+.bscc-divider {
+  border-color: var(--bscc-border);
+}
+
+.bscc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bscc-tabbar-safe {
+  padding-bottom: calc(10px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom {
+  padding-bottom: calc(132px + var(--bscc-safe-bottom));
+}
+
+.bscc-page-safe-bottom-lg {
+  padding-bottom: calc(208px + var(--bscc-safe-bottom));
+}
+
+.bscc-soft-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.bscc-soft-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
