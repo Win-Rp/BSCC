@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "bscc-frontend-app",
   "version": "0.1.0",
   "private": true,
@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "prebuild": "node ./scripts/prepare-build-meta.mjs",
     "build": "vue-tsc --noEmit && tsc -p tsconfig.node.json --noEmit && vite-ssg build && node ./scripts/postbuild-seo.mjs",
-    "build:crx": "node ./scripts/prepare-build-meta.mjs && vite build -c vite.crx.config.ts",
+    "build:crx": "node ./scripts/prepare-build-meta.mjs && vite build -c vite.crx.config.ts && node ./scripts/inject-crx-csp.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "type-check": "vue-tsc --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
