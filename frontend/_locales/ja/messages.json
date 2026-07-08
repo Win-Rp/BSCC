@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "入札書類チェッカー"
+  },
+  "extensionDescription": {
+    "message": "入札書類の類似チェックと談合リスク検出のためのブラウザ拡張機能。クリックしてアップロードワークベンチを開きます。"
+  }
+}

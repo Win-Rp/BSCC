@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "Bid Checker"
+  },
+  "extensionDescription": {
+    "message": "A browser extension for bid document plagiarism checking and bid-rigging risk detection. Click to open the upload workbench."
+  }
+}
