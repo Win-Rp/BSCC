@@ -5,7 +5,18 @@ import { crx } from "@crxjs/vite-plugin";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import manifest from "./manifest.json";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const buildMeta = JSON.parse(readFileSync(resolve(__dirname, ".build-meta.json"), "utf8"));
+const [major, minor] = buildMeta.baseVersion.split(".");
+const displayVersion = `${major}.${minor}.${buildMeta.buildNumber}`;
+
+// 动态覆盖 manifest 版本号，保持与 web 版本一致
+const rawManifest = JSON.parse(readFileSync(resolve(__dirname, "./manifest.json"), "utf8"));
+rawManifest.version = displayVersion;
 
 export default defineConfig({
   base: "./",
@@ -18,7 +29,7 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()]
     }),
-    crx({ manifest }),
+    crx({ manifest: rawManifest }),
     {
       name: "strip-web-analytics-for-crx",
       transformIndexHtml(html) {
