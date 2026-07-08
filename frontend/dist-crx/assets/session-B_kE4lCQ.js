@@ -1,0 +1,1 @@
+const e="bscc.currentTaskNo",o="bscc.currentOrderNo";function a(t){localStorage.setItem(e,t)}function s(){return localStorage.getItem(e)??""}function c(t){localStorage.setItem(o,t)}export{c as a,s as g,a as s};

@@ -500,7 +500,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const payload = contentType.includes("application/json") ? await response.json() as ApiResponse<T> : null;
 
   if (!response.ok || !payload?.success) {
-    const message = payload?.error?.message ?? `请求失败：${response.status}`;
+    const message = payload?.error?.message ?? `Request failed: ${response.status}`;
     throw new Error(message);
   }
 

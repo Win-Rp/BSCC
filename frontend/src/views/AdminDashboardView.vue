@@ -4,12 +4,12 @@
       <div class="admin-header-content">
         <div class="header-left">
           <h1 class="admin-site-title" @click="router.push('/')">{{ adminPanelTitle }}</h1>
-          <p>统一承接上传、进度、结果、对比、恢复与运营场景的审计型工作台</p>
+          <p>{{ translateText("统一承接上传、进度、结果、对比、恢复与运营场景的审计型工作台") }}</p>
         </div>
         <div class="header-right">
           <div class="admin-user-info">
-            <span class="admin-name">管理员：{{ currentAdmin }}</span>
-            <el-button link type="primary" @click="handleLogout">退出登录</el-button>
+            <span class="admin-name">{{ translateText("管理员") }}：{{ currentAdmin }}</span>
+            <el-button link type="primary" @click="handleLogout">{{ translateText("退出登录") }}</el-button>
           </div>
         </div>
       </div>
@@ -22,23 +22,23 @@
             <el-card shadow="never" class="admin-card home-side-card">
               <template #header>
                 <div class="card-header">
-                  <h3>管理首页</h3>
-                  <p>先看概况，再进入具体列表与配置。</p>
+                  <h3>{{ translateText("管理首页") }}</h3>
+                  <p>{{ translateText("先看概况，再进入具体列表与配置。") }}</p>
                 </div>
               </template>
               <div class="home-side-actions">
-                <el-button type="primary" class="w-full" @click="activeTab = 'orders'">进入订单列表</el-button>
-                <el-button class="w-full" @click="activeTab = 'tasks'">进入任务列表</el-button>
-                <el-button class="w-full" @click="activeTab = 'logs'">查看操作日志</el-button>
-                <el-button class="w-full" @click="activeTab = 'settings'">前往系统配置</el-button>
+                <el-button type="primary" class="w-full" @click="activeTab = 'orders'">{{ translateText("进入订单列表") }}</el-button>
+                <el-button class="w-full" @click="activeTab = 'tasks'">{{ translateText("进入任务列表") }}</el-button>
+                <el-button class="w-full" @click="activeTab = 'logs'">{{ translateText("查看操作日志") }}</el-button>
+                <el-button class="w-full" @click="activeTab = 'settings'">{{ translateText("前往系统配置") }}</el-button>
               </div>
             </el-card>
 
             <el-card shadow="never" class="admin-card home-side-card">
               <template #header>
                 <div class="card-header">
-                  <h3>支付状态</h3>
-                  <p>快速确认支付通道是否可用于联调与收款。</p>
+                  <h3>{{ translateText("支付状态") }}</h3>
+                  <p>{{ translateText("快速确认支付通道是否可用于联调与收款。") }}</p>
                 </div>
               </template>
               <div class="home-channel-status">
@@ -678,9 +678,12 @@ import {
   type AdminOverview
 } from '@/services/api';
 import { applyRouteSeo } from '@/utils/seo';
+import { useAppI18n } from '@/composables/useAppI18n';
+
+const { translateText } = useAppI18n();
 
 const router = useRouter();
-const currentAdmin = ref(localStorage.getItem('admin_username') || '未知管理员');
+const currentAdmin = ref(localStorage.getItem('admin_username') || translateText('未知管理员'));
 const activeTab = ref('home');
 
 const filters = reactive({

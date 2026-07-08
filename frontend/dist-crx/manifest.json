@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "标书查重助手",
+  "version": "1.0.0",
+  "description": "面向投标文件的标书查重与围标风险排查插件，点击即可进入上传查重工作台。",
+  "homepage_url": "https://biaoshu.mxitx.com",
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "打开标书查重工作台",
+    "default_icon": {
+      "16": "extension-icons/icon-16.png",
+      "32": "extension-icons/icon-32.png",
+      "48": "extension-icons/icon-48.png"
+    }
+  },
+  "icons": {
+    "16": "extension-icons/icon-16.png",
+    "32": "extension-icons/icon-32.png",
+    "48": "extension-icons/icon-48.png",
+    "128": "extension-icons/icon-128.png"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://biaoshu.mxitx.com/*"
+  ]
+}

@@ -79,15 +79,15 @@ async function fetchOriginalFile() {
     try {
       const response = await fetch(candidate);
       if (!response.ok) {
-        throw new Error(`加载原文档失败：${response.status}`);
+        throw new Error(`${translateText("加载原文档失败")}：${response.status}`);
       }
       return response;
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error("加载原文档失败");
+      lastError = error instanceof Error ? error : new Error(translateText("加载原文档失败"));
     }
   }
 
-  throw lastError ?? new Error("加载原文档失败");
+  throw lastError ?? new Error(translateText("加载原文档失败"));
 }
 
 function updatePdfSearch() {
@@ -124,7 +124,7 @@ async function renderDocxFile() {
     markInstance = new Mark(docxHost.value);
     await highlightDocx();
   } catch (error) {
-    docxError.value = error instanceof Error ? error.message : "Word 原文档渲染失败";
+    docxError.value = error instanceof Error ? error.message : translateText("Word 原文档渲染失败");
   } finally {
     isRenderingDocx.value = false;
   }
@@ -143,7 +143,7 @@ async function loadPdfFile() {
     const blob = await response.blob();
     pdfSource.value = URL.createObjectURL(blob);
   } catch (error) {
-    pdfError.value = error instanceof Error ? error.message : "PDF 原文档渲染失败";
+    pdfError.value = error instanceof Error ? error.message : translateText("PDF 原文档渲染失败");
   } finally {
     isLoadingPdf.value = false;
   }
