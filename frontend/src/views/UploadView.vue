@@ -47,6 +47,14 @@
           </el-form-item>
         </el-form>
 
+        <el-alert
+          type="warning"
+          :closable="false"
+          show-icon
+          class="queue-tip"
+          title="当前人数较多，受服务器性能所限，查重可能需要更长时间。你可以收藏当前页面，或记录任务 ID 后稍后回来查看结果。"
+        />
+
         <div class="action-strip upload-action-strip">
           <el-button 
             type="primary" 
@@ -222,5 +230,10 @@ function isSupportedFile(file: File) {
   color: var(--muted);
   font-size: 13px;
   margin-bottom: 16px;
+}
+
+.queue-tip {
+  margin-top: 8px;
+  border-radius: 14px;
 }
 </style>

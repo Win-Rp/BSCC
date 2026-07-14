@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
-import VuePdfEmbed, { usePdfDocument, usePdfSearch } from "vue-pdf-embed";
+import VuePdfEmbed, {
+  GlobalWorkerOptions,
+  usePdfDocument,
+  usePdfSearch
+} from "vue-pdf-embed/dist/index.essential.mjs";
 import { renderAsync } from "docx-preview";
 import Mark from "mark.js";
 import { useAppI18n } from "@/composables/useAppI18n";
+import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
+
+GlobalWorkerOptions.workerSrc = PdfWorker;
 
 const props = defineProps<{
   title: string;

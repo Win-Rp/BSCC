@@ -1,6 +1,6 @@
 export const BUILD_META = {
   baseVersion: "0.1.0",
-  buildNumber: 8,
-  displayVersion: "0.1.8",
-  updatedAt: "2026-07-08T09:42:39.470Z"
+  buildNumber: 12,
+  displayVersion: "0.1.12",
+  updatedAt: "2026-07-10T06:36:16.975Z"
 } as const;

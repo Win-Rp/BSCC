@@ -6,7 +6,14 @@
         <el-icon class="is-loading processing-icon"><Loading /></el-icon>
         <h2>{{ translateText("正在处理您的任务") }}</h2>
         <p>{{ processingMessage }}</p>
-        
+        <el-alert
+          type="warning"
+          :closable="false"
+          show-icon
+          class="processing-queue-tip"
+          title="当前人数较多，受服务器性能所限，当前查重可能较慢。你可以收藏当前页面，或记录任务 ID 后等待一段时间再回来查看查询结果。"
+        />
+
         <div class="task-recovery-tip">
           <el-alert type="success" :closable="false">
             <template #title>
@@ -872,6 +879,13 @@ watch(locale, () => {
 .processing-content p {
   color: var(--muted);
   margin-bottom: 24px;
+}
+
+.processing-queue-tip {
+  max-width: 640px;
+  margin: 0 auto 18px;
+  border-radius: 14px;
+  text-align: left;
 }
 
 .task-recovery-tip {
