@@ -2,6 +2,29 @@
 
 BSCC 是一个面向标书场景的智能查重与风险研判系统。系统支持上传主标书与多份对比标书，自动完成文本解析、重复检测、结果排行、可视化分析、详情解锁与任务找回，并提供独立的隐藏式运营后台用于配置支付、站点信息和运营策略。
 
+## 在线体验与视频说明
+
+- 在线体验地址：[https://biaoshu.mxitx.com](https://biaoshu.mxitx.com)
+- 视频使用说明：[免费的标书查重软件 开源标书查重 文档对比 招投标 相似度检查 重复检查 标书查重 word查重 pdf查重](https://www.bilibili.com/video/BV1mUMG6qEpp/?share_source=copy_web&vd_source=89e7a3357f2693f28ebb4596e1b8a502)
+
+## 截图展示
+
+### 文件上传界面
+
+![文件上传界面](./docs/images/ch-1.png)
+
+### 对比等待界面
+
+![对比等待界面](./docs/images/ch-2.png)
+
+### 查重结果界面
+
+![查重结果界面](./docs/images/ch-3.png)
+
+### 重复对比界面
+
+![重复对比界面](./docs/images/ch-4.png)
+
 ## 项目概览
 
 - 前端基于 `Vue 3`、`Vite`、`Element Plus`、`ECharts`
@@ -53,6 +76,7 @@ BSCC/
 │  ├─ .env.example               # 支付与站点配置示例
 │  └─ cleanup.py                 # 历史数据清理脚本
 ├─ docs/                         # 设计、需求、接口等文档
+│  └─ images/                     # README 截图展示资源
 └─ README.md
 ```
 
