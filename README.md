@@ -5,7 +5,8 @@ BSCC 是一个面向标书场景的智能查重与风险研判系统。系统支
 ## 在线体验与视频说明
 
 - 在线体验地址：[https://biaoshu.mxitx.com](https://biaoshu.mxitx.com)
-- 视频使用说明：[免费的标书查重软件 开源标书查重 文档对比 招投标 相似度检查 重复检查 标书查重 word查重 pdf查重](https://www.bilibili.com/video/BV1mUMG6qEpp/?share_source=copy_web&vd_source=89e7a3357f2693f28ebb4596e1b8a502)
+- 视频使用说明：[点击查看 B 站视频教程](https://www.bilibili.com/video/BV1mUMG6qEpp/?share_source=copy_web&vd_source=89e7a3357f2693f28ebb4596e1b8a502)  
+  [![点击查看视频教程](./docs/images/ch-1.png)](https://www.bilibili.com/video/BV1mUMG6qEpp/?share_source=copy_web&vd_source=89e7a3357f2693f28ebb4596e1b8a502)
 
 ## 截图展示
 
@@ -31,7 +32,7 @@ BSCC 是一个面向标书场景的智能查重与风险研判系统。系统支
 - 后端基于 `FastAPI`、`SQLite`
 - 支持 `PDF`、`DOCX` 文档解析与对比
 - 支持支付宝和微信 Native 支付解锁
-- 支持按任务 ID 找回历史结果
+- 支持按任务号、订单号或联系方式找回历史结果
 - 支持后台配置首页标题、特点标签、客服信息、支付参数、促销活动和查重阈值
 
 ## 功能清单
@@ -75,6 +76,7 @@ BSCC/
 │  ├─ tests/                     # 后端测试
 │  ├─ .env.example               # 支付与站点配置示例
 │  └─ cleanup.py                 # 历史数据清理脚本
+├─ miniprogram/                  # 微信小程序原生前端
 ├─ docs/                         # 设计、需求、接口等文档
 │  └─ images/                     # README 截图展示资源
 └─ README.md
@@ -198,7 +200,8 @@ npm run type-check
 cd backend
 .\.venv\Scripts\Activate.ps1
 python -m app.main
-python cleanup.py --purge-deleted
+python cleanup.py                  # 清理过期任务
+python cleanup.py --purge-deleted  # 净化逻辑删除任务
 ```
 
 ## 测试与验证
@@ -240,14 +243,28 @@ python -m pip install pytest
 - `task_files`
 - 任务对应的磁盘文件目录
 
-### 清理历史逻辑删除数据
+### 过期任务清理与逻辑删除数据净化
 
-如需清理历史残留的逻辑删除任务，可执行：
+`cleanup.py` 支持三种运行模式：
+
+**默认模式**——扫描并物理清理所有已过期的任务数据（`expires_at` 超时且状态非 `deleted`）：
 
 ```powershell
 cd backend
 .\.venv\Scripts\Activate.ps1
+python cleanup.py
+```
+
+**`--purge-deleted` 模式**——净化历史上已被标记为逻辑删除（`status = 'deleted'`）但仍残留数据库记录的任务：
+
+```powershell
 python cleanup.py --purge-deleted
+```
+
+**`--loop` 模式**——持续循环运行，按指定间隔（默认每小时）自动执行过期任务清理：
+
+```powershell
+python cleanup.py --loop --interval 3600
 ```
 
 ## 文档索引
