@@ -288,3 +288,8 @@ python cleanup.py --loop --interval 3600
 
 - `prototype/` 已从当前主线实现中移除，不再作为运行入口
 - `bscc-frontend-canvas/` 为设计稿与静态稿资产目录，不参与主应用运行
+## License
+
+本项目采用 Apache License 2.0 开源协议，版权所有 © 2026 wp_rp。完整协议文本请参见项目根目录的 [LICENSE](./LICENSE) 文件。
+
+在遵守 Apache License 2.0 的前提下，你可以使用、复制、修改、分发本项目代码，并将其用于商业项目。项目名称、Logo、域名、运营内容、用户上传的文档和业务数据不属于代码授权范围，除非另有明确书面说明。
