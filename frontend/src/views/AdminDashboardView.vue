@@ -384,6 +384,7 @@
                       </el-tag>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="created_at" :label="translateText('创建时间')" width="180" />
                   <el-table-column prop="expires_at" :label="translateText('过期时间')" width="180" />
                   <el-table-column prop="error_message" :label="translateText('错误说明')" />
                   <el-table-column :label="translateText('操作')" width="120" fixed="right">
