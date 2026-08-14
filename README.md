@@ -182,6 +182,19 @@ Copy-Item .env.example .env
 - 后台配置优先级高于 `.env`
 - 支付活动价格、原价、倒计时和订单金额已统一走后端定价逻辑，保证展示与下单同源
 
+### 前端 PostHog 统计
+
+前端提供 `frontend/.env.example`。复制为 `.env.local` 后填写 PostHog 项目 API Key：
+
+```powershell
+cd frontend
+Copy-Item .env.example .env.local
+```
+
+- `VITE_POSTHOG_KEY`：PostHog 项目 API Key；留空时不加载统计。
+- `VITE_POSTHOG_HOST`：数据接收地址；云端美区使用 `https://us.i.posthog.com`，欧盟区改为 `https://eu.i.posthog.com`。
+- 当前仅采集页面浏览；自动点击采集和会话回放默认关闭，避免采集文件名、表单输入等业务内容。
+
 ## 常用开发命令
 
 ### 前端

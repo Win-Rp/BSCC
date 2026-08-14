@@ -7,12 +7,17 @@ import { ViteSSG } from "vite-ssg";
 import { createApp as createClientApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 import App from "./App.vue";
+import { initializeAnalytics } from "./services/analytics";
 import { nonPrerenderRoutes, routes } from "./router";
 import "./styles/main.css";
 import * as echarts from "echarts";
 import VChart from "vue-echarts";
 
 const isCrx = import.meta.env.VITE_CRX === "true";
+
+if (!isCrx) {
+  initializeAnalytics();
+}
 
 function setupApp(app: any) {
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
