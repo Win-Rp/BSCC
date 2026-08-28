@@ -193,8 +193,8 @@ GET /api/tasks/{task_no}/results/{compare_result_id}/detail
 
 访问规则：
 
-- `single` 模式免费访问。
-- `multi` 模式需支付成功后访问。
+- B 文件数不超过后台 `free_b_file_limit` 时免费访问。
+- 超过该上限的任务需支付成功后访问；该权限在创建任务时确定，后续修改配置不影响已有任务。
 
 返回：
 
@@ -568,6 +568,7 @@ Content-Type: application/json
 ```json
 {
   "price_per_b_file_cents": "1000",
+  "free_b_file_limit": "1",
   "preview_segment_limit": "3",
   "result_retention_days": "7",
   "customer_service_wechat": "customer_service_wechat",
@@ -603,4 +604,3 @@ V1 可以先使用前端轮询：
 - 支付状态：每 2 至 5 秒请求 `/api/orders/{order_no}/status`。
 
 后续版本可升级为 WebSocket 或 Server-Sent Events。
-

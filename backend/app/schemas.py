@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class OrderCreate(BaseModel):
@@ -31,6 +31,7 @@ class AdminTaskBatchDelete(BaseModel):
 
 class SettingsUpdate(BaseModel):
     price_per_b_file_cents: str | int | None = None
+    free_b_file_limit: str | int | None = None
     promo_enabled: bool | None = None
     promo_price_per_b_file_cents: str | int | None = None
     promo_ends_at: str | None = None
@@ -60,3 +61,16 @@ class SettingsUpdate(BaseModel):
     wechat_mch_id: str | None = None
     wechat_api_v2_key: str | None = None
     wechat_notify_url: str | None = None
+
+    @field_validator("free_b_file_limit")
+    @classmethod
+    def validate_free_b_file_limit(cls, value: str | int | None) -> int | None:
+        if value is None:
+            return None
+        try:
+            limit = int(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("免费 B 文件上限必须为 1 至 10") from exc
+        if not 1 <= limit <= 10:
+            raise ValueError("免费 B 文件上限必须为 1 至 10")
+        return limit

@@ -352,6 +352,7 @@ CREATE TABLE settings (
 建议初始化配置：
 
 - `price_per_b_file_cents`：每份 B 文件单价，单位分。
+- `free_b_file_limit`：单次任务可免费查看完整详情的 B 文件上限（1 至 10）；超过该值时需要付费解锁。
 - `preview_segment_limit`：每个 B 文件免费预览片段数量。
 - `result_retention_days`：结果保留天数，默认 7。
 - `customer_service_wechat`：客服微信。
@@ -415,4 +416,3 @@ storage/
 - 将任务状态更新为 `deleted`。
 - 保留 `orders` 基础记录。
 - 保留必要的订单字段和错误摘要。
-

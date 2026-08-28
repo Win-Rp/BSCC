@@ -534,6 +534,7 @@ def _delete_task_dependencies(conn, task_id: int) -> None:
 def _format_settings(raw: dict[str, str]) -> dict[str, Any]:
     return {
         "price_per_b_file_cents": int(raw.get("price_per_b_file_cents", "1000") or 1000),
+        "free_b_file_limit": max(1, min(int(raw.get("free_b_file_limit", "1") or 1), 10)),
         "promo_enabled": raw.get("promo_enabled", "false").lower() == "true",
         "promo_price_per_b_file_cents": int(raw.get("promo_price_per_b_file_cents", "100") or 100),
         "promo_ends_at": raw.get("promo_ends_at", ""),

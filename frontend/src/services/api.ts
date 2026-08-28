@@ -273,6 +273,7 @@ export interface PublicSiteConfig {
 
 export interface AdminSettings {
   price_per_b_file_cents: number;
+  free_b_file_limit: number;
   promo_enabled: boolean;
   promo_price_per_b_file_cents: number;
   promo_ends_at: string;

@@ -442,7 +442,11 @@
                     <el-divider content-position="left">{{ translateText("支付与价格") }}</el-divider>
                     <el-form-item :label="translateText('原价(分)')">
                       <el-input-number v-model="settingsForm.price_per_b_file_cents" :min="1" :step="100" />
-                      <span class="form-inline-tip">{{ translateText("未开启促销时，实际下单金额 = 原价 x B 标书数量") }}</span>
+                      <span class="form-inline-tip">{{ translateText("超过免费 B 文件上限的任务，实际下单金额 = 原价 x B 标书数量") }}</span>
+                    </el-form-item>
+                    <el-form-item :label="translateText('免费 B 文件上限')">
+                      <el-input-number v-model="settingsForm.free_b_file_limit" :min="1" :max="10" :step="1" />
+                      <span class="form-inline-tip">{{ translateText("B 文件数不超过该值时免费；超过时需付费解锁完整详情。设为 10 即当前支持范围内全部免费。") }}</span>
                     </el-form-item>
                     <el-form-item :label="translateText('启用促销')">
                       <el-switch v-model="settingsForm.promo_enabled" />
@@ -725,6 +729,7 @@ const actionLoading = reactive({
 // 系统配置表单
 const createDefaultSettingsForm = () => ({
   price_per_b_file_cents: 1000,
+  free_b_file_limit: 1,
   promo_enabled: false,
   promo_price_per_b_file_cents: 100,
   promo_ends_at: '',

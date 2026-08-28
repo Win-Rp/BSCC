@@ -80,6 +80,35 @@ def run() -> None:
         detail = client.get(f"/api/tasks/{task_no}/results/{compare_id}/detail").json()["data"]
         assert len(detail["matches"]) > 0
         assert len(detail["keyword_hits"]) > 0
+
+        configured = client.put(
+            "/api/admin/settings",
+            json={"free_b_file_limit": 2},
+            headers={"Authorization": f"Bearer {login['token']}"},
+        )
+        assert configured.status_code == 200, configured.text
+        assert configured.json()["data"]["free_b_file_limit"] == 2
+
+        free_multi = client.post(
+            "/api/tasks",
+            files=[
+                ("a_file", ("A-free.docx", a_doc, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")),
+                ("b_files", ("B1-free.docx", b1_doc, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")),
+                ("b_files", ("B2-free.docx", b2_doc, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")),
+            ],
+        )
+        assert free_multi.status_code == 200, free_multi.text
+        free_task_no = free_multi.json()["data"]["task_no"]
+        free_status = wait_until_done(client, free_task_no)
+        assert free_status["status"] == "completed", free_status
+        free_summary = client.get(f"/api/tasks/{free_task_no}/summary").json()["data"]
+        assert free_summary["mode"] == "multi"
+        assert free_summary["payment_required"] is False
+        free_compare_id = free_summary["results"][0]["compare_result_id"]
+        free_detail = client.get(f"/api/tasks/{free_task_no}/results/{free_compare_id}/detail")
+        assert free_detail.status_code == 200, free_detail.text
+        free_order = client.post("/api/orders", json={"task_no": free_task_no, "contact": "user@example.com"})
+        assert free_order.status_code == 400, free_order.text
         print({"task_no": task_no, "compare_result_id": compare_id, "matches": len(detail["matches"])})
 
 

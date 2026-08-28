@@ -8,6 +8,7 @@ DB_PATH = DATA_DIR / "bscc.sqlite3"
 
 DEFAULT_SETTINGS = {
     "price_per_b_file_cents": "1000",
+    "free_b_file_limit": "1",
     "promo_enabled": "false",
     "promo_price_per_b_file_cents": "100",
     "promo_ends_at": "",

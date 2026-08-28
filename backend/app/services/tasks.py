@@ -30,6 +30,8 @@ async def create_task(
     with db_session() as conn:
         preview_limit = int(_setting(conn, "preview_segment_limit", "3"))
         retention_days = int(_setting(conn, "result_retention_days", "7"))
+        free_b_file_limit = max(1, min(int(_setting(conn, "free_b_file_limit", "1")), 10))
+        payment_required = len(b_files) > free_b_file_limit
         conn.execute(
             """
             INSERT INTO tasks (
@@ -42,7 +44,7 @@ async def create_task(
                 task_no,
                 mode,
                 "uploaded",
-                "free" if mode == "single" else "locked",
+                "locked" if payment_required else "free",
                 keywords,
                 len(b_files),
                 preview_limit,
@@ -111,7 +113,7 @@ def process_task(task_no: str) -> None:
             )
             _save_compare_result(conn, task, a_file, b_file, a_doc, b_doc, result)
 
-        target_status = "completed" if task["mode"] == "single" else "awaiting_payment"
+        target_status = "awaiting_payment" if task["unlock_status"] == "locked" else "completed"
         _update_task(conn, task["id"], status=target_status, progress=100, completed_at=now_iso())
 
 
@@ -177,7 +179,7 @@ def get_summary(task_no: str) -> dict[str, Any]:
                 }
                 for row in rows
             ],
-            "payment_required": task["mode"] == "multi" and task["unlock_status"] != "unlocked",
+            "payment_required": task["unlock_status"] == "locked",
             "expires_at": task["expires_at"],
         }
 
@@ -193,7 +195,7 @@ def get_preview(task_no: str, compare_result_id: int) -> dict[str, Any]:
 def get_detail(task_no: str, compare_result_id: int) -> dict[str, Any]:
     with db_session() as conn:
         task, compare_row = _require_compare_in_task(conn, task_no, compare_result_id)
-        if task["mode"] == "multi" and task["unlock_status"] != "unlocked":
+        if task["unlock_status"] == "locked":
             raise PermissionError("ORDER_NOT_PAID")
         a_file = conn.execute("SELECT * FROM task_files WHERE id = ?", (compare_row["a_file_id"],)).fetchone()
         b_file = conn.execute("SELECT * FROM task_files WHERE id = ?", (compare_row["b_file_id"],)).fetchone()
@@ -244,7 +246,7 @@ def recover(task_no: str | None, order_no: str | None, contact: str | None) -> d
             "task_status": row["status"],
             "unlock_status": row["unlock_status"],
             "order_status": row["order_status"],
-            "can_view_detail": row["mode"] == "single" or row["unlock_status"] == "unlocked",
+            "can_view_detail": row["unlock_status"] != "locked",
             "expires_at": row["expires_at"],
         }
 

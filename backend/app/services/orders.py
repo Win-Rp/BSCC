@@ -42,7 +42,7 @@ def create_order(
         task = conn.execute("SELECT * FROM tasks WHERE task_no = ?", (task_no,)).fetchone()
         if not task:
             raise ValueError("TASK_NOT_FOUND")
-        if task["mode"] != "multi":
+        if task["unlock_status"] != "locked":
             raise ValueError("VALIDATION_ERROR")
         pricing_settings = load_pricing_settings(conn)
         existing_paid = conn.execute(
