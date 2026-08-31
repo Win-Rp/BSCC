@@ -1,10 +1,12 @@
 from pathlib import Path
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
 STORAGE_DIR = BASE_DIR / "storage"
 DB_PATH = DATA_DIR / "bscc.sqlite3"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///" + str(DB_PATH))
 
 DEFAULT_SETTINGS = {
     "price_per_b_file_cents": "1000",

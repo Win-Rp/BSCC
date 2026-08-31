@@ -6,6 +6,7 @@ from typing import Any
 
 from fastapi import BackgroundTasks
 
+from app.config import DATABASE_URL
 from app.database import db_session
 from app.utils.security import hash_password, make_admin_token, verify_admin_token, verify_password
 from app.utils.site_url import join_base_url, normalize_base_url
@@ -301,14 +302,18 @@ def update_settings(payload: dict[str, Any], admin_user_id: int) -> dict[str, An
     allowed = {key: _serialize_setting_value(key, value) for key, value in payload.items() if value is not None}
     with db_session() as conn:
         for key, value in allowed.items():
-            conn.execute(
-                """
-                INSERT INTO settings (key, value, updated_at)
-                VALUES (?, ?, ?)
-                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
-                """,
-                (key, value, now_iso()),
-            )
+            if DATABASE_URL.startswith("mysql"):
+                conn.execute(
+                    "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) "
+                    "ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = VALUES(updated_at)",
+                    (key, value, now_iso()),
+                )
+            else:
+                conn.execute(
+                    "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) "
+                    "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at",
+                    (key, value, now_iso()),
+                )
             conn.execute(
                 """
                 INSERT INTO operation_logs (admin_user_id, action, target_type, target_id, detail_json, created_at)
@@ -642,4 +647,3 @@ def _normalize_datetime_filter(value: str | None, is_end: bool = False) -> str |
         parsed = parsed.replace(hour=0, minute=0, second=0)
 
     return parsed.isoformat(timespec="seconds")
-

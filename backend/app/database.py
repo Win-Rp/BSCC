@@ -1,8 +1,10 @@
+import os
+import re
 import sqlite3
 from contextlib import contextmanager
 from typing import Iterator
 
-from app.config import DATA_DIR, DB_PATH, DEFAULT_SETTINGS
+from app.config import DATA_DIR, DB_PATH, DATABASE_URL, DEFAULT_SETTINGS
 from app.utils.security import hash_password
 from app.utils.time import now_iso
 
@@ -199,11 +201,73 @@ CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at);
 """
 
 
-def connect() -> sqlite3.Connection:
+class MySQLConnection:
+    """Small DB-API compatibility wrapper, keeping existing service SQL unchanged."""
+    def __init__(self, connection):
+        self.connection = connection
+        self.cursor = connection.cursor
+
+    def execute(self, sql, params=()):
+        # KEY is reserved by MySQL but is an existing application column name.
+        sql = re.sub(r"(?i)(\bsettings\s*\(\s*)key\b", r"\1`key`", sql)
+        sql = re.sub(r"(?i)(\b(?:select|where|order\s+by)\s+)key\b", r"\1`key`", sql)
+        sql = re.sub(r"(?i)(\bon\s+conflict\s*\(\s*)key\b", r"\1`key`", sql)
+        sql = sql.replace("?", "%s")
+        cursor = self.connection.cursor()
+        cursor.execute(sql, params)
+        return cursor
+
+    def commit(self): self.connection.commit()
+    def rollback(self): self.connection.rollback()
+    def close(self): self.connection.close()
+
+    def executescript(self, script):
+        for statement in script.split(";"):
+            statement = statement.strip()
+            if statement:
+                try:
+                    self.execute(statement)
+                except Exception as exc:
+                    # MySQL has no CREATE INDEX IF NOT EXISTS. Re-running startup
+                    # should tolerate an index that was created previously.
+                    if getattr(exc, "args", [None])[0] != 1061:
+                        raise
+
+
+def connect():
+    if DATABASE_URL.startswith("mysql"):
+        import pymysql
+        from urllib.parse import urlparse
+        parsed = urlparse(DATABASE_URL)
+        conn = pymysql.connect(host=parsed.hostname or "localhost", port=parsed.port or 3306,
+                               user=parsed.username, password=parsed.password or "",
+                               database=parsed.path.lstrip("/"), charset="utf8mb4",
+                               cursorclass=pymysql.cursors.DictCursor, autocommit=False)
+        return MySQLConnection(conn)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
+
+
+def mysql_schema() -> str:
+    schema = (SCHEMA.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "BIGINT PRIMARY KEY AUTO_INCREMENT")
+              .replace("TEXT", "VARCHAR(255)")
+              .replace("REAL", "DOUBLE")
+              .replace("INTEGER", "BIGINT")
+              .replace("CREATE INDEX IF NOT EXISTS", "CREATE INDEX"))
+    # SQLite TEXT has no length limit. Keep content-bearing fields as LONGTEXT;
+    # indexed identifiers remain VARCHAR(255) for MySQL index compatibility.
+    long_columns = {
+        "keyword_text", "error_message", "parsed_text_path", "parsed_json_path",
+        "preview_json_path", "detail_json_path", "a_text", "b_text",
+        "a_position_json", "b_position_json", "context_before", "context_after",
+        "detail_json", "description", "value",
+    }
+    for column in long_columns:
+        schema = re.sub(rf"(?m)^(\s+{column}) VARCHAR\(255\)", rf"\1 LONGTEXT", schema)
+    schema = re.sub(r"(?m)^(\s*)key VARCHAR\(255\)", r"\1`key` VARCHAR(255)", schema)
+    return schema
 
 
 @contextmanager
@@ -222,29 +286,28 @@ def db_session() -> Iterator[sqlite3.Connection]:
 def init_db() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with db_session() as conn:
-        conn.executescript(SCHEMA)
+        schema = SCHEMA
+        if DATABASE_URL.startswith("mysql"):
+            schema = mysql_schema()
+        conn.executescript(schema)
         _ensure_column(conn, "orders", "pay_channel", "TEXT NOT NULL DEFAULT 'alipay'")
         _ensure_column(conn, "orders", "alipay_trade_no", "TEXT")
         for key, value in DEFAULT_SETTINGS.items():
-            conn.execute(
-                """
-                INSERT INTO settings (key, value, description, updated_at)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT(key) DO NOTHING
-                """,
-                (key, value, None, now_iso()),
-            )
-        conn.execute(
-            """
-            INSERT INTO admin_users (username, password_hash, display_name, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(username) DO NOTHING
-            """,
-            ("admin", hash_password("admin123"), "管理员", now_iso(), now_iso()),
-        )
+            if DATABASE_URL.startswith("mysql"):
+                conn.execute("INSERT IGNORE INTO settings (key, value, description, updated_at) VALUES (?, ?, ?, ?)",
+                             (key, value, None, now_iso()))
+            else:
+                conn.execute("INSERT INTO settings (key, value, description, updated_at) VALUES (?, ?, ?, ?) ON CONFLICT(key) DO NOTHING",
+                             (key, value, None, now_iso()))
+        admin_sql = ("INSERT IGNORE INTO admin_users (username, password_hash, display_name, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
+                     if DATABASE_URL.startswith("mysql") else
+                     "INSERT INTO admin_users (username, password_hash, display_name, created_at, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(username) DO NOTHING")
+        conn.execute(admin_sql, ("admin", hash_password("admin123"), "管理员", now_iso(), now_iso()))
 
 
 def _ensure_column(conn: sqlite3.Connection, table_name: str, column_name: str, column_definition: str) -> None:
+    if DATABASE_URL.startswith("mysql"):
+        return
     columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table_name})").fetchall()}
     if column_name not in columns:
         conn.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_definition}")

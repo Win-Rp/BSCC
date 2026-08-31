@@ -4,10 +4,14 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: bscc-backend
+    networks:
+      - panel
     restart: unless-stopped
     env_file:
       - ./backend/.env.example
     environment:
+      # 现有 MySQL 的连接串，例如 mysql://user:password@host.docker.internal:3306/bscc
+      DATABASE_URL: ${DATABASE_URL:?请在 .env 中配置现有 MySQL 的 DATABASE_URL}
       TZ: Asia/Shanghai
       ADMIN_TOKEN_SECRET: ${ADMIN_TOKEN_SECRET:-bscc-admin-prod-secret}
       ADMIN_TOKEN_EXPIRES_DAYS: ${ADMIN_TOKEN_EXPIRES_DAYS:-7}
@@ -38,9 +42,16 @@ services:
         VITE_POSTHOG_KEY: ${VITE_POSTHOG_KEY:-}
         VITE_POSTHOG_HOST: ${VITE_POSTHOG_HOST:-https://us.i.posthog.com}
     container_name: bscc-frontend
+    networks:
+      - panel
     restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
     ports:
       - "9007:80"
+
+networks:
+  panel:
+    name: 1panel-network
+    external: true

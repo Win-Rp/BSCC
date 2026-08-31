@@ -105,6 +105,8 @@
       <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">陕ICP备2026010691号</a>
       <span class="shell-copyright__divider">|</span>
       <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=61011302002444" target="_blank" rel="noopener noreferrer">公安备案 陕公网安备61011302002444号</a>
+      <span class="shell-copyright__divider">|</span>
+      <a href="https://mic.mxitx.com" target="_blank" rel="noopener noreferrer">让你的手机变身电脑麦克风和摄像头</a>
     </div>
   </div>
 </template>
