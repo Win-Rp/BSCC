@@ -8,7 +8,8 @@ import VuePdfEmbed, {
 import { renderAsync } from "docx-preview";
 import Mark from "mark.js";
 import { useAppI18n } from "@/composables/useAppI18n";
-import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+// vue-pdf-embed 内部使用 pdfjs-dist 的 legacy 构建，worker 必须配套使用 legacy 版本
+import PdfWorker from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";

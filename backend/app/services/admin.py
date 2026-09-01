@@ -107,14 +107,15 @@ def list_orders(
         ],
     )
     with db_session() as conn:
-        total = conn.execute(
+        total_row = conn.execute(
             f"""
-            SELECT COUNT(*)
+            SELECT COUNT(*) AS total
             FROM orders o JOIN tasks t ON t.id = o.task_id
             {where_sql}
             """,
             params,
-        ).fetchone()[0]
+        ).fetchone()
+        total = total_row["total"] if total_row else 0
         rows = conn.execute(
             f"""
             SELECT o.order_no, t.task_no, o.status, o.amount_cents, o.b_file_count, o.contact,
@@ -156,14 +157,15 @@ def list_tasks(
         ],
     )
     with db_session() as conn:
-        total = conn.execute(
+        total_row = conn.execute(
             f"""
-            SELECT COUNT(*)
+            SELECT COUNT(*) AS total
             FROM tasks
             {where_sql}
             """,
             params,
-        ).fetchone()[0]
+        ).fetchone()
+        total = total_row["total"] if total_row else 0
         rows = conn.execute(
             f"""
             SELECT task_no, mode, status, unlock_status, b_file_count, progress, error_message,
@@ -339,15 +341,16 @@ def list_logs(page: int = 1, page_size: int = 10, keyword: str | None = None) ->
         ],
     )
     with db_session() as conn:
-        total = conn.execute(
+        total_row = conn.execute(
             f"""
-            SELECT COUNT(*)
+            SELECT COUNT(*) AS total
             FROM operation_logs l
             LEFT JOIN admin_users u ON u.id = l.admin_user_id
             {where_sql}
             """,
             params,
-        ).fetchone()[0]
+        ).fetchone()
+        total = total_row["total"] if total_row else 0
         rows = conn.execute(
             f"""
             SELECT l.id, l.action, l.target_type, l.target_id, l.detail_json, l.created_at,
