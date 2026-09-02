@@ -2,11 +2,11 @@
   <nav-bar title="查重结果" showBack />
 
   <view class="card" wx:if="{{summaryMeta}}">
-    <view class="task-head-row">
-      <view class="task-id-box" bindtap="copyTaskNo">
-        <text class="task-id-box__text">{{summaryMeta.taskNo}}</text>
-        <text class="task-id-box__copy">复制任务号</text>
-      </view>
+    <view class="task-id-box" bindtap="copyTaskNo">
+      <text class="task-id-box__text">{{summaryMeta.taskNo}}</text>
+      <text class="task-id-box__copy">复制任务号</text>
+    </view>
+    <view class="task-share-row">
       <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
         <view class="share-btn__icon">
           <view class="share-btn__arrow"></view>
