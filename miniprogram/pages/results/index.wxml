@@ -12,7 +12,7 @@
           <view class="share-btn__arrow"></view>
           <view class="share-btn__base"></view>
         </view>
-        <text class="share-btn__text">分享结果</text>
+        <text class="share-btn__text">分享结果给好友</text>
       </button>
     </view>
     <view class="meta-chips">
