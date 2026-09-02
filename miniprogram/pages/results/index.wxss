@@ -232,6 +232,35 @@
   background: #aebac4;
 }
 
+.overview-stats {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 24rpx;
+}
+
+.overview-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+  padding: 18rpx 0;
+  border-radius: 16rpx;
+  background: #f7fafb;
+}
+
+.overview-stat__value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #0b4f4c;
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-stat__label {
+  font-size: 22rpx;
+  color: #98a4ae;
+}
+
 .overview-note {
   margin-top: 20rpx;
   color: #98a4ae;

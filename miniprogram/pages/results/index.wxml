@@ -68,13 +68,27 @@
         <text class="bar-row__value">{{item.value}}</text>
       </view>
     </view>
+    <view class="overview-stats">
+      <view class="overview-stat">
+        <text class="overview-stat__value">{{overviewData.stats.keywordHitCount}}</text>
+        <text class="overview-stat__label">关键字命中</text>
+      </view>
+      <view class="overview-stat">
+        <text class="overview-stat__value">{{overviewData.stats.matchedSentenceCount}}</text>
+        <text class="overview-stat__label">重复句子</text>
+      </view>
+      <view class="overview-stat">
+        <text class="overview-stat__value">{{overviewData.stats.matchedParagraphCount}}</text>
+        <text class="overview-stat__label">重复段落</text>
+      </view>
+    </view>
     <view class="overview-note">结构相似度反映文档结构与属性层面的接近程度，不计入查重结论。</view>
   </view>
 
-  <view class="card">
+  <view class="card" wx:if="{{summary && summary.results && summary.results.length > 1}}">
     <view class="section-title">结果列表</view>
-    <view class="empty" wx:if="{{!loading && (!summary || !summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
-    <view class="result-list" wx:if="{{summary && summary.results && summary.results.length}}">
+    <view class="section-desc">共 {{summary.results.length}} 份对比文件，点击卡片切换查看。</view>
+    <view class="result-list">
       <result-card
         wx:for="{{summary.results}}"
         wx:key="compare_result_id"
@@ -89,10 +103,9 @@
     </view>
   </view>
 
-  <view class="card">
+  <view class="card" wx:if="{{previewLoading || previewList.length}}">
     <view class="section-title">免费预览</view>
     <view class="muted" wx:if="{{previewLoading}}">正在加载预览片段…</view>
-    <view class="empty" wx:if="{{!previewLoading && !previewList.length}}">当前结果暂无可展示的预览片段。</view>
     <view class="preview-list" wx:if="{{previewList.length}}">
       <view class="preview-item" wx:for="{{previewList}}" wx:key="id">
         <view class="preview-item__meta">
@@ -134,5 +147,6 @@
 
   <view class="footer-link" wx:if="{{summary}}" bindtap="gotoRecovery">找回历史任务</view>
 
+  <view class="empty" wx:if="{{!loading && summary && (!summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
   <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
 </view>

@@ -1,4 +1,4 @@
-<view class="result-card {{selected ? 'result-card--selected' : ''}}">
+<view class="result-card {{selected ? 'result-card--selected' : ''}}" bindtap="handlePreview">
   <view wx:if="{{viewModel}}">
     <view class="result-card__header">
       <view class="result-card__name">{{viewModel.bFileName}}</view>
@@ -33,7 +33,6 @@
     </view>
 
     <view class="result-card__actions">
-      <button class="btn-secondary" size="mini" bindtap="handlePreview">免费预览</button>
       <button wx:if="{{!locked || unlocked}}" class="btn-primary" size="mini" bindtap="handleDetail">查看详情</button>
       <button wx:else class="btn-primary" size="mini" bindtap="handleUnlock">去解锁</button>
     </view>

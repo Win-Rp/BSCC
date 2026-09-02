@@ -22,7 +22,7 @@ function getFillClass(value) {
 
 function buildOverview(summary, selectedResult) {
   if (!summary || !selectedResult) {
-    return { totalMetric: null, contentDetails: [], structDetails: [] };
+    return { totalMetric: null, stats: null, contentDetails: [], structDetails: [] };
   }
   const totalRisk = getRiskLevel(selectedResult.total_similarity);
   const totalMetric = {
@@ -41,6 +41,11 @@ function buildOverview(summary, selectedResult) {
   };
   return {
     totalMetric,
+    stats: {
+      keywordHitCount: Number(selectedResult.keyword_hit_count || 0),
+      matchedSentenceCount: Number(selectedResult.matched_sentence_count || 0),
+      matchedParagraphCount: Number(selectedResult.matched_paragraph_count || 0)
+    },
     contentDetails: [
       toDetail("完全重复", selectedResult.exact_similarity),
       toDetail("改写相似", selectedResult.rewrite_similarity),
@@ -101,7 +106,7 @@ Page({
     isUnlocked: false,
     selectedResultId: 0,
     selectedResult: null,
-    overviewData: { totalMetric: null, contentDetails: [], structDetails: [] },
+    overviewData: { totalMetric: null, stats: null, contentDetails: [], structDetails: [] },
     previewLoading: false,
     previewList: []
   },
