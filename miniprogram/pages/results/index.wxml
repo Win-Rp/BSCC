@@ -124,7 +124,7 @@
     </view>
     <view class="result-actions">
       <button class="btn-primary compare-cta" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
-        {{isUnlocked ? '进入对比页查看完整详情' : '进入对比页（预览模式）'}}
+        {{isUnlocked ? '进入对比页查看详情' : '进入对比页（预览模式）'}}
       </button>
       <view class="result-actions-row">
         <button class="btn-secondary" bindtap="handleOpenAFile">打开 A 原文</button>
