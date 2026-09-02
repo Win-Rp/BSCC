@@ -1,29 +1,33 @@
 <view class="page results-page">
+  <nav-bar title="查重结果" showBack />
+
   <view class="card" wx:if="{{summaryMeta}}">
-    <view class="section-title">任务结果</view>
-    <view class="summary-head">
-      <view class="summary-item">
-        <text class="summary-label">任务号</text>
-        <text class="summary-value">{{summaryMeta.taskNo}}</text>
+    <view class="task-head-row">
+      <view class="task-id-box" bindtap="copyTaskNo">
+        <text class="task-id-box__text">{{summaryMeta.taskNo}}</text>
+        <text class="task-id-box__copy">复制任务号</text>
       </view>
-      <view class="summary-item">
-        <text class="summary-label">模式</text>
-        <text class="summary-value">{{summaryMeta.modeText}}</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-label">B 文件数量</text>
-        <text class="summary-value">{{summaryMeta.bFileCount}}</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-label">解锁状态</text>
-        <text class="summary-value">{{summaryMeta.unlockText}}</text>
-      </view>
+      <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
+        <view class="share-btn__icon">
+          <view class="share-btn__arrow"></view>
+          <view class="share-btn__base"></view>
+        </view>
+        <text class="share-btn__text">分享结果</text>
+      </button>
     </view>
-    <view class="summary-lines">
-      <view class="summary-line"><text class="summary-line__label">A 文件</text>{{summaryMeta.aFileName}}</view>
-      <view class="summary-line"><text class="summary-line__label">当前 B 文件</text>{{summaryMeta.selectedBFileName}}</view>
-      <view class="summary-line"><text class="summary-line__label">当前结果</text>{{summaryMeta.currentResultText}}</view>
-      <view class="summary-line"><text class="summary-line__label">结果保留至</text>{{summaryMeta.expiresAt}}</view>
+    <view class="meta-chips">
+      <text class="meta-chip">{{summaryMeta.modeText}}</text>
+      <text class="meta-chip">B 文件 {{summaryMeta.bFileCount}} 份</text>
+      <text class="meta-chip {{isUnlocked ? 'meta-chip--safe' : 'meta-chip--warn'}}">{{summaryMeta.unlockText}}</text>
+      <text class="meta-chip">保留至 {{summaryMeta.expiresAt}}</text>
+    </view>
+    <view class="file-line">
+      <view class="file-badge file-badge--a">A</view>
+      <text class="file-line__name">{{summaryMeta.aFileName}}</text>
+    </view>
+    <view class="file-line">
+      <view class="file-badge file-badge--b">B</view>
+      <text class="file-line__name">{{summaryMeta.selectedBFileName}}</text>
     </view>
   </view>
 
@@ -32,18 +36,32 @@
     summary="{{summary}}"
     unlocked="{{isUnlocked}}"
     orderNo="{{orderNo}}"
+    promo="{{promoConfig}}"
     bind:unlock="gotoOrder"
     bind:view="gotoCompare"
   />
 
-  <view class="card" wx:if="{{overview.length}}">
-    <view class="section-title">总览指标</view>
-    <view class="overview-grid">
-      <view class="overview-item" wx:for="{{overview}}" wx:key="label">
-        <text class="overview-label">{{item.label}}</text>
-        <text class="overview-value">{{item.value}}</text>
+  <view class="card" wx:if="{{overviewData.totalMetric}}">
+    <view class="section-title">相似度指标</view>
+    <view class="metric-hero">
+      <view class="metric-hero__score metric-hero__score--{{overviewData.totalMetric.riskType}}">
+        {{overviewData.totalMetric.valueText}}
+      </view>
+      <view class="metric-hero__side">
+        <text class="tag tag-{{overviewData.totalMetric.riskType}}">{{overviewData.totalMetric.riskText}}</text>
+        <view class="metric-hero__hint">A 与当前 B 的总相似度</view>
       </view>
     </view>
+    <view class="overview-bars">
+      <view class="bar-row" wx:for="{{overviewData.details}}" wx:key="label">
+        <text class="bar-row__label">{{item.label}}</text>
+        <view class="bar-row__track">
+          <view class="bar-row__fill {{item.fillClass}}" style="width: {{item.percent}}%;"></view>
+        </view>
+        <text class="bar-row__value">{{item.value}}</text>
+      </view>
+    </view>
+    <view class="overview-note">格式相似、元数据相似反映文档结构与属性层面的接近程度，不等同于内容重复。</view>
   </view>
 
   <view class="card">
@@ -71,36 +89,42 @@
     <view class="preview-list" wx:if="{{previewList.length}}">
       <view class="preview-item" wx:for="{{previewList}}" wx:key="id">
         <view class="preview-item__meta">
-          <text class="tag">{{item.typeText}}</text>
+          <text class="tag {{item.typeClass}}">{{item.typeText}}</text>
           <text class="preview-item__ratio">{{item.similarityText}}</text>
         </view>
-        <view class="preview-item__block">
-          <text class="preview-item__label">A：</text>
-          <text>{{item.aText}}</text>
+        <view class="preview-item__block preview-item__block--a">
+          <view class="preview-item__label">A</view>
+          <text class="preview-item__text">{{item.aText}}</text>
         </view>
-        <view class="preview-item__block">
-          <text class="preview-item__label">B：</text>
-          <text>{{item.bText}}</text>
+        <view class="preview-item__block preview-item__block--b">
+          <view class="preview-item__label">B</view>
+          <text class="preview-item__text">{{item.bText}}</text>
         </view>
-        <view class="preview-item__pos">{{item.positionText}}</view>
+        <view class="preview-item__pos">
+          <text class="preview-item__pos-chip">A · 第 {{item.aPage}} 页</text>
+          <text class="preview-item__pos-chip">B · 第 {{item.bPage}} 页</text>
+        </view>
       </view>
     </view>
   </view>
 
   <view class="card" wx:if="{{summary}}">
-    <view class="section-title">操作区</view>
+    <view class="section-title">{{isUnlocked ? '查看完整详情' : '预览与原文'}}</view>
     <view class="section-desc">
-      {{isUnlocked ? '当前结果已解锁，可直接进入对比页查看完整详情。' : '当前结果未解锁，可先打开原文或进入对比页查看预览片段。'}}
+      {{isUnlocked ? '结果已解锁，进入对比页可查看全部重复片段与差异定位。' : '结果未解锁，可打开原文或进入对比页查看免费预览片段。'}}
     </view>
     <view class="result-actions">
-      <button class="btn-secondary" bindtap="handleOpenAFile">打开 A 标书</button>
-      <button class="btn-secondary" bindtap="handleOpenBFile" disabled="{{!selectedResultId}}">打开当前 B 标书</button>
-      <button class="btn-primary" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
-        {{isUnlocked ? '进入对比页' : '进入对比页（预览）'}}
+      <button class="btn-primary compare-cta" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
+        {{isUnlocked ? '进入对比页查看完整详情' : '进入对比页（预览模式）'}}
       </button>
+      <view class="result-actions-row">
+        <button class="btn-secondary" bindtap="handleOpenAFile">打开 A 原文</button>
+        <button class="btn-secondary" bindtap="handleOpenBFile" disabled="{{!selectedResultId}}">打开 B 原文</button>
+      </view>
     </view>
-    <button class="btn-secondary recovery-btn" bindtap="gotoRecovery">恢复任务</button>
   </view>
+
+  <view class="footer-link" wx:if="{{summary}}" bindtap="gotoRecovery">找回历史任务</view>
 
   <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
 </view>

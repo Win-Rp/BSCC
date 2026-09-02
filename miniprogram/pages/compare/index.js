@@ -95,6 +95,44 @@ function buildHitSummary(filteredItems, activeMatch, activeFilter) {
   };
 }
 
+function getMetadataTypeText(type) {
+  const map = {
+    same: "相同",
+    similar: "相似",
+    different: "不同",
+    missing: "缺失"
+  };
+  return map[type] || type || "-";
+}
+
+function buildFormatItems(detail) {
+  return (detail.format_results || []).map((item, index) => ({
+    id: `format-${index}`,
+    itemName: item.item_name,
+    aValue: item.a_value,
+    bValue: item.b_value,
+    similarityText: typeof item.similarity === "number" ? formatPercent(item.similarity) : "-",
+    description: item.description || ""
+  }));
+}
+
+function buildMetadataItems(detail) {
+  return (detail.metadata_results || []).map((item, index) => ({
+    id: `metadata-${index}`,
+    fieldName: item.field_name,
+    aValue: item.a_value || "—",
+    bValue: item.b_value || "—",
+    typeText: getMetadataTypeText(item.similarity_type),
+    typeClass: {
+      same: "meta-same",
+      similar: "meta-similar",
+      different: "meta-different",
+      missing: "meta-missing"
+    }[item.similarity_type] || "",
+    isHighlighted: Boolean(item.is_highlighted)
+  }));
+}
+
 Page({
   data: {
     taskNo: "",
@@ -122,7 +160,9 @@ Page({
     activeMatch: null,
     hitSummary: null,
     aBlocks: [],
-    bBlocks: []
+    bBlocks: [],
+    formatItems: [],
+    metadataItems: []
   },
 
   onLoad(options) {
@@ -203,6 +243,8 @@ Page({
           hitSummary: null,
           aBlocks: [],
           bBlocks: [],
+          formatItems: [],
+          metadataItems: [],
           previewList: previewRes.success ? buildPreviewList(previewRes.data) : [],
           errorText: ""
         });
@@ -222,7 +264,9 @@ Page({
       loading: false,
       locked: false,
       detailData,
-      matchItems
+      matchItems,
+      formatItems: buildFormatItems(detailData),
+      metadataItems: buildMetadataItems(detailData)
     });
     this.applyFilter(this.data.activeFilter, 0);
   },

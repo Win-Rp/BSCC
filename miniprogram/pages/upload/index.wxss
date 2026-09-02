@@ -2,6 +2,19 @@
   display: flex;
   flex-direction: column;
   gap: 24rpx;
+  padding-bottom: calc(220rpx + env(safe-area-inset-bottom));
+}
+
+.hero-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.hero-card__logo {
+  width: 88rpx;
+  height: 88rpx;
+  flex-shrink: 0;
 }
 
 .hero-card__title {
@@ -37,9 +50,13 @@
 }
 
 .file-picker,
-.submit-btn,
-.recovery-btn {
+.recovery-btn,
+.docs-btn {
   width: 100%;
+}
+
+.docs-btn {
+  margin-top: 4rpx;
 }
 
 .file-line {
@@ -74,6 +91,81 @@
   font-size: 24rpx;
 }
 
-.submit-error {
+/* 固定底部操作栏（一体化：文件摘要 + 圆角按钮） */
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  padding: 18rpx 24rpx;
+  padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1rpx solid #eceff1;
+  box-shadow: 0 -10rpx 30rpx rgba(15, 23, 42, 0.08);
+  box-sizing: border-box;
+}
+
+.submit-bar__error {
+  margin-bottom: 14rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  background: rgba(214, 69, 69, 0.08);
   font-size: 24rpx;
+  text-align: center;
+}
+
+.submit-bar__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submit-bar__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  margin-right: 20rpx;
+  min-width: 0;
+  flex: 1;
+}
+
+.submit-bar__summary {
+  font-size: 26rpx;
+  color: #5b6770;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.submit-bar__btn {
+  flex-shrink: 0;
+  width: 340rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #1b8a83 0%, #0b4f4c 100%);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 24rpx rgba(11, 79, 76, 0.24);
+}
+
+.submit-bar__btn::after {
+  border: none;
+}
+
+.submit-bar__btn--hover {
+  opacity: 0.9;
+  transform: translateY(2rpx);
+}
+
+.submit-bar__btn-text {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 4rpx;
+  padding-left: 4rpx;
 }

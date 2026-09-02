@@ -1,0 +1,126 @@
+<view class="page docs-page">
+  <nav-bar title="使用说明" showBack />
+  <!-- 顶部介绍 -->
+  <view class="card docs-hero">
+    <image class="docs-hero__logo" src="/assets/images/logo-white.png" mode="widthFix" />
+    <view class="docs-hero__title">{{content.hero.title}}</view>
+    <view class="docs-hero__desc">{{content.hero.description}}</view>
+    <view class="docs-hero__chips">
+      <text class="tag" wx:for="{{content.hero.chips}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 目录锚点 -->
+  <scroll-view scroll-x class="docs-anchor">
+    <view class="docs-anchor__list">
+      <view
+        class="docs-anchor__item {{activeAnchor === item.id ? 'docs-anchor__item--active' : ''}}"
+        wx:for="{{content.anchors}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="handleAnchorTap"
+      >{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 快速上手 -->
+  <view class="card docs-section" id="quick-start">
+    <view class="section-title">快速上手</view>
+    <view class="docs-grid docs-grid--two">
+      <view class="docs-mini-card" wx:for="{{content.quickStart.items}}" wx:key="title">
+        <view class="docs-mini-card__title">{{item.title}}</view>
+        <view class="docs-mini-card__text">{{item.text}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 使用流程 -->
+  <view class="card docs-section" id="workflow">
+    <view class="section-title">使用流程</view>
+    <view class="docs-steps">
+      <view class="docs-step" wx:for="{{content.workflow.steps}}" wx:key="index">
+        <view class="docs-step__index">{{item.index}}</view>
+        <view class="docs-step__body">
+          <view class="docs-step__title">{{item.title}}</view>
+          <view class="docs-step__desc">{{item.description}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果解读 -->
+  <view class="card docs-section" id="results">
+    <view class="section-title">结果解读</view>
+    <view class="docs-grid docs-grid--two">
+      <view class="docs-mini-card" wx:for="{{content.results.items}}" wx:key="title">
+        <view class="docs-mini-card__title">{{item.title}}</view>
+        <view class="docs-mini-card__text">{{item.text}}</view>
+      </view>
+    </view>
+    <view class="docs-tip-strip">
+      <view class="docs-tip" wx:for="{{content.results.tips}}" wx:key="title">
+        <view class="docs-tip__title">{{item.title}}</view>
+        <view class="docs-tip__text">{{item.text}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支付解锁 -->
+  <view class="card docs-section" id="payment">
+    <view class="section-title">支付与解锁</view>
+    <view
+      class="docs-highlight {{item.warn ? 'docs-highlight--warn' : ''}}"
+      wx:for="{{content.payment.highlights}}"
+      wx:key="title"
+    >
+      <view class="docs-highlight__title">{{item.title}}</view>
+      <view class="docs-highlight__text">{{item.text}}</view>
+    </view>
+    <view class="docs-steps">
+      <view class="docs-step" wx:for="{{content.payment.steps}}" wx:key="title">
+        <view class="docs-step__index">{{index + 1}}</view>
+        <view class="docs-step__body">
+          <view class="docs-step__title">{{item.title}}</view>
+          <view class="docs-step__desc">{{item.text}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对比页 -->
+  <view class="card docs-section" id="compare">
+    <view class="section-title">对比页</view>
+    <view class="docs-grid docs-grid--two">
+      <view class="docs-mini-card" wx:for="{{content.compare.items}}" wx:key="title">
+        <view class="docs-mini-card__title">{{item.title}}</view>
+        <view class="docs-mini-card__text">{{item.text}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 任务找回 -->
+  <view class="card docs-section" id="recover">
+    <view class="section-title">任务找回</view>
+    <view class="notice-strip notice-strip--success docs-recover-tip">{{content.recover.description}}</view>
+    <view class="docs-grid docs-grid--three">
+      <view class="docs-mini-card" wx:for="{{content.recover.cards}}" wx:key="title">
+        <view class="docs-mini-card__title">{{item.title}}</view>
+        <view class="docs-mini-card__text">{{item.text}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 常见问题 -->
+  <view class="card docs-section" id="faq">
+    <view class="section-title">常见问题</view>
+    <view class="docs-faq" wx:for="{{content.faq}}" wx:key="q">
+      <view class="docs-faq__head" data-index="{{index}}" bindtap="toggleFaq">
+        <view class="docs-faq__q">{{index + 1}}. {{item.q}}</view>
+        <view class="docs-faq__arrow {{expandedFaq === index ? 'docs-faq__arrow--open' : ''}}">▾</view>
+      </view>
+      <view class="docs-faq__a" wx:if="{{expandedFaq === index}}">{{item.a}}</view>
+    </view>
+  </view>
+
+  <button class="btn-primary docs-back" bindtap="goUpload">返回上传页</button>
+</view>

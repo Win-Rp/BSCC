@@ -1,7 +1,8 @@
 {
-  "description": "BSCC 标书查重微信小程序",
+  "description": "标书查重微信小程序",
   "packOptions": {
-    "ignore": []
+    "ignore": [],
+    "include": []
   },
   "setting": {
     "urlCheck": false,
@@ -14,14 +15,27 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "libVersion": "3.6.1",
-  "appid": "touristappid",
+  "appid": "wx1239b43c91f1cc13",
   "projectname": "bscc-miniprogram",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {},
-  "miniprogramRoot": "./"
+  "miniprogramRoot": "./",
+  "editorSetting": {}
 }

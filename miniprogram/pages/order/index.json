@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "订单与支付"
+  "navigationBarTitleText": "订单与支付",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
 }

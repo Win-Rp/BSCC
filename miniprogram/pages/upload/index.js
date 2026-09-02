@@ -1,6 +1,7 @@
 const api = require("../../services/api");
 const storage = require("../../utils/storage");
 const { joinKeywords } = require("../../utils/format");
+const { ensureNotifyReady } = require("../../utils/notify");
 
 function normalizeFiles(list) {
   return (list || []).map((item) => ({
@@ -10,9 +11,25 @@ function normalizeFiles(list) {
   }));
 }
 
+const SUPPORTED_EXTENSIONS = ["docx", "pdf"];
+
+function splitBySupported(files) {
+  const accepted = [];
+  const rejected = [];
+  for (const file of files) {
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (SUPPORTED_EXTENSIONS.indexOf(ext) >= 0) {
+      accepted.push(file);
+    } else {
+      rejected.push(file);
+    }
+  }
+  return { accepted, rejected };
+}
+
 Page({
   data: {
-    siteTitle: "BSCC 标书查重",
+    siteTitle: "标书查重",
     homeTags: [],
     systemNotice: "",
     aFile: null,
@@ -20,11 +37,12 @@ Page({
     keywords: "",
     loading: false,
     errorText: "",
+    fileSummary: "尚未选择文件",
     submitText: "开始查重",
     rules: [
-      "支持 DOC、DOCX、PDF，扫描版 PDF 暂不支持。",
+      "支持 DOCX、PDF，扫描版 PDF 暂不支持。",
       "B 文件建议控制在 1 至 10 份。",
-      "1 对多任务可先免费预览，再按订单解锁完整详情。"
+      "首份 B 文件免费对比，超出后可在结果页解锁完整详情。"
     ]
   },
 
@@ -32,23 +50,40 @@ Page({
     const app = getApp();
     const siteConfig = app.globalData.siteConfig || {};
     this.setData({
-      siteTitle: siteConfig.site_title || "BSCC 标书查重",
+      siteTitle: siteConfig.site_title || "标书查重",
       homeTags: siteConfig.home_tags || [],
       systemNotice: siteConfig.system_notice || ""
     });
+    this.refreshBarSummary();
+  },
+
+  refreshBarSummary() {
+    const parts = [];
+    if (this.data.aFile) parts.push("A×1");
+    if (this.data.bFiles.length) parts.push(`B×${this.data.bFiles.length}`);
+    const fileSummary = parts.length ? `已选 ${parts.join(" · ")}` : "尚未选择文件";
+    this.setData({ fileSummary });
   },
 
   chooseAFile() {
     wx.chooseMessageFile({
       count: 1,
       type: "file",
-      extension: ["doc", "docx", "pdf"],
+      extension: SUPPORTED_EXTENSIONS,
       success: (res) => {
-        const file = normalizeFiles(res.tempFiles)[0] || null;
+        const files = normalizeFiles(res.tempFiles);
+        const { accepted, rejected } = splitBySupported(files);
+        if (!accepted.length) {
+          this.setData({
+            errorText: "仅支持 DOCX、PDF 格式，请重新选择"
+          });
+          return;
+        }
         this.setData({
-          aFile: file,
+          aFile: accepted[0],
           errorText: ""
         });
+        this.refreshBarSummary();
       }
     });
   },
@@ -66,14 +101,27 @@ Page({
     wx.chooseMessageFile({
       count: remain,
       type: "file",
-      extension: ["doc", "docx", "pdf"],
+      extension: SUPPORTED_EXTENSIONS,
       success: (res) => {
         const picked = normalizeFiles(res.tempFiles);
-        const merged = this.data.bFiles.concat(picked).slice(0, 10);
+        const { accepted, rejected } = splitBySupported(picked);
+        if (!accepted.length) {
+          this.setData({
+            errorText: "仅支持 DOCX、PDF 格式，请重新选择"
+          });
+          return;
+        }
+        if (rejected.length) {
+          wx.showToast({
+            title: `已跳过不支持的文件：${rejected.map((f) => f.name).join("、")}`,
+            icon: "none"
+          });
+        }
         this.setData({
-          bFiles: merged,
+          bFiles: this.data.bFiles.concat(accepted).slice(0, 10),
           errorText: ""
         });
+        this.refreshBarSummary();
       }
     });
   },
@@ -84,6 +132,7 @@ Page({
     this.setData({
       bFiles: nextFiles
     });
+    this.refreshBarSummary();
   },
 
   handleKeywordsInput(event) {
@@ -96,6 +145,22 @@ Page({
     wx.navigateTo({
       url: "/pages/recovery/index"
     });
+  },
+
+  gotoDocs() {
+    wx.navigateTo({
+      url: "/pages/docs/index"
+    });
+  },
+
+  onShareAppMessage() {
+    const siteConfig = getApp().globalData.siteConfig || {};
+    return {
+      title: `${siteConfig.site_title || "标书查重"} · 1对多智能查重`,
+      path: "/pages/upload/index",
+      desc: "上传主标书与多份对比标书，自动完成重复检测与风险研判",
+      imageUrl: "/assets/images/share.png"
+    };
   },
 
   async submitTask() {
@@ -114,10 +179,14 @@ Page({
       submitText: "任务提交中..."
     });
 
+    // 查重是分钟级异步任务：先尝试取得订阅通知授权（弹一次授权弹窗，拒绝不影响提交）
+    const notify = await ensureNotifyReady();
+
     const response = await api.createTask({
       aFile: this.data.aFile,
       bFiles: this.data.bFiles,
-      keywords: joinKeywords(this.data.keywords)
+      keywords: joinKeywords(this.data.keywords),
+      notifyOpenid: notify.openid
     });
 
     if (!response.success) {

@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "查重结果",
   "usingComponents": {
+    "nav-bar": "/components/nav-bar/index",
     "result-card": "/components/result-card/index",
     "unlock-bar": "/components/unlock-bar/index"
   }

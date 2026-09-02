@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "文档对比"
+  "navigationBarTitleText": "文档对比",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
 }

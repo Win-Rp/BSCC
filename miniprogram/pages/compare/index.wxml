@@ -1,4 +1,5 @@
 <view class="page compare-page">
+  <nav-bar title="结果对比" showBack />
   <view class="card">
     <view class="section-title">文档对比</view>
     <view class="muted">任务号：{{taskNo}}</view>
@@ -92,6 +93,41 @@
         <view class="detail-text">{{activeMatch.bText || '当前命中主要定位在 A 文档侧。'}}</view>
       </view>
       <view class="detail-meta">{{activeMatch.positionText}}</view>
+    </view>
+
+    <!-- 格式相似项 -->
+    <view class="card" wx:if="{{formatItems.length}}">
+      <view class="section-title">格式相似项 <text class="section-count">({{formatItems.length}})</text></view>
+      <view class="section-desc">句子数量、段落数量等结构统计值，判断两份文档组织方式是否接近。</view>
+      <view class="format-list">
+        <view class="format-item" wx:for="{{formatItems}}" wx:key="id">
+          <view class="format-item__head">
+            <text class="format-item__name">{{item.itemName}}</text>
+            <text class="format-item__ratio">{{item.similarityText}}</text>
+          </view>
+          <view class="format-item__body">
+            <view class="format-item__row"><text class="format-item__side">A</text>{{item.aValue || '—'}}</view>
+            <view class="format-item__row"><text class="format-item__side">B</text>{{item.bValue || '—'}}</view>
+          </view>
+          <view class="format-item__desc" wx:if="{{item.description}}">{{item.description}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 元数据对比 -->
+    <view class="card" wx:if="{{metadataItems.length}}">
+      <view class="section-title">元数据对比 <text class="section-count">({{metadataItems.length}})</text></view>
+      <view class="section-desc">标题、作者、日期等元数据字段的一致性对比。</view>
+      <view class="metadata-list">
+        <view class="metadata-item" wx:for="{{metadataItems}}" wx:key="id">
+          <view class="metadata-item__head">
+            <text class="metadata-item__name">{{item.fieldName}}</text>
+            <text class="metadata-tag {{item.typeClass}}">{{item.typeText}}</text>
+          </view>
+          <view class="metadata-item__row"><text class="metadata-item__side">A</text>{{item.aValue}}</view>
+          <view class="metadata-item__row"><text class="metadata-item__side">B</text>{{item.bValue}}</view>
+        </view>
+      </view>
     </view>
 
     <view class="doc-grid">

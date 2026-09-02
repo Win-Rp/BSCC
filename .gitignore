@@ -1,3 +1,13 @@
 .DS_Store
 Thumbs.db
 new_detail.json
+
+# 依赖目录（frontend/backend 各自 gitignore 之外的）
+node_modules/
+
+# 本地开发工件（TRAE 会话产物、HTML 预览）
+.trae-html-share-packages/
+.workspace/
+
+# 微信开发者工具个人配置
+miniprogram/project.private.config.json

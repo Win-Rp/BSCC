@@ -8,7 +8,7 @@
     <view class="result-card__score-row">
       <view>
         <view class="result-card__label">总相似度</view>
-        <view class="result-card__score">{{viewModel.totalSimilarity}}</view>
+        <view class="result-card__score result-card__score--{{viewModel.riskType}}">{{viewModel.totalSimilarity}}</view>
       </view>
       <view class="result-card__meta">
         <text>完全重复 {{viewModel.exactSimilarity}}</text>

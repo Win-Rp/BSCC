@@ -1,4 +1,5 @@
 <view class="page order-page">
+  <nav-bar title="订单支付" showBack />
   <view class="card">
     <view class="section-title">订单创建与支付轮询</view>
     <view class="section-desc">当前后端能力为下单 + 状态轮询，不调用小程序原生支付。创建订单后请按系统提示完成支付，本页会自动刷新解锁状态。</view>
@@ -21,6 +22,35 @@
 
     <view class="danger" wx:if="{{errorText}}">{{errorText}}</view>
     <button class="btn-primary create-btn" loading="{{loading}}" bindtap="createOrder">创建订单</button>
+  </view>
+
+  <!-- 促销定价卡片 -->
+  <view class="card pricing-card" wx:if="{{orderCard && orderCard.pricingCard}}">
+    <view class="pricing-card__head">
+      <view class="section-title">价格明细</view>
+      <text class="badge badge--promo" wx:if="{{orderCard.pricingCard.promoActive}}">{{orderCard.pricingCard.badge}}</text>
+      <text class="badge badge--plain" wx:else>标准定价</text>
+    </view>
+
+    <view class="pricing-card__amount">
+      <view class="pricing-card__price-row" wx:if="{{orderCard.pricingCard.promoActive}}">
+        <text class="price-strike">{{orderCard.pricingCard.originalAmountText}}</text>
+        <text class="pricing-card__price price-highlight">{{orderCard.pricingCard.effectiveAmountText}}</text>
+        <text class="pricing-card__save-tag">省 {{orderCard.pricingCard.savingsText}}</text>
+      </view>
+      <view class="pricing-card__price-row" wx:else>
+        <text class="pricing-card__price">{{orderCard.pricingCard.effectiveAmountText}}</text>
+      </view>
+      <view class="pricing-card__meta">共 {{orderCard.bFileCount}} 份 B 文件 · 每份 {{orderCard.pricingCard.unitEffectiveText}}</view>
+    </view>
+
+    <view class="pricing-card__countdown" wx:if="{{orderCard.pricingCard.showCountdown && !orderCard.pricingCard.countdownEnded}}">
+      <text class="pricing-card__countdown-label">距活动结束</text>
+      <text class="pricing-card__countdown-value">{{countdownText}}</text>
+      <text class="pricing-card__countdown-loss">{{orderCard.pricingCard.lossAversion}}</text>
+    </view>
+    <view class="pricing-card__note" wx:if="{{orderCard.pricingCard.note}}">{{orderCard.pricingCard.note}}</view>
+    <view class="pricing-card__note pricing-card__note--loss" wx:if="{{orderCard.pricingCard.promoActive && orderCard.pricingCard.lossAversion && !orderCard.pricingCard.showCountdown}}">{{orderCard.pricingCard.lossAversion}}</view>
   </view>
 
   <view class="card">
@@ -51,7 +81,6 @@
     <view class="order-line">B 文件数：{{orderCard.bFileCount}}</view>
     <view class="order-line">应付金额：{{orderCard.amountText}}</view>
     <view class="order-line">订单状态：{{orderCard.statusText}}</view>
-    <view class="order-line" wx:if="{{orderCard.pricing}}">后端定价说明：每份按服务端定价实时计算</view>
     <image wx:if="{{orderCard.qrCodeURL}}" class="qr-image" mode="aspectFit" src="{{orderCard.qrCodeURL}}" />
     <view class="qr-empty" wx:else>当前订单暂未返回支付二维码，请根据系统提示完成支付，或稍后手动刷新状态。</view>
     <view class="muted">{{orderCard.paymentMessage}}</view>

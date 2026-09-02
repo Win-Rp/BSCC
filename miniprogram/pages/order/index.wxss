@@ -101,3 +101,100 @@
 .status-actions button {
   flex: 1;
 }
+
+/* 促销定价卡片 */
+.pricing-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fdf9f2 100%);
+  border: 1rpx solid #f5e2c0;
+}
+
+.pricing-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.pricing-card__head .section-title {
+  margin-bottom: 0;
+}
+
+.pricing-card__amount {
+  padding: 22rpx;
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1rpx solid #f0e2c8;
+}
+
+.pricing-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.pricing-card__price {
+  font-size: 52rpx;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pricing-card__save-tag {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  background: rgba(18, 110, 106, 0.1);
+  color: #126e6a;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.pricing-card__meta {
+  margin-top: 12rpx;
+  color: #68727d;
+  font-size: 23rpx;
+}
+
+.pricing-card__countdown {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  flex-wrap: wrap;
+  margin-top: 18rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  background: #fff1e6;
+  border: 1rpx solid #ffd7b8;
+}
+
+.pricing-card__countdown-label {
+  color: #9a5b13;
+  font-size: 24rpx;
+}
+
+.pricing-card__countdown-value {
+  font-family: monospace;
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #f04b2a;
+  letter-spacing: 2rpx;
+}
+
+.pricing-card__countdown-loss {
+  flex: 1;
+  text-align: right;
+  color: #b06a1f;
+  font-size: 22rpx;
+}
+
+.pricing-card__note {
+  margin-top: 14rpx;
+  color: #9a5b13;
+  font-size: 23rpx;
+  line-height: 1.6;
+}
+
+.pricing-card__note--loss {
+  color: #d97706;
+  font-weight: 600;
+}

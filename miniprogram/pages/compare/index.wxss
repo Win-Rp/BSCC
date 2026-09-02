@@ -182,3 +182,111 @@
   background: rgba(18, 110, 106, 0.16);
   border: 1rpx solid rgba(18, 110, 106, 0.28);
 }
+
+/* 格式相似项 */
+.section-count {
+  font-size: 24rpx;
+  color: #98a2ad;
+  font-weight: 400;
+}
+
+.format-list,
+.metadata-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.format-item,
+.metadata-item {
+  padding: 20rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid #e2e8ec;
+  background: #fbfcfd;
+}
+
+.format-item__head,
+.metadata-item__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.format-item__name,
+.metadata-item__name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.format-item__ratio {
+  color: #126e6a;
+  font-weight: 600;
+}
+
+.format-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.format-item__row,
+.metadata-item__row {
+  display: flex;
+  gap: 12rpx;
+  align-items: baseline;
+  font-size: 25rpx;
+  color: #44515c;
+  word-break: break-all;
+}
+
+.format-item__side,
+.metadata-item__side {
+  flex: none;
+  width: 40rpx;
+  text-align: center;
+  padding: 2rpx 0;
+  border-radius: 8rpx;
+  background: #eef5f5;
+  color: #126e6a;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.format-item__desc {
+  margin-top: 10rpx;
+  color: #98a2ad;
+  font-size: 22rpx;
+  line-height: 1.6;
+}
+
+/* 元数据对比 */
+.metadata-tag {
+  flex: none;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.meta-same {
+  background: rgba(18, 110, 106, 0.1);
+  color: #126e6a;
+}
+
+.meta-similar {
+  background: rgba(217, 119, 6, 0.12);
+  color: #d97706;
+}
+
+.meta-different {
+  background: rgba(214, 69, 69, 0.1);
+  color: #d64545;
+}
+
+.meta-missing {
+  background: #eef1f4;
+  color: #68727d;
+}

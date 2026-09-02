@@ -4,20 +4,94 @@
   gap: 24rpx;
 }
 
-.task-meta,
-.status-text,
-.progress-percent,
-.loading-text {
-  margin-top: 14rpx;
+/* 状态 hero 区 */
+.status-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24rpx 0 8rpx;
 }
 
-.status-text {
-  font-size: 34rpx;
-  font-weight: 600;
+.status-hero__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: rgba(18, 110, 106, 0.08);
 }
 
+.status-hero__dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #126e6a;
+  animation: hero-dot-jump 1.2s ease-in-out infinite;
+}
+
+.status-hero__dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.status-hero__dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes hero-dot-jump {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-12rpx);
+    opacity: 1;
+  }
+}
+
+.status-hero__icon--mark {
+  background: rgba(214, 69, 69, 0.1);
+}
+
+.status-hero__mark {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #d64545;
+  line-height: 1;
+}
+
+.status-hero--done .status-hero__icon--mark {
+  background: rgba(18, 110, 106, 0.1);
+}
+
+.status-hero__mark--check {
+  color: #126e6a;
+  font-size: 52rpx;
+}
+
+.status-hero__text {
+  margin-top: 22rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2b33;
+}
+
+.status-hero--error .status-hero__text {
+  color: #d64545;
+}
+
+.status-hero__hint {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #68727d;
+  line-height: 1.6;
+}
+
+/* 进度条 */
 .progress-track {
-  margin-top: 24rpx;
+  margin-top: 28rpx;
   height: 18rpx;
   border-radius: 999rpx;
   background: #e7eef0;
@@ -26,42 +100,172 @@
 
 .progress-track__bar {
   height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #126e6a 0%, #1aa39d 50%, #126e6a 100%);
+  background-size: 200% 100%;
+  animation: progress-shimmer 1.8s linear infinite;
+  transition: width 0.6s ease;
+}
+
+.progress-track__bar--done {
+  animation: none;
   background: linear-gradient(135deg, #126e6a, #0b4f4c);
 }
 
+.progress-track__bar--error {
+  animation: none;
+  background: linear-gradient(135deg, #d64545, #b93838);
+}
+
+@keyframes progress-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .progress-percent {
+  margin-top: 14rpx;
+  text-align: center;
+  color: #126e6a;
+  font-size: 28rpx;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-percent--error {
+  color: #d64545;
+}
+
+/* 竖向时间线 */
+.timeline {
+  margin-top: 36rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+}
+
+.timeline-item__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 36rpx;
+  flex-shrink: 0;
+}
+
+.timeline-item__node {
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  border: 3rpx solid #cdd6dc;
+  background: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.timeline-item__line {
+  width: 3rpx;
+  flex: 1;
+  min-height: 34rpx;
+  background: #e2e8ec;
+  margin: 4rpx 0;
+}
+
+.timeline-item__label {
+  font-size: 26rpx;
+  color: #98a4ae;
+  line-height: 30rpx;
+  padding-bottom: 30rpx;
+}
+
+.timeline-item:last-child .timeline-item__label {
+  padding-bottom: 0;
+}
+
+.timeline-item--done .timeline-item__node {
+  border-color: #126e6a;
+  background: #126e6a;
+}
+
+.timeline-item__check {
+  color: #ffffff;
+  font-size: 18rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.timeline-item__check--error {
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.timeline-item--done .timeline-item__line {
+  background: #126e6a;
+}
+
+.timeline-item--done .timeline-item__label {
   color: #126e6a;
   font-weight: 600;
 }
 
-.step-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-  margin-top: 24rpx;
+.timeline-item--current .timeline-item__node {
+  border-color: #126e6a;
+  animation: node-pulse 1.6s ease-out infinite;
 }
 
-.step-item {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  color: #98a4ae;
-}
-
-.step-item--active {
+.timeline-item--current .timeline-item__label {
   color: #126e6a;
+  font-weight: 700;
 }
 
-.step-dot {
-  width: 18rpx;
-  height: 18rpx;
-  border-radius: 50%;
-  background: currentColor;
+@keyframes node-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(18, 110, 106, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 12rpx rgba(18, 110, 106, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(18, 110, 106, 0);
+  }
+}
+
+.timeline-item--error .timeline-item__node {
+  border-color: #d64545;
+  background: #d64545;
+}
+
+.timeline-item--error .timeline-item__label {
+  color: #d64545;
+  font-weight: 700;
 }
 
 .error-box {
-  margin-top: 20rpx;
+  margin-top: 8rpx;
   padding: 20rpx;
   border-radius: 18rpx;
   background: rgba(214, 69, 69, 0.08);
+}
+
+.recover-link {
+  width: 100%;
+  margin-top: 20rpx;
+}
+
+/* 未完成时的主按钮（弱化 + 动态进度文案） */
+.progress-cta--waiting {
+  background: linear-gradient(135deg, #9dc4c1 0%, #86b3b0 100%);
+  box-shadow: none;
+  color: #ffffff;
 }

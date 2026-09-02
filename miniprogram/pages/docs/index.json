@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "使用说明",
+  "navigationBarBackgroundColor": "#F5F7F8",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#F5F7F8",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
+}

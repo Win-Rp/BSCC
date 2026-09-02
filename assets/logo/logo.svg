@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 180" width="100%" role="img" aria-label="标书查重 BSCC Logo">
+  <defs>
+    <linearGradient id="bscc-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b8a83"/>
+      <stop offset="100%" stop-color="#0b4f4c"/>
+    </linearGradient>
+    <linearGradient id="bscc-teal-soft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#cde7e3"/>
+      <stop offset="100%" stop-color="#a9d5cf"/>
+    </linearGradient>
+    <filter id="bscc-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0b4f4c" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- ===== 图形标（双文档比对 + 校验对勾） ===== -->
+  <g transform="translate(0,8)">
+    <!-- 背景文档（浅色，轻微旋转营造层次） -->
+    <g transform="rotate(-6 100 98)">
+      <rect x="56" y="46" width="88" height="104" rx="14" fill="url(#bscc-teal-soft)"/>
+    </g>
+
+    <!-- 主文档（品牌渐变） -->
+    <g filter="url(#bscc-shadow)">
+      <rect x="70" y="34" width="88" height="104" rx="14" fill="url(#bscc-teal)"/>
+    </g>
+
+    <!-- 折角 -->
+    <path d="M128 34 L158 34 L158 64 Z" fill="#3ea89e"/>
+    <line x1="128" y1="34" x2="158" y2="64" stroke="#ffffff" stroke-opacity="0.4" stroke-width="2"/>
+
+    <!-- 校验对勾 -->
+    <path d="M86 92 L103 109 L136 72" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ===== 文字标 ===== -->
+  <text x="200" y="104" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="60" font-weight="800" fill="#0b4f4c" letter-spacing="4">标书查重</text>
+  <text x="202" y="138" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="600" fill="#7c8b92" letter-spacing="5">BID DOCUMENT CHECK</text>
+  <rect x="202" y="152" width="44" height="6" rx="3" fill="#f04b2a"/>
+</svg>

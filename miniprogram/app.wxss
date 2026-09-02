@@ -108,3 +108,138 @@ page {
 .actions button {
   flex: 1;
 }
+
+/* ===== 通用布局工具 ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.badge--promo {
+  background: linear-gradient(135deg, #ff8a00, #f04b2a);
+  color: #ffffff;
+}
+
+.badge--plain {
+  background: #eef5f5;
+  color: #126e6a;
+}
+
+.price-strike {
+  color: #98a2ad;
+  font-size: 24rpx;
+  text-decoration: line-through;
+}
+
+.price-highlight {
+  color: #f04b2a;
+  font-weight: 700;
+}
+
+.price-save {
+  color: #126e6a;
+  font-weight: 600;
+}
+
+/* ===== 进度条（相似度可视化） ===== */
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 12rpx;
+}
+
+.bar-row__label {
+  flex: 0 0 140rpx;
+  color: #68727d;
+  font-size: 24rpx;
+}
+
+.bar-row__track {
+  flex: 1;
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: #eef2f4;
+  overflow: hidden;
+}
+
+.bar-row__fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #23b3a4, #126e6a);
+  transition: width 0.4s ease;
+}
+
+.bar-row__fill--danger {
+  background: linear-gradient(90deg, #ffb199, #f04b2a);
+}
+
+.bar-row__fill--warning {
+  background: linear-gradient(90deg, #ffd08a, #f59e0b);
+}
+
+.bar-row__value {
+  flex: 0 0 96rpx;
+  text-align: right;
+  font-weight: 600;
+  font-size: 24rpx;
+}
+
+/* ===== 通知条 ===== */
+.notice-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 18rpx;
+  background: #fff7ed;
+  border: 1rpx solid #fde3c1;
+  color: #9a5b13;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.notice-strip--info {
+  background: #eff8fb;
+  border-color: #cde7f1;
+  color: #155e75;
+}
+
+.notice-strip--success {
+  background: #edf8f7;
+  border-color: #c4e7e3;
+  color: #126e6a;
+}
+
+/* ===== 复制任务号胶囊 ===== */
+.task-id-box {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  background: #f2f7f7;
+  border: 1rpx dashed #9ecbc6;
+}
+
+.task-id-box__text {
+  flex: 1;
+  font-family: monospace;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #0b4f4c;
+  word-break: break-all;
+}
+
+.task-id-box__copy {
+  flex: none;
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: #126e6a;
+  color: #ffffff;
+  font-size: 24rpx;
+}

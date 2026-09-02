@@ -1,16 +1,33 @@
 const { request, upload, buildURL } = require("../utils/request");
 
 function createTask(payload) {
-  return upload("/api/tasks", {
-    filePath: payload.aFile.path,
-    name: "a_file",
-    files: (payload.bFiles || []).map((item) => ({
-      name: "b_files",
-      uri: item.path
-    })),
-    formData: {
-      keywords: payload.keywords || ""
+  const files = [
+    {
+      name: "a_file",
+      filePath: payload.aFile.path,
+      filename: payload.aFile.name
     }
+  ].concat(
+    (payload.bFiles || []).map((item) => ({
+      name: "b_files",
+      filePath: item.path,
+      filename: item.name
+    }))
+  );
+
+  return upload("/api/tasks", {
+    files,
+    formData: {
+      keywords: payload.keywords || "",
+      notify_openid: payload.notifyOpenid || ""
+    }
+  });
+}
+
+function wxLogin(code) {
+  return request("/api/wx/login", {
+    method: "POST",
+    data: { code }
   });
 }
 
@@ -66,6 +83,7 @@ function getBFileURL(taskNo, resultId) {
 
 module.exports = {
   createTask,
+  wxLogin,
   getTaskStatus,
   getTaskSummary,
   getPreview,

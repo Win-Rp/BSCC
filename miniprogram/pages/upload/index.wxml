@@ -1,6 +1,10 @@
 <view class="page upload-page">
+  <nav-bar title="标书查重" />
   <view class="card hero-card">
-    <view class="hero-card__title">{{siteTitle}}</view>
+    <view class="hero-card__brand">
+      <image class="hero-card__logo" src="/assets/images/logo-icon.png" mode="aspectFit" />
+      <view class="hero-card__title">{{siteTitle}}</view>
+    </view>
     <view class="hero-card__desc">适用于投标文本快速查重、风险预览与结果恢复。</view>
     <view class="hero-card__tags">
       <text class="tag hero-card__tag" wx:for="{{homeTags}}" wx:key="*this">{{item}}</text>
@@ -48,8 +52,20 @@
     <view class="rule-list">
       <view class="rule-item" wx:for="{{rules}}" wx:key="*this">{{index + 1}}. {{item}}</view>
     </view>
-    <view class="danger submit-error" wx:if="{{errorText}}">{{errorText}}</view>
-    <button class="btn-primary submit-btn" loading="{{loading}}" bindtap="submitTask">{{submitText}}</button>
     <button class="btn-secondary recovery-btn" bindtap="gotoRecovery">恢复历史任务</button>
+    <button class="btn-secondary docs-btn" bindtap="gotoDocs">使用说明 · 常见问题</button>
+  </view>
+
+  <!-- 固定底部操作栏 -->
+  <view class="submit-bar">
+    <view class="danger submit-bar__error" wx:if="{{errorText}}">{{errorText}}</view>
+    <view class="submit-bar__row">
+      <view class="submit-bar__info">
+        <view class="submit-bar__summary">{{fileSummary}}</view>
+      </view>
+      <button class="submit-bar__btn" hover-class="submit-bar__btn--hover" loading="{{loading}}" bindtap="submitTask">
+        <text class="submit-bar__btn-text">{{submitText}}</text>
+      </button>
+    </view>
   </view>
 </view>

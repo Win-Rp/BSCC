@@ -1,35 +1,117 @@
-.unlock-bar {
+.unlock-card {
+  border-radius: 24rpx;
+  padding: 28rpx;
+  background: linear-gradient(180deg, #fffdf8 0%, #fff5e8 100%);
+  border: 1rpx solid #f5dfbd;
+  box-shadow: 0 8rpx 24rpx rgba(154, 91, 19, 0.08);
+}
+
+.unlock-card__head {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  background: linear-gradient(135deg, rgba(18, 110, 106, 0.1), rgba(11, 79, 76, 0.16));
-  border: 1rpx solid rgba(18, 110, 106, 0.16);
-  border-radius: 24rpx;
-  padding: 24rpx;
+  gap: 14rpx;
 }
 
-.unlock-bar__content {
-  flex: 1;
+.unlock-card__title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #7a4a10;
 }
 
-.unlock-bar__title {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #0b4f4c;
+.unlock-card__badge {
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  background: #f04b2a;
+  color: #ffffff;
+  font-size: 21rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
 }
 
-.unlock-bar__desc {
-  margin-top: 8rpx;
-  color: #35535f;
+.unlock-card__desc {
+  margin-top: 12rpx;
+  color: #6b5a3c;
   font-size: 24rpx;
+  line-height: 1.6;
 }
 
-.unlock-bar__meta {
-  margin-top: 10rpx;
-  color: #68727d;
+.unlock-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+}
+
+.unlock-card__price-value {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #f04b2a;
+  line-height: 1.1;
+}
+
+.unlock-card__price-strike {
+  color: #b08968;
+  font-size: 24rpx;
+  text-decoration: line-through;
+}
+
+.unlock-card__price-save {
+  color: #126e6a;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.unlock-card__unit {
+  margin-top: 8rpx;
+  color: #9a5b13;
+  font-size: 23rpx;
+}
+
+.unlock-card__countdown {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 18rpx;
+  padding: 14rpx 18rpx;
+  border-radius: 14rpx;
+  background: #fff1e6;
+  border: 1rpx solid #ffd7b8;
+}
+
+.unlock-card__countdown-label {
+  color: #9a5b13;
+  font-size: 23rpx;
+}
+
+.unlock-card__countdown-value {
+  font-family: monospace;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #f04b2a;
+  letter-spacing: 2rpx;
+}
+
+.unlock-card__note {
+  margin-top: 14rpx;
+  color: #9a5b13;
+  font-size: 23rpx;
+  line-height: 1.6;
+}
+
+.unlock-card__note--loss {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.unlock-card__button {
+  width: 100%;
+  margin-top: 24rpx;
+}
+
+.unlock-card__meta {
+  margin-top: 14rpx;
+  color: #b08968;
   font-size: 22rpx;
-}
-
-.unlock-bar__button {
-  min-width: 180rpx;
+  text-align: center;
 }

@@ -5,10 +5,12 @@
     "pages/results/index",
     "pages/compare/index",
     "pages/recovery/index",
-    "pages/order/index"
+    "pages/order/index",
+    "pages/docs/index"
   ],
   "window": {
-    "navigationBarTitleText": "BSCC 标书查重",
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "标书查重",
     "navigationBarBackgroundColor": "#F5F7F8",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F5F7F8",

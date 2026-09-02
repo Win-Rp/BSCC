@@ -7,9 +7,11 @@ function formatPercent(value) {
   return `${(number * 100).toFixed(2)}%`;
 }
 
+// 后端与数据库统一以「分」存储价格，前端展示统一换算为「元」
+const centsToYuan = (amountCents) => Number(((Number(amountCents) || 0) / 100).toFixed(2));
+
 function formatMoney(cents) {
-  const amount = Number(cents || 0) / 100;
-  return `¥${amount.toFixed(2)}`;
+  return `¥${centsToYuan(cents).toFixed(2)}`;
 }
 
 function formatDateTime(input) {
@@ -21,6 +23,19 @@ function formatDateTime(input) {
     return input;
   }
   return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
+}
+
+function formatCountdown(remainingMs) {
+  const totalSeconds = Math.max(Math.floor(remainingMs / 1000), 0);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(seconds)}`;
+}
+
+function buildServerOffsetMs(serverNow) {
+  const serverTimestamp = Date.parse(serverNow || "");
+  return Number.isNaN(serverTimestamp) ? 0 : serverTimestamp - Date.now();
 }
 
 function splitKeywords(value) {
@@ -89,7 +104,10 @@ function ellipsis(text, maxLength) {
 module.exports = {
   formatPercent,
   formatMoney,
+  centsToYuan,
   formatDateTime,
+  formatCountdown,
+  buildServerOffsetMs,
   splitKeywords,
   joinKeywords,
   getStatusText,

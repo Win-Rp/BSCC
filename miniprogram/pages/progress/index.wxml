@@ -1,27 +1,75 @@
 <view class="page progress-page">
-  <view class="card">
-    <view class="section-title">任务进度</view>
-    <view class="task-meta">任务号：{{taskNo || '未获取到任务号'}}</view>
-    <view class="status-text">{{statusText}}</view>
+  <nav-bar title="查重进度" showBack />
 
-    <view class="progress-track">
-      <view class="progress-track__bar" style="width: {{progress}}%;"></view>
+  <!-- 无任务号兜底 -->
+  <view class="card" wx:if="{{!taskNo}}">
+    <view class="section-title">未找到任务</view>
+    <view class="muted">当前会话中没有可查询的任务号，请重新发起查重或通过历史任务恢复。</view>
+    <view class="actions">
+      <button class="btn-primary" bindtap="gotoUpload">返回上传页</button>
     </view>
-    <view class="progress-percent">{{progress}}%</view>
+  </view>
 
-    <view class="step-list">
-      <view class="step-item {{item.active ? 'step-item--active' : ''}}" wx:for="{{steps}}" wx:key="key">
-        <view class="step-dot"></view>
-        <text class="step-label">{{item.label}}</text>
+  <block wx:else>
+    <view class="card">
+      <!-- 状态 hero 区 -->
+      <view class="status-hero {{isFailed ? 'status-hero--error' : ''}} {{isFinished ? 'status-hero--done' : ''}}">
+        <view class="status-hero__icon" wx:if="{{!isFailed && !isFinished}}">
+          <view class="status-hero__dot"></view>
+          <view class="status-hero__dot"></view>
+          <view class="status-hero__dot"></view>
+        </view>
+        <view class="status-hero__icon status-hero__icon--mark" wx:if="{{isFailed}}">
+          <text class="status-hero__mark">!</text>
+        </view>
+        <view class="status-hero__icon status-hero__icon--mark" wx:if="{{isFinished}}">
+          <text class="status-hero__mark status-hero__mark--check">✓</text>
+        </view>
+        <view class="status-hero__text">{{statusText}}</view>
+        <view class="status-hero__hint">{{statusHint}}</view>
       </view>
+
+      <!-- 进度条 -->
+      <view class="progress-track {{isFailed ? 'progress-track--error' : ''}}">
+        <view class="progress-track__bar {{isFailed ? 'progress-track__bar--error' : ''}} {{isFinished ? 'progress-track__bar--done' : ''}}" style="width: {{progress}}%;"></view>
+      </view>
+      <view class="progress-percent {{isFailed ? 'progress-percent--error' : ''}}">
+        {{isFailed ? '处理失败' : progress + '%'}}
+      </view>
+
+      <!-- 竖向时间线 -->
+      <view class="timeline">
+        <view class="timeline-item timeline-item--{{item.state}}" wx:for="{{steps}}" wx:key="key" wx:for-index="idx">
+          <view class="timeline-item__rail">
+            <view class="timeline-item__node">
+              <text class="timeline-item__check" wx:if="{{item.state === 'done'}}">✓</text>
+              <text class="timeline-item__check timeline-item__check--error" wx:if="{{item.state === 'error'}}">!</text>
+            </view>
+            <view class="timeline-item__line" wx:if="{{idx < steps.length - 1}}"></view>
+          </view>
+          <text class="timeline-item__label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="danger error-box" wx:if="{{errorMessage && !isFailed}}">{{errorMessage}}</view>
     </view>
 
-    <view class="danger error-box" wx:if="{{errorMessage}}">{{errorMessage}}</view>
-    <view class="muted loading-text" wx:if="{{loading}}">正在同步任务状态，请稍候…</view>
-  </view>
+    <!-- 任务号找回提示 -->
+    <view class="card">
+      <view class="section-title">保存任务号，随时找回</view>
+      <view class="notice-strip notice-strip--info">查重耗时较长时可离开页面，结果保留 7 天，凭任务号随时找回。</view>
+      <view class="task-id-box" bindtap="copyTaskNo">
+        <text class="task-id-box__text">{{taskNo}}</text>
+        <text class="task-id-box__copy">复制任务号</text>
+      </view>
+      <button class="btn-secondary recover-link" bindtap="gotoRecovery">前往恢复历史任务</button>
+    </view>
 
-  <view class="actions">
-    <button class="btn-secondary" bindtap="gotoUpload">返回上传页</button>
-    <button class="btn-primary" bindtap="gotoResults">查看结果页</button>
-  </view>
+    <view class="actions">
+      <button class="btn-secondary" bindtap="gotoUpload">{{isFailed ? '返回重新上传' : '返回上传页'}}</button>
+      <button class="{{isFinished || isFailed ? 'btn-primary' : 'btn-primary progress-cta--waiting'}}" bindtap="gotoResults">
+        {{isFailed ? '查看任务详情' : isFinished ? '查看结果页' : '查重中 ' + progress + '%'}}
+      </button>
+    </view>
+  </block>
 </view>

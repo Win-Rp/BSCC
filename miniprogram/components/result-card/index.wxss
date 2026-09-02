@@ -39,7 +39,16 @@
 .result-card__score {
   font-size: 40rpx;
   font-weight: 700;
-  color: #1f2933;
+  color: #126e6a;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-card__score--warning {
+  color: #d97706;
+}
+
+.result-card__score--danger {
+  color: #d64545;
 }
 
 .result-card__meta {

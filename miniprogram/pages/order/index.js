@@ -1,7 +1,48 @@
 const api = require("../../services/api");
 const storage = require("../../utils/storage");
 const { startPolling, isOrderTerminal } = require("../../services/task");
-const { formatMoney, formatDateTime } = require("../../utils/format");
+const {
+  formatMoney,
+  formatDateTime,
+  formatCountdown,
+  buildServerOffsetMs
+} = require("../../utils/format");
+
+function buildPricingCard(pricing) {
+  if (!pricing) {
+    return null;
+  }
+
+  const count = Number(pricing.b_file_count || 1);
+  const originalAmount = Number(pricing.original_amount_cents || pricing.original_unit_price_cents * count || 0);
+  const effectiveAmount = Number(pricing.effective_amount_cents || pricing.effective_unit_price_cents * count || 0);
+  const savings = Number(pricing.savings_cents !== undefined ? pricing.savings_cents : Math.max(originalAmount - effectiveAmount, 0));
+  const discountPercent = Number(pricing.discount_percent !== undefined ? pricing.discount_percent : 0);
+  const promoActive = Boolean(pricing.promo_active);
+  const showCountdown = Boolean(pricing.show_countdown);
+  const serverNow = pricing.server_now || "";
+  const promoEndsAt = pricing.promo_ends_at || "";
+  const remainingMs = showCountdown && promoEndsAt ? Math.max(Date.parse(promoEndsAt) - (Date.now() + buildServerOffsetMs(serverNow)), 0) : 0;
+
+  return {
+    promoActive,
+    showCountdown,
+    promoEnabled: Boolean(pricing.promo_enabled),
+    badge: pricing.promo_badge || "限时特惠",
+    note: pricing.promo_note || "",
+    lossAversion: pricing.promo_loss_aversion_text || "",
+    unitOriginalText: formatMoney(originalAmount / count),
+    unitEffectiveText: formatMoney(effectiveAmount / count),
+    originalAmountText: formatMoney(originalAmount),
+    effectiveAmountText: formatMoney(effectiveAmount),
+    savingsText: formatMoney(savings),
+    discountPercent,
+    countdownText: formatCountdown(remainingMs),
+    countdownEnded: remainingMs <= 0,
+    promoEndsAt,
+    serverNow
+  };
+}
 
 function buildChannels(siteConfig) {
   const config = siteConfig || {};
@@ -62,7 +103,8 @@ function buildOrderCard(data, fallbackChannel) {
     status: data.status || "",
     statusText: getOrderStatusText(data.status),
     payChannelText: getPayChannelText(data.pay_channel || fallbackChannel),
-    pricing: data.pricing || null
+    pricing: data.pricing || null,
+    pricingCard: buildPricingCard(data.pricing)
   };
 }
 
@@ -97,7 +139,8 @@ Page({
     errorText: "",
     orderCard: null,
     statusCard: null,
-    supportInfo: null
+    supportInfo: null,
+    countdownText: ""
   },
 
   onLoad(options) {
@@ -126,10 +169,12 @@ Page({
 
   onHide() {
     this.stopOrderPolling();
+    this.stopCountdown();
   },
 
   onUnload() {
     this.stopOrderPolling();
+    this.stopCountdown();
   },
 
   handleInput(event) {
@@ -188,6 +233,7 @@ Page({
       orderCard: buildOrderCard(data, this.data.payChannel),
       statusCard: buildStatusCard(data, data.order_no)
     });
+    this.startCountdown();
 
     this.queryOrderStatus({ silent: true });
     this.startOrderPolling();
@@ -243,6 +289,7 @@ Page({
       this.setData({
         orderCard: buildOrderCard(data, this.data.payChannel)
       });
+      this.startCountdown();
     }
 
     if (finalOptions.manual) {
@@ -331,6 +378,7 @@ Page({
             this.setData({
               orderCard: buildOrderCard(data, this.data.payChannel)
             });
+            this.startCountdown();
           }
 
           if (data.status === "paid" || data.unlock_status === "unlocked") {
@@ -353,6 +401,37 @@ Page({
     }
     this.poller = null;
     this.setData({ polling: false });
+  },
+
+  startCountdown() {
+    const pricingCard = this.data.orderCard && this.data.orderCard.pricingCard;
+    if (!pricingCard || !pricingCard.showCountdown || !pricingCard.promoEndsAt) {
+      this.setData({ countdownText: "" });
+      return;
+    }
+
+    this.stopCountdown();
+    this.countdownEndTs = Date.parse(pricingCard.promoEndsAt) - 0;
+    this.countdownOffset = buildServerOffsetMs(pricingCard.serverNow);
+    this.tickCountdown();
+    this.countdownTimer = setInterval(() => this.tickCountdown(), 1000);
+  },
+
+  tickCountdown() {
+    const remainingMs = Math.max(this.countdownEndTs - (Date.now() + this.countdownOffset), 0);
+    this.setData({
+      countdownText: formatCountdown(remainingMs)
+    });
+    if (remainingMs <= 0) {
+      this.stopCountdown();
+    }
+  },
+
+  stopCountdown() {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
   },
 
   gotoResults() {

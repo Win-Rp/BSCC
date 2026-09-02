@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "任务进度"
+  "navigationBarTitleText": "任务进度",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/index"
+  }
 }
