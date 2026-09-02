@@ -615,7 +615,36 @@
                         {{ translateText("默认地址：") }}{{ defaultWechatNotifyUrl || translateText('请先填写上方“网站域名”以自动生成默认回调地址') }}
                       </div>
                     </el-form-item>
-                  
+
+                    <el-divider content-position="left">{{ translateText("查重完成通知（小程序订阅消息）") }}</el-divider>
+                    <el-form-item :label="translateText('启用完成通知')">
+                      <el-switch v-model="settingsForm.notify_enabled" />
+                      <span class="form-inline-tip">{{ translateText("开启后用户提交查重前请求订阅授权，任务完成后推送微信服务通知") }}</span>
+                    </el-form-item>
+                    <el-form-item :label="translateText('订阅消息模板 ID')">
+                      <el-input
+                        v-model="settingsForm.notify_template_id"
+                        :placeholder="translateText('小程序后台 - 功能 - 订阅消息 - 我的模板中的模板 ID')"
+                      />
+                      <div class="form-tip">{{ translateText("关键词需包含：服务编号、服务结果") }}</div>
+                    </el-form-item>
+                    <el-form-item :label="translateText('小程序 AppID')">
+                      <el-input
+                        v-model="settingsForm.wechat_mini_app_id"
+                        :placeholder="translateText('留空则使用上方微信支付的 AppID')"
+                      />
+                      <div class="form-tip">{{ translateText("订阅消息推送必须使用小程序自身的 AppID，与服务号/支付 AppID 不同") }}</div>
+                    </el-form-item>
+                    <el-form-item :label="translateText('小程序 AppSecret')">
+                      <el-input
+                        v-model="settingsForm.wechat_app_secret"
+                        type="password"
+                        show-password
+                        :placeholder="translateText('请输入小程序 AppSecret（设置与开发 - 开发管理 中获取）')"
+                      />
+                      <div class="form-tip">{{ translateText("用于 wx.login 换取 openid 和获取接口调用凭据") }}</div>
+                    </el-form-item>
+
                     <el-form-item>
                       <el-button type="primary" @click="saveSettings" :loading="savingSettings">{{ translateText("保存配置") }}</el-button>
                     </el-form-item>
@@ -758,7 +787,11 @@ const createDefaultSettingsForm = () => ({
   wechat_app_id: '',
   wechat_mch_id: '',
   wechat_api_v2_key: '',
-  wechat_notify_url: ''
+  wechat_notify_url: '',
+  notify_enabled: true,
+  notify_template_id: '',
+  wechat_mini_app_id: '',
+  wechat_app_secret: ''
 });
 
 const settingsForm = reactive(createDefaultSettingsForm());

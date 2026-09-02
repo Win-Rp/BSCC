@@ -9,6 +9,7 @@ from app.database import db_session
 from app.services.parser import load_parsed_json, parse_document, parse_keywords, write_parsed_files
 from app.services.similarity import compare_documents, write_result_files
 from app.services.storage import save_upload, task_storage_dir
+from app.services.wechat_notify import notify_task_finished
 from app.utils.time import days_from_now_iso, now, now_iso
 
 
@@ -22,6 +23,7 @@ async def create_task(
     b_files: list[UploadFile],
     keywords: str | None,
     background_tasks: BackgroundTasks | None = None,
+    notify_openid: str | None = None,
 ) -> dict[str, Any]:
     if not b_files or len(b_files) > 10:
         raise ValueError("VALIDATION_ERROR:B 文件数量必须为 1 至 10 份")
@@ -36,9 +38,10 @@ async def create_task(
             """
             INSERT INTO tasks (
               task_no, mode, status, unlock_status, keyword_text, b_file_count, preview_limit,
-              storage_dir, progress, created_at, updated_at, expires_at
+              storage_dir, progress, created_at, updated_at, expires_at,
+              notify_openid, notify_authorized_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 task_no,
@@ -53,6 +56,8 @@ async def create_task(
                 now_iso(),
                 now_iso(),
                 days_from_now_iso(retention_days),
+                notify_openid or None,
+                now_iso() if notify_openid else None,
             ),
         )
         task_id = conn.execute("SELECT id FROM tasks WHERE task_no = ?", (task_no,)).fetchone()["id"]
@@ -115,6 +120,17 @@ def process_task(task_no: str) -> None:
 
         target_status = "awaiting_payment" if task["unlock_status"] == "locked" else "completed"
         _update_task(conn, task["id"], status=target_status, progress=100, completed_at=now_iso())
+        notify_result = "查重完成" if target_status == "completed" else "完成待解锁"
+
+    try:
+        if notify_task_finished(task_no, notify_result):
+            with db_session() as conn:
+                conn.execute(
+                    "UPDATE tasks SET notify_sent_at = ?, updated_at = ? WHERE task_no = ?",
+                    (now_iso(), now_iso(), task_no),
+                )
+    except Exception:
+        pass
 
 
 def get_status(task_no: str) -> dict[str, Any]:

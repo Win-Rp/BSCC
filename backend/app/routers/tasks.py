@@ -3,8 +3,9 @@ from fastapi.responses import FileResponse
 from app.database import db_session
 from app.services.storage import task_storage_dir
 
-from app.schemas import RecoverRequest
+from app.schemas import RecoverRequest, WxLoginRequest
 from app.services import tasks as task_service
+from app.services import wechat_notify
 from app.utils.api import fail, ok
 
 
@@ -17,12 +18,25 @@ async def create_task(
     a_file: UploadFile = File(...),
     b_files: list[UploadFile] = File(...),
     keywords: str | None = Form(None),
+    notify_openid: str | None = Form(None),
 ):
     try:
-        return ok(await task_service.create_task(a_file, b_files, keywords, background_tasks))
+        return ok(await task_service.create_task(a_file, b_files, keywords, background_tasks, notify_openid))
     except ValueError as exc:
         code, message = _split_error(str(exc))
         raise fail(code, message)
+
+
+@router.post("/wx/login")
+def wx_login(payload: WxLoginRequest):
+    config = wechat_notify.get_notify_config()
+    if not config["app_id"] or not config["app_secret"]:
+        return ok({"openid": "", "notify_enabled": False})
+    try:
+        session = wechat_notify.code2session(config["app_id"], config["app_secret"], payload.code)
+    except ValueError as exc:
+        raise fail("WX_LOGIN_FAILED", str(exc), 400)
+    return ok({"openid": session["openid"], "notify_enabled": config["enabled"]})
 
 
 @router.get("/tasks/{task_no}/status")

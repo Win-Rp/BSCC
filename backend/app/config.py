@@ -40,4 +40,8 @@ DEFAULT_SETTINGS = {
     "wechat_mch_id": "",
     "wechat_api_v2_key": "",
     "wechat_notify_url": "",
+    "notify_enabled": "true",
+    "notify_template_id": "0EWR6EdE5PZwTy3op4CIwxMH950vcLvBdPT5tBD1jkA",
+    "wechat_app_secret": "",
+    "wechat_mini_app_id": "",
 }

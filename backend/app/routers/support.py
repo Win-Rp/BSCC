@@ -44,7 +44,8 @@ def public_site_config(locale: str | None = None):
                 'promo_note',
                 'promo_badge',
                 'promo_countdown_enabled',
-                'promo_loss_aversion_text'
+                'promo_loss_aversion_text',
+                'notify_template_id'
             )
             """
         ).fetchall()
@@ -56,6 +57,7 @@ def public_site_config(locale: str | None = None):
             "system_notice": settings.get("system_notice", ""),
             "alipay_enabled": str(settings.get("alipay_enabled", "false")).lower() == "true",
             "wechat_enabled": str(settings.get("wechat_enabled", "false")).lower() == "true",
+            "notify_template_id": settings.get("notify_template_id", ""),
             "promo": build_public_pricing_payload(settings, locale=locale),
         }
     )

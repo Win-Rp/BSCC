@@ -572,6 +572,10 @@ def _format_settings(raw: dict[str, str]) -> dict[str, Any]:
         "wechat_mch_id": raw.get("wechat_mch_id", ""),
         "wechat_api_v2_key": raw.get("wechat_api_v2_key", ""),
         "wechat_notify_url": raw.get("wechat_notify_url", ""),
+        "notify_enabled": raw.get("notify_enabled", "true").lower() == "true",
+        "notify_template_id": raw.get("notify_template_id", ""),
+        "wechat_app_secret": raw.get("wechat_app_secret", ""),
+        "wechat_mini_app_id": raw.get("wechat_mini_app_id", ""),
     }
 
 

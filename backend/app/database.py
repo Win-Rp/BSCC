@@ -292,6 +292,9 @@ def init_db() -> None:
         conn.executescript(schema)
         _ensure_column(conn, "orders", "pay_channel", "TEXT NOT NULL DEFAULT 'alipay'")
         _ensure_column(conn, "orders", "alipay_trade_no", "TEXT")
+        _ensure_column(conn, "tasks", "notify_openid", "TEXT")
+        _ensure_column(conn, "tasks", "notify_authorized_at", "TEXT")
+        _ensure_column(conn, "tasks", "notify_sent_at", "TEXT")
         for key, value in DEFAULT_SETTINGS.items():
             if DATABASE_URL.startswith("mysql"):
                 conn.execute("INSERT IGNORE INTO settings (key, value, description, updated_at) VALUES (?, ?, ?, ?)",
