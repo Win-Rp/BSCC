@@ -238,4 +238,39 @@ async function patchPage(page) {
   await writeFile(filePath, html, "utf8");
 }
 
+function escapeXml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+// sitemap.xml 由 pages 列表生成，新增 SEO 页只需在 pages 中登记，
+// lastmod 自动取构建当日（Asia/Shanghai），无需再手工维护
+async function buildSitemap() {
+  const lastmod = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Shanghai"
+  });
+  const urls = pages
+    .map((page) => {
+      const loc = SITE_URL + (page.routePath === "/" ? "/" : page.routePath);
+      return [
+        "  <url>",
+        `    <loc>${escapeXml(loc)}</loc>`,
+        `    <lastmod>${lastmod}</lastmod>`,
+        "  </url>"
+      ].join("\n");
+    })
+    .join("\n");
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    urls,
+    "</urlset>",
+    ""
+  ].join("\n");
+  await writeFile(path.join(DIST_DIR, "sitemap.xml"), xml, "utf8");
+}
+
 await Promise.all(pages.map(patchPage));
+await buildSitemap();
