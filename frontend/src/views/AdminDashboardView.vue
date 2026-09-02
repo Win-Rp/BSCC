@@ -440,8 +440,8 @@
                 <div v-loading="loadingSettings" class="settings-container">
                   <el-form :model="settingsForm" label-width="140px" class="settings-form">
                     <el-divider content-position="left">{{ translateText("支付与价格") }}</el-divider>
-                    <el-form-item :label="translateText('原价(分)')">
-                      <el-input-number v-model="settingsForm.price_per_b_file_cents" :min="1" :step="100" />
+                    <el-form-item :label="translateText('原价(元)')">
+                      <el-input-number v-model="settingsForm.price_per_b_file_yuan" :min="0.01" :step="1" :precision="2" />
                       <span class="form-inline-tip">{{ translateText("超过免费 B 文件上限的任务，实际下单金额 = 原价 x B 标书数量") }}</span>
                     </el-form-item>
                     <el-form-item :label="translateText('免费 B 文件上限')">
@@ -452,8 +452,8 @@
                       <el-switch v-model="settingsForm.promo_enabled" />
                       <span class="form-inline-tip">{{ translateText("开启后结果页和支付弹窗会显示活动价与倒计时") }}</span>
                     </el-form-item>
-                    <el-form-item :label="translateText('优惠价(分)')">
-                      <el-input-number v-model="settingsForm.promo_price_per_b_file_cents" :min="1" :step="100" />
+                    <el-form-item :label="translateText('优惠价(元)')">
+                      <el-input-number v-model="settingsForm.promo_price_per_b_file_yuan" :min="0.01" :step="1" :precision="2" />
                       <span class="form-inline-tip">{{ translateText("活动期间的每份 B 标书优惠价，必须低于原价") }}</span>
                     </el-form-item>
                     <el-form-item :label="translateText('活动截止时间')">
@@ -728,10 +728,10 @@ const actionLoading = reactive({
 
 // 系统配置表单
 const createDefaultSettingsForm = () => ({
-  price_per_b_file_cents: 1000,
+  price_per_b_file_yuan: 10,
   free_b_file_limit: 1,
   promo_enabled: false,
-  promo_price_per_b_file_cents: 100,
+  promo_price_per_b_file_yuan: 1,
   promo_ends_at: '',
   promo_note: translateText('限时活动，仅限当前批次查重任务'),
   promo_badge: translateText('限时特惠'),
@@ -837,6 +837,10 @@ const viewTaskResult = (taskNo: string) => {
 };
 
 const formatAmount = (amountCents: number) => `¥${(Number(amountCents || 0) / 100).toFixed(2)}`;
+
+// 后台界面以「元」编辑价格，后端与数据库统一以「分」存储，读写时做单位换算
+const centsToYuan = (amountCents: number) => Number(((Number(amountCents) || 0) / 100).toFixed(2));
+const yuanToCents = (amountYuan: number) => Math.round((Number(amountYuan) || 0) * 100);
 const getTaskStatusLabel = (status: string) => {
   if (status === 'completed') return translateText('已完成');
   if (status === 'failed') return translateText('失败');
@@ -930,6 +934,9 @@ const fetchSettings = async () => {
     const token = localStorage.getItem('admin_token') || '';
     const res = await getSystemSettings(token);
     Object.assign(settingsForm, createDefaultSettingsForm(), res || {});
+    // 后端以「分」返回价格，后台界面以「元」展示与编辑
+    settingsForm.price_per_b_file_yuan = centsToYuan(res?.price_per_b_file_cents ?? 1000);
+    settingsForm.promo_price_per_b_file_yuan = centsToYuan(res?.promo_price_per_b_file_cents ?? 100);
   } catch (error) {
     handleAdminRequestError(error, translateText('获取系统配置失败'));
   } finally {
@@ -945,12 +952,15 @@ const saveSettings = async () => {
   const trimmedPromoNote = settingsForm.promo_note.trim();
   const trimmedPromoBadge = settingsForm.promo_badge.trim();
   const trimmedPromoLossAversionText = settingsForm.promo_loss_aversion_text.trim();
+  // 界面以「元」录入，提交前换算为后端统一使用的「分」
+  const priceCents = yuanToCents(settingsForm.price_per_b_file_yuan);
+  const promoPriceCents = yuanToCents(settingsForm.promo_price_per_b_file_yuan);
   if (settingsForm.alipay_enabled && !trimmedGateway) {
     ElMessage.warning(translateText('请填写支付宝网关'));
     return;
   }
 
-  if (settingsForm.promo_enabled && settingsForm.promo_price_per_b_file_cents >= settingsForm.price_per_b_file_cents) {
+  if (settingsForm.promo_enabled && promoPriceCents >= priceCents) {
     ElMessage.warning(translateText('优惠价必须低于原价'));
     return;
   }
@@ -985,7 +995,7 @@ const saveSettings = async () => {
       site_base_url: trimmedSiteBaseUrl,
       site_title: trimmedSiteTitle,
       promo_enabled: settingsForm.promo_enabled,
-      promo_price_per_b_file_cents: settingsForm.promo_price_per_b_file_cents,
+      promo_price_per_b_file_cents: promoPriceCents,
       promo_ends_at: trimmedPromoEndsAt,
       promo_note: trimmedPromoNote,
       promo_badge: trimmedPromoBadge,
@@ -998,8 +1008,16 @@ const saveSettings = async () => {
       wechat_api_v2_key: trimmedWechatApiKey,
       wechat_notify_url: trimmedWechatNotifyUrl
     };
+    // 界面字段（元）仅用于编辑，不提交给后端
+    const {
+      price_per_b_file_yuan: _priceYuan,
+      promo_price_per_b_file_yuan: _promoPriceYuan,
+      ...settingsPayload
+    } = settingsForm;
     await updateSystemSettings(token, {
-      ...settingsForm,
+      ...settingsPayload,
+      price_per_b_file_cents: priceCents,
+      promo_price_per_b_file_cents: promoPriceCents,
       site_base_url: trimmedSiteBaseUrl,
       site_title: trimmedSiteTitle,
       promo_ends_at: trimmedPromoEndsAt,
@@ -1018,7 +1036,7 @@ const saveSettings = async () => {
       settingsForm.site_base_url !== submittedSnapshot.site_base_url ||
       settingsForm.site_title.trim() !== submittedSnapshot.site_title ||
       settingsForm.promo_enabled !== submittedSnapshot.promo_enabled ||
-      settingsForm.promo_price_per_b_file_cents !== submittedSnapshot.promo_price_per_b_file_cents ||
+      yuanToCents(settingsForm.promo_price_per_b_file_yuan) !== submittedSnapshot.promo_price_per_b_file_cents ||
       settingsForm.promo_ends_at !== submittedSnapshot.promo_ends_at ||
       settingsForm.promo_note.trim() !== submittedSnapshot.promo_note ||
       settingsForm.promo_badge.trim() !== submittedSnapshot.promo_badge ||
