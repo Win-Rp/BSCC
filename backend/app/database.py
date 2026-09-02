@@ -38,6 +38,9 @@ CREATE TABLE IF NOT EXISTS tasks (
   updated_at TEXT NOT NULL,
   completed_at TEXT,
   expires_at TEXT NOT NULL,
+  notify_openid TEXT,
+  notify_authorized_at TEXT,
+  notify_sent_at TEXT,
   deleted_at TEXT
 );
 
@@ -310,6 +313,19 @@ def init_db() -> None:
 
 def _ensure_column(conn: sqlite3.Connection, table_name: str, column_name: str, column_definition: str) -> None:
     if DATABASE_URL.startswith("mysql"):
+        # MySQL 无 PRAGMA，经 information_schema 判断后再 ALTER；TEXT 不支持 DEFAULT，统一换成 VARCHAR(255)
+        from urllib.parse import urlparse
+
+        db_name = urlparse(DATABASE_URL).path.lstrip("/")
+        row = conn.execute(
+            "SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS "
+            "WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+            (db_name, table_name, column_name),
+        ).fetchone()
+        if row and row["cnt"]:
+            return
+        mysql_definition = column_definition.replace("TEXT", "VARCHAR(255)")
+        conn.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {mysql_definition}")
         return
     columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table_name})").fetchall()}
     if column_name not in columns:

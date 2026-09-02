@@ -46,7 +46,20 @@ Page({
     ]
   },
 
+  onLoad() {
+    // 配置异步返回可能晚于首次 onShow，就绪后再补一次渲染，避免公告延迟出现
+    const app = getApp();
+    if (app.configReady) {
+      app.configReady.then(() => this.applySiteConfig());
+    }
+  },
+
   onShow() {
+    this.applySiteConfig();
+    this.refreshBarSummary();
+  },
+
+  applySiteConfig() {
     const app = getApp();
     const siteConfig = app.globalData.siteConfig || {};
     this.setData({
@@ -54,7 +67,6 @@ Page({
       homeTags: siteConfig.home_tags || [],
       systemNotice: siteConfig.system_notice || ""
     });
-    this.refreshBarSummary();
   },
 
   refreshBarSummary() {
