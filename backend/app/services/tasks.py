@@ -6,7 +6,14 @@ from typing import Any
 from fastapi import BackgroundTasks, UploadFile
 
 from app.database import db_session
-from app.services.parser import load_parsed_json, parse_document, parse_keywords, write_parsed_files
+from app.services.parser import (
+    ERROR_MESSAGES,
+    assert_readable_pdf,
+    load_parsed_json,
+    parse_document,
+    parse_keywords,
+    write_parsed_files,
+)
 from app.services.similarity import compare_documents, write_result_files
 from app.services.storage import save_upload, task_storage_dir
 from app.services.wechat_notify import notify_task_finished
@@ -66,6 +73,7 @@ async def create_task(
 
     try:
         await _save_task_files(task_no, task_id, a_file, b_files)
+        _preflight_uploads(task_no, task_id)
         if background_tasks:
             background_tasks.add_task(process_task_safely, task_no)
         else:
@@ -87,23 +95,38 @@ def process_task_safely(task_no: str) -> None:
 
 
 def process_task(task_no: str) -> None:
+    # 阶段 1：标记解析中，取出文件清单（短事务，尽快释放写锁）
     with db_session() as conn:
         task = _task_by_no(conn, task_no)
         if not task:
             raise ValueError("TASK_NOT_FOUND")
         _update_task(conn, task["id"], status="parsing", progress=20)
-        files = conn.execute("SELECT * FROM task_files WHERE task_id = ? ORDER BY role, id", (task["id"],)).fetchall()
-        for file_row in files:
-            _parse_file(conn, file_row, task_no)
-        a_file = conn.execute("SELECT * FROM task_files WHERE task_id = ? AND role = 'A'", (task["id"],)).fetchone()
-        b_files = conn.execute(
-            "SELECT * FROM task_files WHERE task_id = ? AND role = 'B' AND parse_status = 'success'",
-            (task["id"],),
-        ).fetchall()
-        if not a_file or a_file["parse_status"] != "success":
-            raise ValueError("PARSE_FAILED:主标书 A 解析失败")
+        file_rows = conn.execute("SELECT * FROM task_files WHERE task_id = ? ORDER BY role, id", (task["id"],)).fetchall()
+
+    # 阶段 2：解析每个文件（各自独立事务提交，文件级失败原因不会被任务失败回滚吞掉）
+    parsed_by_id: dict[int, Any] = {}
+    failures: list[dict[str, str]] = []
+    for file_row in file_rows:
+        updated, error = _parse_file(file_row, task_no)
+        if updated is not None:
+            parsed_by_id[file_row["id"]] = updated
+        elif error:
+            failures.append({"role": file_row["role"], "name": file_row["original_name"], "message": error})
+
+    # 阶段 3：校验解析结果 -> 查重比较 -> 收尾（单事务）
+    with db_session() as conn:
+        task = _task_by_no(conn, task_no)
+        if not task:
+            raise ValueError("TASK_NOT_FOUND")
+        a_row = next((row for row in file_rows if row["role"] == "A"), None)
+        a_file = parsed_by_id.get(a_row["id"]) if a_row else None
+        if a_file is None:
+            a_failure = next((f for f in failures if f["role"] == "A"), None)
+            raise ValueError(_parse_failure_error("主标书", a_failure))
+        b_files = [parsed_by_id[row["id"]] for row in file_rows if row["role"] == "B" and row["id"] in parsed_by_id]
         if not b_files:
-            raise ValueError("PARSE_FAILED:没有可用的 B 文件")
+            b_failure = next((f for f in failures if f["role"] == "B"), None)
+            raise ValueError(_parse_failure_error("对比文件", b_failure))
 
         _update_task(conn, task["id"], status="checking", progress=60)
         keywords = parse_keywords(task["keyword_text"])
@@ -147,7 +170,7 @@ def get_status(task_no: str) -> dict[str, Any]:
             "unlock_status": task["unlock_status"],
             "progress": task["progress"],
             "message": _status_message(task["status"]),
-            "error_message": task["error_message"],
+            "error_message": _human_message(task["error_message"]),
         }
 
 
@@ -303,37 +326,97 @@ def _insert_file(conn, task_id: int, role: str, upload: UploadFile, path: Path, 
     )
 
 
-def _parse_file(conn, file_row, task_no: str) -> None:
+def _parse_file(file_row, task_no: str) -> tuple[Any | None, str | None]:
+    """解析单个文件并落库（独立事务，成功/失败各自提交）。
+
+    成功返回 (更新后的文件行, None)；失败返回 (None, 用户可读错误)。
+    文件级结果单独提交，任务后续失败回滚也不会丢失具体失败原因。
+    """
+    file_id = file_row["id"]
     try:
         parsed = parse_document(Path(file_row["file_path"]), file_row["file_ext"])
         parsed_dir = task_storage_dir(task_no) / "parsed"
-        stem = f"file-{file_row['id']}"
+        stem = f"file-{file_id}"
         text_path = parsed_dir / f"{stem}.txt"
         json_path = parsed_dir / f"{stem}.json"
         write_parsed_files(parsed, text_path, json_path)
-        conn.execute(
-            """
-            UPDATE task_files
-            SET parse_status = 'success', parsed_text_path = ?, parsed_json_path = ?, page_count = ?,
-                word_count = ?, sentence_count = ?, paragraph_count = ?, updated_at = ?
-            WHERE id = ?
-            """,
-            (
-                str(text_path),
-                str(json_path),
-                parsed.page_count,
-                parsed.word_count,
-                parsed.sentence_count,
-                parsed.paragraph_count,
-                now_iso(),
-                file_row["id"],
-            ),
-        )
-    except ValueError as exc:
-        conn.execute(
-            "UPDATE task_files SET parse_status = 'failed', error_message = ?, updated_at = ? WHERE id = ?",
-            (str(exc), now_iso(), file_row["id"]),
-        )
+        with db_session() as conn:
+            conn.execute(
+                """
+                UPDATE task_files
+                SET parse_status = 'success', parsed_text_path = ?, parsed_json_path = ?, page_count = ?,
+                    word_count = ?, sentence_count = ?, paragraph_count = ?, error_message = NULL, updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    str(text_path),
+                    str(json_path),
+                    parsed.page_count,
+                    parsed.word_count,
+                    parsed.sentence_count,
+                    parsed.paragraph_count,
+                    now_iso(),
+                    file_id,
+                ),
+            )
+            return conn.execute("SELECT * FROM task_files WHERE id = ?", (file_id,)).fetchone(), None
+    except Exception as exc:
+        message = _file_parse_error(exc)
+        with db_session() as conn:
+            conn.execute(
+                "UPDATE task_files SET parse_status = 'failed', error_message = ?, updated_at = ? WHERE id = ?",
+                (message, now_iso(), file_id),
+            )
+        return None, message
+
+
+def _file_parse_error(exc: Exception) -> str:
+    """把解析异常转换为统一 "CODE:说明" 格式的用户可读错误。"""
+    raw = str(exc)
+    code = raw.split(":", 1)[0]
+    if code in ERROR_MESSAGES:
+        return raw if ":" in raw else f"{code}:{ERROR_MESSAGES[code]}"
+    return f"PARSE_FILE_FAILED:{ERROR_MESSAGES['PARSE_FILE_FAILED']}（{type(exc).__name__}）"
+
+
+def _human_message(raw: str | None) -> str | None:
+    """把 "CODE:用户可读说明" 剥离为纯中文；纯错误码也映射为中文；其余原样返回。"""
+    if not raw:
+        return None
+    code, _, rest = raw.partition(":")
+    if rest:
+        return rest if code in ERROR_MESSAGES else raw
+    return ERROR_MESSAGES.get(code, raw)
+
+
+def _preflight_uploads(task_no: str, task_id: int) -> None:
+    """上传后立即探测 PDF 文字层：扫描件/图片型/损坏文件在后台任务前给出明确提示。"""
+    with db_session() as conn:
+        files = conn.execute(
+            "SELECT id, role, original_name, file_path, file_ext FROM task_files WHERE task_id = ? ORDER BY role, id",
+            (task_id,),
+        ).fetchall()
+    for file_row in files:
+        if (file_row["file_ext"] or "").lower() != ".pdf":
+            continue
+        try:
+            assert_readable_pdf(Path(file_row["file_path"]))
+        except ValueError as exc:
+            with db_session() as conn:
+                conn.execute(
+                    "UPDATE task_files SET parse_status = 'failed', error_message = ?, updated_at = ? WHERE id = ?",
+                    (str(exc), now_iso(), file_row["id"]),
+                )
+            label = "主标书" if file_row["role"] == "A" else "对比文件"
+            reason = _human_message(str(exc)) or "不支持该 PDF 文件"
+            raise ValueError(f"PARSE_FAILED:{label}（{file_row['original_name']}）无法用于查重：{reason}") from exc
+
+
+def _parse_failure_error(label: str, failure: dict[str, str] | None) -> str:
+    if not failure:
+        return f"PARSE_FAILED:{label}文件缺失或无法解析，请重新上传后重试"
+    reason = _human_message(failure["message"]) or "文件解析失败"
+    return f"PARSE_FAILED:{label}（{failure['name']}）解析失败：{reason}"
 
 
 def _save_compare_result(conn, task, a_file, b_file, a_doc, b_doc, result: dict[str, Any]) -> None:
@@ -486,7 +569,13 @@ def _mark_task_failed(task_no: str, message: str) -> None:
     with db_session() as conn:
         task = _task_by_no(conn, task_no)
         if task:
-            _update_task(conn, task["id"], status="failed", progress=100, error_message=message)
+            _update_task(
+                conn,
+                task["id"],
+                status="failed",
+                progress=100,
+                error_message=_human_message(message) or message,
+            )
 
 
 def _status_message(status: str) -> str:

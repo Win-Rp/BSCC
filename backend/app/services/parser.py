@@ -10,6 +10,19 @@ from pypdf import PdfReader
 
 SENTENCE_SPLIT_RE = re.compile(r"[^。！？!?；;]+[。！？!?；;]*")
 
+SCAN_PDF_MESSAGE = "该 PDF 为扫描件或图片型文件（无文字层），V1 版本暂不支持，请上传可复制文字的 PDF 或 Word 文档"
+PDF_INVALID_MESSAGE = "PDF 文件无法读取，可能已损坏或加密"
+
+# 错误码 -> 用户可读中文说明。业务代码抛错统一采用 "CODE:说明" 格式。
+ERROR_MESSAGES = {
+    "VALIDATION_ERROR": "请求参数错误",
+    "UNSUPPORTED_FILE_TYPE": "文件类型不支持，仅支持 Word（.docx）或 PDF 文档",
+    "SCAN_PDF_NOT_SUPPORTED": SCAN_PDF_MESSAGE,
+    "PDF_INVALID": PDF_INVALID_MESSAGE,
+    "PARSE_FILE_FAILED": "文件解析失败（文件可能已损坏、加密或格式异常）",
+    "PARSE_FAILED": "文件解析失败",
+}
+
 
 @dataclass
 class ParsedDocument:
@@ -35,7 +48,23 @@ def parse_document(file_path: Path, file_ext: str) -> ParsedDocument:
         return _parse_docx(file_path)
     if ext == ".pdf":
         return _parse_pdf(file_path)
-    raise ValueError("UNSUPPORTED_FILE_TYPE")
+    raise ValueError(f"UNSUPPORTED_FILE_TYPE:{ERROR_MESSAGES['UNSUPPORTED_FILE_TYPE']}")
+
+
+def assert_readable_pdf(file_path: Path) -> None:
+    """上传前探测 PDF 是否支持解析（含文字层）。
+
+    扫描件/图片型 PDF（无可提取文字）抛 SCAN_PDF_NOT_SUPPORTED；
+    损坏、加密等无法读取的 PDF 抛 PDF_INVALID。
+    """
+    try:
+        reader = PdfReader(str(file_path))
+        for page in reader.pages:
+            if (page.extract_text() or "").strip():
+                return
+    except Exception as exc:
+        raise ValueError(f"PDF_INVALID:{PDF_INVALID_MESSAGE}（{type(exc).__name__}）") from exc
+    raise ValueError(f"SCAN_PDF_NOT_SUPPORTED:{SCAN_PDF_MESSAGE}")
 
 
 def write_parsed_files(parsed: ParsedDocument, text_path: Path, json_path: Path) -> None:
@@ -107,7 +136,7 @@ def _parse_pdf(file_path: Path) -> ParsedDocument:
                 paragraphs.append(clean)
                 page_numbers.append(page_index)
     if not paragraphs:
-        raise ValueError("SCAN_PDF_NOT_SUPPORTED")
+        raise ValueError(f"SCAN_PDF_NOT_SUPPORTED:{SCAN_PDF_MESSAGE}")
     blocks = _build_blocks(paragraphs, page_numbers)
     metadata_raw = reader.metadata or {}
     metadata = {

@@ -6,6 +6,7 @@ from app.services.storage import task_storage_dir
 from app.schemas import RecoverRequest, WxLoginRequest
 from app.services import tasks as task_service
 from app.services import wechat_notify, wechat_mp
+from app.services.parser import ERROR_MESSAGES
 from app.utils.api import fail, ok
 
 
@@ -160,10 +161,9 @@ def _split_error(raw: str) -> tuple[str, str]:
         code, message = raw.split(":", 1)
         return code, message
     messages = {
+        **ERROR_MESSAGES,
         "VALIDATION_ERROR": "请求参数错误",
-        "UNSUPPORTED_FILE_TYPE": "文件类型不支持",
-        "SCAN_PDF_NOT_SUPPORTED": "V1 暂不支持扫描件 PDF",
-        "PARSE_FAILED": "文件解析失败",
         "TASK_NOT_FOUND": "任务不存在",
+        "ORDER_NOT_PAID": "订单未支付",
     }
     return raw, messages.get(raw, raw)
