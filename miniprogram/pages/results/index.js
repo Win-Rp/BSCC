@@ -1,6 +1,5 @@
 const api = require("../../services/api");
 const storage = require("../../utils/storage");
-const { downloadAndOpenFile } = require("../../utils/file");
 const {
   formatPercent,
   formatDateTime,
@@ -203,33 +202,6 @@ Page({
     const compareResultId = Number(event.detail.compareResultId);
     wx.navigateTo({
       url: `/pages/compare/index?taskNo=${this.data.taskNo}&resultId=${compareResultId}`
-    });
-  },
-
-  async handleOpenAFile() {
-    if (!this.data.taskNo || !this.data.summaryMeta) {
-      return;
-    }
-    await downloadAndOpenFile({
-      url: api.getAFileURL(this.data.taskNo),
-      fileName: this.data.summaryMeta.aFileName,
-      loadingText: "正在打开A标书"
-    });
-  },
-
-  async handleOpenBFile() {
-    if (!this.data.taskNo || !this.data.selectedResultId || !this.data.selectedResult) {
-      wx.showToast({
-        title: "当前暂无可打开的B标书",
-        icon: "none"
-      });
-      return;
-    }
-
-    await downloadAndOpenFile({
-      url: api.getBFileURL(this.data.taskNo, this.data.selectedResultId),
-      fileName: this.data.selectedResult.b_file_name,
-      loadingText: "正在打开B标书"
     });
   },
 

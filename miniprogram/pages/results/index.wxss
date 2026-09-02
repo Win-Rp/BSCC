@@ -370,15 +370,6 @@
   width: 100%;
 }
 
-.result-actions-row {
-  display: flex;
-  gap: 16rpx;
-}
-
-.result-actions-row button {
-  flex: 1;
-}
-
 .result-order-no {
   margin-top: 16rpx;
   color: #98a4ae;
