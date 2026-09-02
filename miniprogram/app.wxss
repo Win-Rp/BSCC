@@ -82,6 +82,13 @@ page {
   font-size: 28rpx;
 }
 
+.input {
+  height: 88rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 88rpx;
+}
+
 .textarea {
   min-height: 180rpx;
 }
