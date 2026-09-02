@@ -358,28 +358,32 @@
   font-size: 20rpx;
 }
 
-/* 操作区 */
-.result-actions {
+/* 页脚：主操作按钮 + 次要链接 */
+.compare-footer {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 16rpx;
-  margin-top: 20rpx;
+  padding: 8rpx 0 32rpx;
 }
 
 .compare-cta {
   width: 100%;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .result-order-no {
-  margin-top: 16rpx;
   color: #98a4ae;
   font-size: 22rpx;
   text-align: center;
 }
 
 .footer-link {
-  text-align: center;
   color: #98a4ae;
   font-size: 24rpx;
-  padding: 8rpx 0 16rpx;
+  padding: 0;
 }

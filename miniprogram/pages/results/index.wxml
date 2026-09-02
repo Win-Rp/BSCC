@@ -128,20 +128,13 @@
     </view>
   </view>
 
-  <view class="card" wx:if="{{summary}}">
-    <view class="section-title">结果操作</view>
-    <view class="section-desc">
-      {{isUnlocked ? '结果已解锁，进入对比页可查看全部重复片段与差异定位。' : '结果未解锁，可进入对比页查看免费预览片段，解锁后查看完整详情。'}}
-    </view>
-    <view class="result-actions">
-      <button class="btn-primary compare-cta" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
-        {{isUnlocked ? '进入对比页查看详情' : '进入对比页（预览模式）'}}
-      </button>
-    </view>
+  <view class="compare-footer" wx:if="{{summary}}">
+    <button class="btn-primary compare-cta" bindtap="gotoCompare" disabled="{{!selectedResultId}}">
+      {{isUnlocked ? '进入对比页查看详情' : '进入对比页（预览模式）'}}
+    </button>
     <view class="result-order-no" wx:if="{{isUnlocked && orderNo}}">订单号：{{orderNo}}</view>
+    <view class="footer-link" bindtap="gotoRecovery">找回历史任务</view>
   </view>
-
-  <view class="footer-link" wx:if="{{summary}}" bindtap="gotoRecovery">找回历史任务</view>
 
   <view class="empty" wx:if="{{!loading && summary && (!summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
   <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
