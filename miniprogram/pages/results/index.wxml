@@ -6,6 +6,15 @@
       <text class="task-id-box__text">{{summaryMeta.taskNo}}</text>
       <text class="task-id-box__copy">复制任务号</text>
     </view>
+    <view class="task-share-row">
+      <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
+        <view class="share-btn__icon">
+          <view class="share-btn__arrow"></view>
+          <view class="share-btn__base"></view>
+        </view>
+        <text class="share-btn__text">分享结果</text>
+      </button>
+    </view>
     <view class="meta-chips">
       <text class="meta-chip">{{summaryMeta.modeText}}</text>
       <text class="meta-chip">B 文件 {{summaryMeta.bFileCount}} 份</text>
@@ -65,16 +74,7 @@
   </view>
 
   <view class="card">
-    <view class="section-head">
-      <view class="section-title">结果列表</view>
-      <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
-        <view class="share-btn__icon">
-          <view class="share-btn__arrow"></view>
-          <view class="share-btn__base"></view>
-        </view>
-        <text class="share-btn__text">分享结果</text>
-      </button>
-    </view>
+    <view class="section-title">结果列表</view>
     <view class="empty" wx:if="{{!loading && (!summary || !summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
     <view class="result-list" wx:if="{{summary && summary.results && summary.results.length}}">
       <result-card

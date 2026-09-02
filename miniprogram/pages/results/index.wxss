@@ -4,31 +4,24 @@
   gap: 24rpx;
 }
 
-/* 结果列表标题行：标题 + 分享按钮 */
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16rpx;
-}
-
-.section-head .section-title {
-  margin-bottom: 0;
+/* 任务卡：分享按钮整行，内容水平垂直居中 */
+.task-share-row {
+  margin-top: 18rpx;
 }
 
 .share-btn {
-  flex: none;
-  width: auto;
-  display: inline-flex;
+  width: 100%;
+  height: 72rpx;
+  display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8rpx;
-  height: 56rpx;
-  padding: 0 26rpx;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 0;
   border-radius: 999rpx;
   background: linear-gradient(135deg, #126e6a, #0b4f4c);
   color: #ffffff;
-  font-size: 22rpx;
+  font-size: 26rpx;
   line-height: 1;
   margin: 0;
 }
@@ -39,17 +32,18 @@
 
 .share-btn__icon {
   position: relative;
-  width: 26rpx;
-  height: 26rpx;
+  flex-shrink: 0;
+  width: 32rpx;
+  height: 32rpx;
 }
 
 .share-btn__arrow {
   position: absolute;
   left: 50%;
-  bottom: 4rpx;
-  width: 5rpx;
-  height: 13rpx;
-  margin-left: -2.5rpx;
+  bottom: 6rpx;
+  width: 6rpx;
+  height: 16rpx;
+  margin-left: -3rpx;
   border-radius: 3rpx;
   background: #ffffff;
 }
@@ -59,11 +53,11 @@
   position: absolute;
   top: -2rpx;
   left: 50%;
-  width: 8rpx;
-  height: 8rpx;
-  margin-left: -4rpx;
-  border-top: 3rpx solid #ffffff;
-  border-left: 3rpx solid #ffffff;
+  width: 10rpx;
+  height: 10rpx;
+  margin-left: -5rpx;
+  border-top: 4rpx solid #ffffff;
+  border-left: 4rpx solid #ffffff;
   transform: rotate(45deg);
 }
 
@@ -71,10 +65,10 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: 21rpx;
-  height: 14rpx;
-  margin-left: -10.5rpx;
-  border: 3rpx solid #ffffff;
+  width: 26rpx;
+  height: 18rpx;
+  margin-left: -13rpx;
+  border: 4rpx solid #ffffff;
   border-radius: 3rpx 3rpx 0 0;
   border-bottom: none;
   box-sizing: border-box;
@@ -82,6 +76,7 @@
 
 .share-btn__text {
   color: #ffffff;
+  line-height: 1;
 }
 
 /* 任务卡：chips + 文件行 */
