@@ -645,6 +645,45 @@
                       <div class="form-tip">{{ translateText("用于 wx.login 换取 openid 和获取接口调用凭据") }}</div>
                     </el-form-item>
 
+                    <el-divider content-position="left">{{ translateText("服务号用户运营（关注与强触达）") }}</el-divider>
+                    <el-form-item :label="translateText('启用服务号推送')">
+                      <el-switch v-model="settingsForm.mp_notify_enabled" />
+                      <span class="form-inline-tip">{{ translateText("用户关注服务号后，任务完成优先走服务号模板消息（免逐次授权）") }}</span>
+                    </el-form-item>
+                    <el-form-item :label="translateText('服务号 AppID')">
+                      <el-input
+                        v-model="settingsForm.mp_app_id"
+                        :placeholder="translateText('服务号后台 - 设置与开发 - 基本配置中的 AppID')"
+                      />
+                      <div class="form-tip">{{ translateText("需与小程序同主体或关联主体，并在小程序后台“设置-关注公众号”中选中") }}</div>
+                    </el-form-item>
+                    <el-form-item :label="translateText('服务号 AppSecret')">
+                      <el-input
+                        v-model="settingsForm.mp_app_secret"
+                        type="password"
+                        show-password
+                        :placeholder="translateText('请输入服务号 AppSecret')"
+                      />
+                      <div class="form-tip">{{ translateText("用于获取服务号接口调用凭据") }}</div>
+                    </el-form-item>
+                    <el-form-item :label="translateText('服务器 Token')">
+                      <el-input
+                        v-model="settingsForm.mp_verify_token"
+                        :placeholder="translateText('自定义 Token，与服务号服务器配置中填写的保持一致')"
+                      />
+                      <div class="form-tip">
+                        {{ translateText("回调 URL：") }}{{ mpCallbackUrl || translateText('请先填写“网站域名”后自动生成') }}
+                        {{ translateText("（服务号后台 - 设置与开发 - 基本配置 - 服务器配置，明文模式）") }}
+                      </div>
+                    </el-form-item>
+                    <el-form-item :label="translateText('服务号模板 ID')">
+                      <el-input
+                        v-model="settingsForm.mp_notify_template_id"
+                        :placeholder="translateText('服务号后台 - 功能 - 模板消息中添加后获取')"
+                      />
+                      <div class="form-tip">{{ translateText("模板需含两个关键词：服务编号、服务结果；点击通知可跳转小程序结果页") }}</div>
+                    </el-form-item>
+
                     <el-form-item>
                       <el-button type="primary" @click="saveSettings" :loading="savingSettings">{{ translateText("保存配置") }}</el-button>
                     </el-form-item>
@@ -791,7 +830,12 @@ const createDefaultSettingsForm = () => ({
   notify_enabled: true,
   notify_template_id: '',
   wechat_mini_app_id: '',
-  wechat_app_secret: ''
+  wechat_app_secret: '',
+  mp_notify_enabled: false,
+  mp_app_id: '',
+  mp_app_secret: '',
+  mp_verify_token: '',
+  mp_notify_template_id: ''
 });
 
 const settingsForm = reactive(createDefaultSettingsForm());
@@ -846,6 +890,7 @@ const semanticThresholdPercent = computed({
 const normalizedSiteBaseUrl = computed(() => settingsForm.site_base_url.trim().replace(/\/+$/, ''));
 const defaultAlipayNotifyUrl = computed(() => normalizedSiteBaseUrl.value ? `${normalizedSiteBaseUrl.value}/api/payments/alipay/notify` : '');
 const defaultWechatNotifyUrl = computed(() => normalizedSiteBaseUrl.value ? `${normalizedSiteBaseUrl.value}/api/payments/wechat/notify` : '');
+const mpCallbackUrl = computed(() => normalizedSiteBaseUrl.value ? `${normalizedSiteBaseUrl.value}/api/wechat/mp/callback` : '');
 
 const handleAdminRequestError = (error: unknown, fallbackMessage: string) => {
   const message = error instanceof Error ? error.message : fallbackMessage;
@@ -1018,6 +1063,19 @@ const saveSettings = async () => {
   }
   if (settingsForm.wechat_enabled && !trimmedWechatNotifyUrl && !trimmedSiteBaseUrl) {
     ElMessage.warning(translateText('请填写网站域名或手动填写微信异步通知地址'));
+    return;
+  }
+
+  const trimmedMpAppId = settingsForm.mp_app_id.trim();
+  const trimmedMpAppSecret = settingsForm.mp_app_secret.trim();
+  const trimmedMpVerifyToken = settingsForm.mp_verify_token.trim();
+  const trimmedMpTemplateId = settingsForm.mp_notify_template_id.trim();
+  if (settingsForm.mp_notify_enabled && (!trimmedMpAppId || !trimmedMpAppSecret || !trimmedMpVerifyToken || !trimmedMpTemplateId)) {
+    ElMessage.warning(translateText('启用服务号推送需完整填写 AppID、AppSecret、服务器 Token 与模板 ID'));
+    return;
+  }
+  if (settingsForm.mp_notify_enabled && !trimmedSiteBaseUrl) {
+    ElMessage.warning(translateText('启用服务号推送需先填写网站域名，用于生成服务号服务器配置的回调地址'));
     return;
   }
 

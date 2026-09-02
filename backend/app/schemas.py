@@ -69,6 +69,11 @@ class SettingsUpdate(BaseModel):
     notify_template_id: str | None = None
     wechat_app_secret: str | None = None
     wechat_mini_app_id: str | None = None
+    mp_notify_enabled: bool | None = None
+    mp_app_id: str | None = None
+    mp_app_secret: str | None = None
+    mp_verify_token: str | None = None
+    mp_notify_template_id: str | None = None
 
     @field_validator("free_b_file_limit")
     @classmethod

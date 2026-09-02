@@ -44,4 +44,9 @@ DEFAULT_SETTINGS = {
     "notify_template_id": "0EWR6EdE5PZwTy3op4CIwxMH950vcLvBdPT5tBD1jkA",
     "wechat_app_secret": "",
     "wechat_mini_app_id": "",
+    "mp_notify_enabled": "false",
+    "mp_app_id": "",
+    "mp_app_secret": "",
+    "mp_verify_token": "",
+    "mp_notify_template_id": "",
 }

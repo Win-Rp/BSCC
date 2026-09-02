@@ -136,6 +136,11 @@
     <view class="footer-link" bindtap="gotoRecovery">找回历史任务</view>
   </view>
 
+  <!-- 服务号关注引导（仅扫码进入等场景由微信展示） -->
+  <view class="official-account-wrap" wx:if="{{showOfficialAccount}}">
+    <official-account binderror="onOfficialAccountError" />
+  </view>
+
   <view class="empty" wx:if="{{!loading && summary && (!summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
   <view class="empty" wx:if="{{errorText}}">{{errorText}}</view>
 </view>

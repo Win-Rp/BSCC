@@ -73,7 +73,8 @@ def code2session(app_id: str, app_secret: str, js_code: str) -> dict[str, Any]:
         raise ValueError(f"WX_CODE2SESSION_FAILED:{data.get('errcode')}:{data.get('errmsg')}")
     if not data.get("openid"):
         raise ValueError("WX_CODE2SESSION_FAILED:no openid returned")
-    return {"openid": data["openid"], "session_key": data.get("session_key", "")}
+    # unionid 仅在小程序绑定微信开放平台后返回，用于关联服务号粉丝
+    return {"openid": data["openid"], "session_key": data.get("session_key", ""), "unionid": data.get("unionid", "")}
 
 
 def _fetch_access_token(app_id: str, app_secret: str) -> str:
@@ -183,6 +184,15 @@ def _clip(text: str, limit: int) -> str:
 
 
 def notify_task_finished(task_no: str, result_text: str) -> bool:
+    # 优先服务号模板消息（已关注用户强触达），失败回退小程序订阅消息
+    from app.services import wechat_mp
+
+    try:
+        if wechat_mp.mp_notify_task_finished(task_no, result_text):
+            return True
+    except Exception as exc:
+        logger.warning("mp notify fallback to subscribe task=%s err=%s", task_no, exc)
+
     config = get_notify_config()
     if not config["enabled"]:
         return False

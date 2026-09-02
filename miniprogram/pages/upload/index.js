@@ -39,6 +39,7 @@ Page({
     errorText: "",
     fileSummary: "尚未选择文件",
     submitText: "开始查重",
+    showOfficialAccount: true,
     rules: [
       "支持 DOCX、PDF，扫描版 PDF 暂不支持。",
       "B 文件建议控制在 1 至 10 份。",
@@ -52,6 +53,10 @@ Page({
     if (app.configReady) {
       app.configReady.then(() => this.applySiteConfig());
     }
+  },
+
+  onOfficialAccountError() {
+    this.setData({ showOfficialAccount: false });
   },
 
   onShow() {
@@ -198,7 +203,8 @@ Page({
       aFile: this.data.aFile,
       bFiles: this.data.bFiles,
       keywords: joinKeywords(this.data.keywords),
-      notifyOpenid: notify.openid
+      notifyOpenid: notify.openid,
+      notifyUnionid: notify.unionid
     });
 
     if (!response.success) {

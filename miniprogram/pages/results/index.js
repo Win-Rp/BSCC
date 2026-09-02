@@ -107,7 +107,12 @@ Page({
     selectedResult: null,
     overviewData: { totalMetric: null, stats: null, contentDetails: [], structDetails: [] },
     previewLoading: false,
-    previewList: []
+    previewList: [],
+    showOfficialAccount: true
+  },
+
+  onOfficialAccountError() {
+    this.setData({ showOfficialAccount: false });
   },
 
   onLoad(options) {

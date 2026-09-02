@@ -19,7 +19,8 @@ function createTask(payload) {
     files,
     formData: {
       keywords: payload.keywords || "",
-      notify_openid: payload.notifyOpenid || ""
+      notify_openid: payload.notifyOpenid || "",
+      notify_unionid: payload.notifyUnionid || ""
     }
   });
 }

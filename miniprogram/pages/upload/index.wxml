@@ -56,6 +56,11 @@
     <button class="btn-secondary docs-btn" bindtap="gotoDocs">使用说明 · 常见问题</button>
   </view>
 
+  <!-- 服务号关注引导（仅扫码进入等场景由微信展示） -->
+  <view class="official-account-wrap" wx:if="{{showOfficialAccount}}">
+    <official-account binderror="onOfficialAccountError" />
+  </view>
+
   <!-- 固定底部操作栏 -->
   <view class="submit-bar">
     <view class="danger submit-bar__error" wx:if="{{errorText}}">{{errorText}}</view>

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, BackgroundTasks, File, Form, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, BackgroundTasks, File, Form, Query, Request, UploadFile
+from fastapi.responses import FileResponse, PlainTextResponse
 from app.database import db_session
 from app.services.storage import task_storage_dir
 
 from app.schemas import RecoverRequest, WxLoginRequest
 from app.services import tasks as task_service
-from app.services import wechat_notify
+from app.services import wechat_notify, wechat_mp
 from app.utils.api import fail, ok
 
 
@@ -19,9 +19,10 @@ async def create_task(
     b_files: list[UploadFile] = File(...),
     keywords: str | None = Form(None),
     notify_openid: str | None = Form(None),
+    notify_unionid: str | None = Form(None),
 ):
     try:
-        return ok(await task_service.create_task(a_file, b_files, keywords, background_tasks, notify_openid))
+        return ok(await task_service.create_task(a_file, b_files, keywords, background_tasks, notify_openid, notify_unionid))
     except ValueError as exc:
         code, message = _split_error(str(exc))
         raise fail(code, message)
@@ -31,12 +32,43 @@ async def create_task(
 def wx_login(payload: WxLoginRequest):
     config = wechat_notify.get_notify_config()
     if not config["app_id"] or not config["app_secret"]:
-        return ok({"openid": "", "notify_enabled": False})
+        return ok({"openid": "", "unionid": "", "notify_enabled": False})
     try:
         session = wechat_notify.code2session(config["app_id"], config["app_secret"], payload.code)
     except ValueError as exc:
         raise fail("WX_LOGIN_FAILED", str(exc), 400)
-    return ok({"openid": session["openid"], "notify_enabled": config["enabled"]})
+    return ok({"openid": session["openid"], "unionid": session.get("unionid", ""), "notify_enabled": config["enabled"]})
+
+
+@router.get("/wechat/mp/callback")
+def wechat_mp_verify(
+    signature: str = Query(""),
+    timestamp: str = Query(""),
+    nonce: str = Query(""),
+    echostr: str = Query(""),
+):
+    config = wechat_mp.get_mp_config()
+    if not wechat_mp.verify_signature(config["verify_token"], signature, timestamp, nonce):
+        return PlainTextResponse("forbidden", status_code=403)
+    return PlainTextResponse(echostr)
+
+
+@router.post("/wechat/mp/callback")
+async def wechat_mp_callback(request: Request):
+    config = wechat_mp.get_mp_config()
+    params = request.query_params
+    signature = params.get("signature", "")
+    timestamp = params.get("timestamp", "")
+    nonce = params.get("nonce", "")
+    if not wechat_mp.verify_signature(config["verify_token"], signature, timestamp, nonce):
+        return PlainTextResponse("forbidden", status_code=403)
+    body = (await request.body()).decode("utf-8", errors="ignore")
+    try:
+        event = wechat_mp.parse_event_xml(body)
+        return PlainTextResponse(wechat_mp.handle_callback_event(event))
+    except Exception:
+        # 明文模式异常也按 success 应答，避免微信重复推送
+        return PlainTextResponse("success")
 
 
 @router.get("/tasks/{task_no}/status")

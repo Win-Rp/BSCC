@@ -20,6 +20,13 @@ page {
   box-shadow: 0 10rpx 30rpx rgba(15, 23, 42, 0.04);
 }
 
+/* 服务号关注组件容器（组件仅在扫码等场景渲染，其余场景 binderror 后移除） */
+.official-account-wrap {
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 30rpx rgba(15, 23, 42, 0.04);
+}
+
 .section-title {
   font-size: 32rpx;
   font-weight: 600;

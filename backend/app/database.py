@@ -41,7 +41,17 @@ CREATE TABLE IF NOT EXISTS tasks (
   notify_openid TEXT,
   notify_authorized_at TEXT,
   notify_sent_at TEXT,
+  notify_unionid TEXT,
   deleted_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS mp_followers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  union_id TEXT,
+  mp_openid TEXT NOT NULL UNIQUE,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  subscribed_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS task_files (
@@ -298,6 +308,7 @@ def init_db() -> None:
         _ensure_column(conn, "tasks", "notify_openid", "TEXT")
         _ensure_column(conn, "tasks", "notify_authorized_at", "TEXT")
         _ensure_column(conn, "tasks", "notify_sent_at", "TEXT")
+        _ensure_column(conn, "tasks", "notify_unionid", "TEXT")
         for key, value in DEFAULT_SETTINGS.items():
             if DATABASE_URL.startswith("mysql"):
                 conn.execute("INSERT IGNORE INTO settings (key, value, description, updated_at) VALUES (?, ?, ?, ?)",

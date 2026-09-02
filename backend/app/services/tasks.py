@@ -24,6 +24,7 @@ async def create_task(
     keywords: str | None,
     background_tasks: BackgroundTasks | None = None,
     notify_openid: str | None = None,
+    notify_unionid: str | None = None,
 ) -> dict[str, Any]:
     if not b_files or len(b_files) > 10:
         raise ValueError("VALIDATION_ERROR:B 文件数量必须为 1 至 10 份")
@@ -39,9 +40,9 @@ async def create_task(
             INSERT INTO tasks (
               task_no, mode, status, unlock_status, keyword_text, b_file_count, preview_limit,
               storage_dir, progress, created_at, updated_at, expires_at,
-              notify_openid, notify_authorized_at
+              notify_openid, notify_authorized_at, notify_unionid
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 task_no,
@@ -58,6 +59,7 @@ async def create_task(
                 days_from_now_iso(retention_days),
                 notify_openid or None,
                 now_iso() if notify_openid else None,
+                notify_unionid or None,
             ),
         )
         task_id = conn.execute("SELECT id FROM tasks WHERE task_no = ?", (task_no,)).fetchone()["id"]
