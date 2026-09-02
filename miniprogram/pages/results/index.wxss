@@ -350,6 +350,13 @@
   flex: 1;
 }
 
+.result-order-no {
+  margin-top: 16rpx;
+  color: #98a4ae;
+  font-size: 22rpx;
+  text-align: center;
+}
+
 .footer-link {
   text-align: center;
   color: #98a4ae;

@@ -32,13 +32,11 @@
   </view>
 
   <unlock-bar
-    wx:if="{{summary}}"
+    wx:if="{{summary && !isUnlocked}}"
     summary="{{summary}}"
-    unlocked="{{isUnlocked}}"
     orderNo="{{orderNo}}"
     promo="{{promoConfig}}"
     bind:unlock="gotoOrder"
-    bind:view="gotoCompare"
   />
 
   <view class="card" wx:if="{{overviewData.totalMetric}}">
@@ -118,7 +116,7 @@
   </view>
 
   <view class="card" wx:if="{{summary}}">
-    <view class="section-title">{{isUnlocked ? '查看完整详情' : '预览与原文'}}</view>
+    <view class="section-title">结果操作</view>
     <view class="section-desc">
       {{isUnlocked ? '结果已解锁，进入对比页可查看全部重复片段与差异定位。' : '结果未解锁，可打开原文或进入对比页查看免费预览片段。'}}
     </view>
@@ -131,6 +129,7 @@
         <button class="btn-secondary" bindtap="handleOpenBFile" disabled="{{!selectedResultId}}">打开 B 原文</button>
       </view>
     </view>
+    <view class="result-order-no" wx:if="{{isUnlocked && orderNo}}">订单号：{{orderNo}}</view>
   </view>
 
   <view class="footer-link" wx:if="{{summary}}" bindtap="gotoRecovery">找回历史任务</view>

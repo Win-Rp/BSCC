@@ -1,30 +1,8 @@
 const { formatMoney, formatCountdown, buildServerOffsetMs } = require("../../utils/format");
 
-function buildOfferModel(summary, unlocked, promo) {
-  if (!summary) {
+function buildOfferModel(summary, promo) {
+  if (!summary || !summary.payment_required) {
     return null;
-  }
-  if (!summary.payment_required) {
-    return null;
-  }
-
-  if (unlocked) {
-    return {
-      locked: false,
-      title: "已解锁完整详情",
-      desc: "本任务已完成解锁，可查看全部对比详情与后续回看。",
-      badge: "",
-      priceText: "",
-      strikeText: "",
-      savingsText: "",
-      unitPriceText: "",
-      note: "",
-      lossAversion: "",
-      showCountdown: false,
-      promoEndsAt: "",
-      serverNow: "",
-      bFileCount: summary.b_file_count || 0
-    };
   }
 
   const bFileCount = Math.max(Number(summary.b_file_count || 1), 1);
@@ -38,7 +16,6 @@ function buildOfferModel(summary, unlocked, promo) {
   const showCountdown = Boolean(pricing.show_countdown) && Boolean(pricing.promo_ends_at);
 
   return {
-    locked: true,
     title: "解锁查重",
     desc: "本次任务已超出免费对比文件额度，解锁后可查看全部重复片段、格式相似项、元数据对比与关键字命中。",
     badge: promoActive ? (pricing.promo_badge || "限时特惠") : "",
@@ -61,10 +38,6 @@ Component({
       type: Object,
       value: null
     },
-    unlocked: {
-      type: Boolean,
-      value: false
-    },
     orderNo: {
       type: String,
       value: ""
@@ -81,7 +54,7 @@ Component({
   },
 
   observers: {
-    "summary, unlocked, promo"() {
+    "summary, promo"() {
       this.updateViewModel();
     }
   },
@@ -97,7 +70,7 @@ Component({
 
   methods: {
     updateViewModel() {
-      const viewModel = buildOfferModel(this.data.summary, this.data.unlocked, this.data.promo);
+      const viewModel = buildOfferModel(this.data.summary, this.data.promo);
       this.setData({ viewModel });
       this.syncCountdown();
     },
@@ -136,10 +109,6 @@ Component({
 
     handleUnlock() {
       this.triggerEvent("unlock");
-    },
-
-    handleView() {
-      this.triggerEvent("view");
     }
   }
 });
