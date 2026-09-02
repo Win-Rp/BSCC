@@ -22,7 +22,7 @@ function getFillClass(value) {
 
 function buildOverview(summary, selectedResult) {
   if (!summary || !selectedResult) {
-    return { totalMetric: null, details: [] };
+    return { totalMetric: null, contentDetails: [], structDetails: [] };
   }
   const totalRisk = getRiskLevel(selectedResult.total_similarity);
   const totalMetric = {
@@ -30,23 +30,27 @@ function buildOverview(summary, selectedResult) {
     riskType: totalRisk.type,
     riskText: totalRisk.text
   };
-  const items = [
-    { label: "完全重复", value: selectedResult.exact_similarity },
-    { label: "改写相似", value: selectedResult.rewrite_similarity },
-    { label: "语义相似", value: selectedResult.semantic_similarity },
-    { label: "格式相似", value: selectedResult.format_similarity },
-    { label: "元数据相似", value: selectedResult.metadata_similarity }
-  ];
-  const details = items.map((item) => {
-    const number = Number(item.value || 0);
+  const toDetail = (label, value) => {
+    const number = Number(value || 0);
     return {
-      label: item.label,
+      label,
       value: formatPercent(number),
       percent: Math.min(Math.max(Math.round(number * 100), 0), 100),
       fillClass: getFillClass(number)
     };
-  });
-  return { totalMetric, details };
+  };
+  return {
+    totalMetric,
+    contentDetails: [
+      toDetail("完全重复", selectedResult.exact_similarity),
+      toDetail("改写相似", selectedResult.rewrite_similarity),
+      toDetail("语义相似", selectedResult.semantic_similarity)
+    ],
+    structDetails: [
+      toDetail("格式相似", selectedResult.format_similarity),
+      toDetail("元数据相似", selectedResult.metadata_similarity)
+    ]
+  };
 }
 
 function buildPreviewList(payload) {
@@ -97,7 +101,7 @@ Page({
     isUnlocked: false,
     selectedResultId: 0,
     selectedResult: null,
-    overviewData: { totalMetric: null, details: [] },
+    overviewData: { totalMetric: null, contentDetails: [], structDetails: [] },
     previewLoading: false,
     previewList: []
   },

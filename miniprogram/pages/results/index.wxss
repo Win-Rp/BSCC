@@ -4,25 +4,31 @@
   gap: 24rpx;
 }
 
-/* 任务卡头部：任务号整行 + 分享按钮行 */
-.task-share-row {
+/* 结果列表标题行：标题 + 分享按钮 */
+.section-head {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 16rpx;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.section-head .section-title {
+  margin-bottom: 0;
 }
 
 .share-btn {
   flex: none;
+  width: auto;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 10rpx;
-  height: 64rpx;
-  padding: 0 30rpx;
+  gap: 8rpx;
+  height: 56rpx;
+  padding: 0 26rpx;
   border-radius: 999rpx;
   background: linear-gradient(135deg, #126e6a, #0b4f4c);
   color: #ffffff;
-  font-size: 24rpx;
+  font-size: 22rpx;
   line-height: 1;
   margin: 0;
 }
@@ -33,17 +39,17 @@
 
 .share-btn__icon {
   position: relative;
-  width: 32rpx;
-  height: 32rpx;
+  width: 26rpx;
+  height: 26rpx;
 }
 
 .share-btn__arrow {
   position: absolute;
   left: 50%;
-  bottom: 6rpx;
-  width: 6rpx;
-  height: 16rpx;
-  margin-left: -3rpx;
+  bottom: 4rpx;
+  width: 5rpx;
+  height: 13rpx;
+  margin-left: -2.5rpx;
   border-radius: 3rpx;
   background: #ffffff;
 }
@@ -53,11 +59,11 @@
   position: absolute;
   top: -2rpx;
   left: 50%;
-  width: 10rpx;
-  height: 10rpx;
-  margin-left: -5rpx;
-  border-top: 4rpx solid #ffffff;
-  border-left: 4rpx solid #ffffff;
+  width: 8rpx;
+  height: 8rpx;
+  margin-left: -4rpx;
+  border-top: 3rpx solid #ffffff;
+  border-left: 3rpx solid #ffffff;
   transform: rotate(45deg);
 }
 
@@ -65,10 +71,10 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: 26rpx;
-  height: 18rpx;
-  margin-left: -13rpx;
-  border: 4rpx solid #ffffff;
+  width: 21rpx;
+  height: 14rpx;
+  margin-left: -10.5rpx;
+  border: 3rpx solid #ffffff;
   border-radius: 3rpx 3rpx 0 0;
   border-bottom: none;
   box-sizing: border-box;
@@ -190,8 +196,45 @@
   gap: 6rpx;
 }
 
+.bar-group-title {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #44515c;
+}
+
+.bar-group-title--alt {
+  margin-top: 26rpx;
+  padding-top: 22rpx;
+  border-top: 1rpx solid #eef2f4;
+}
+
+.bar-group-note {
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+  background: #f2f6f7;
+  color: #98a4ae;
+  font-size: 20rpx;
+  font-weight: 400;
+}
+
 .overview-bars .bar-row + .bar-row {
   margin-top: 10rpx;
+}
+
+.bar-row--struct .bar-row__label {
+  color: #98a4ae;
+}
+
+.bar-row--struct .bar-row__value {
+  color: #68727d;
+}
+
+.bar-row__fill--neutral {
+  background: #aebac4;
 }
 
 .overview-note {

@@ -6,15 +6,6 @@
       <text class="task-id-box__text">{{summaryMeta.taskNo}}</text>
       <text class="task-id-box__copy">复制任务号</text>
     </view>
-    <view class="task-share-row">
-      <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
-        <view class="share-btn__icon">
-          <view class="share-btn__arrow"></view>
-          <view class="share-btn__base"></view>
-        </view>
-        <text class="share-btn__text">分享结果</text>
-      </button>
-    </view>
     <view class="meta-chips">
       <text class="meta-chip">{{summaryMeta.modeText}}</text>
       <text class="meta-chip">B 文件 {{summaryMeta.bFileCount}} 份</text>
@@ -53,19 +44,37 @@
       </view>
     </view>
     <view class="overview-bars">
-      <view class="bar-row" wx:for="{{overviewData.details}}" wx:key="label">
+      <view class="bar-group-title">内容相似度<text class="bar-group-note">决定查重结论</text></view>
+      <view class="bar-row" wx:for="{{overviewData.contentDetails}}" wx:key="label">
         <text class="bar-row__label">{{item.label}}</text>
         <view class="bar-row__track">
           <view class="bar-row__fill {{item.fillClass}}" style="width: {{item.percent}}%;"></view>
         </view>
         <text class="bar-row__value">{{item.value}}</text>
       </view>
+      <view class="bar-group-title bar-group-title--alt">结构相似度<text class="bar-group-note">仅供参考</text></view>
+      <view class="bar-row bar-row--struct" wx:for="{{overviewData.structDetails}}" wx:key="label">
+        <text class="bar-row__label">{{item.label}}</text>
+        <view class="bar-row__track bar-row__track--struct">
+          <view class="bar-row__fill bar-row__fill--neutral" style="width: {{item.percent}}%;"></view>
+        </view>
+        <text class="bar-row__value">{{item.value}}</text>
+      </view>
     </view>
-    <view class="overview-note">格式相似、元数据相似反映文档结构与属性层面的接近程度，不等同于内容重复。</view>
+    <view class="overview-note">结构相似度反映文档结构与属性层面的接近程度，不计入查重结论。</view>
   </view>
 
   <view class="card">
-    <view class="section-title">结果列表</view>
+    <view class="section-head">
+      <view class="section-title">结果列表</view>
+      <button class="share-btn" open-type="share" aria-label="分享查重结果给微信好友">
+        <view class="share-btn__icon">
+          <view class="share-btn__arrow"></view>
+          <view class="share-btn__base"></view>
+        </view>
+        <text class="share-btn__text">分享结果</text>
+      </button>
+    </view>
     <view class="empty" wx:if="{{!loading && (!summary || !summary.results || !summary.results.length)}}">暂无结果，请稍后刷新。</view>
     <view class="result-list" wx:if="{{summary && summary.results && summary.results.length}}">
       <result-card
