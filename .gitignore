@@ -9,5 +9,8 @@ node_modules/
 .trae-html-share-packages/
 .workspace/
 
+# WorkBuddy 工作目录（会话记忆日志、UI 设计预览）
+.workbuddy/
+
 # 微信开发者工具个人配置
 miniprogram/project.private.config.json
