@@ -70,6 +70,7 @@ Page({
   data: {
     taskNo: "",
     copied: false,
+    showQr: false,
     uploading: false,
     uploadFailed: false,
     progress: 0,
@@ -123,6 +124,18 @@ Page({
       clearTimeout(this._copyResetTimer);
       this._copyResetTimer = null;
     }
+  },
+
+  showMpQr() {
+    this.setData({ showQr: true });
+  },
+
+  hideMpQr() {
+    this.setData({ showQr: false });
+  },
+
+  noop() {
+    // 阻止冒泡占位：弹层内容点击不关闭
   },
 
   beginUpload(payload) {

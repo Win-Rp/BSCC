@@ -63,6 +63,8 @@
         <text class="task-id-box__copy {{copied ? 'task-id-box__copy--done' : ''}}">{{copied ? '已复制' : '复制'}}</text>
       </view>
       <view class="recover-link" bindtap="gotoRecovery">前往恢复历史任务 ›</view>
+      <!-- 关注服务号引导：二维码由后台 site-config 的 mp_qrcode_url 下发，未配置不显示 -->
+      <view class="mp-follow" wx:if="{{!isFinished && !isFailed}}" bindtap="showMpQr">关注服务号，查重完成即时提醒 ›</view>
     </view>
 
     <!-- 进行中：进度已在上方进度区呈现，底部仅保留返回入口，避免状态重复展示 -->
@@ -79,4 +81,15 @@
       <button class="btn-primary" bindtap="gotoResults">查看结果页</button>
     </view>
   </block>
+
+  <!-- 服务号二维码弹层：长按识别关注 -->
+  <view class="qr-mask" wx:if="{{showQr}}" bindtap="hideMpQr">
+    <view class="qr-panel" catchtap="noop">
+      <view class="qr-panel__title">关注服务号</view>
+      <view class="qr-panel__hint">查重完成后通过服务号第一时间通知您</view>
+      <image class="qr-panel__img" src="/assets/images/mp-qr.jpg" mode="aspectFit" show-menu-by-longpress="{{true}}" />
+      <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
+      <view class="qr-panel__close" bindtap="hideMpQr">关闭</view>
+    </view>
+  </view>
 </view>

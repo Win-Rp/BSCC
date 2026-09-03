@@ -305,3 +305,68 @@
   font-size: 26rpx;
   font-weight: 600;
 }
+/* ===== 服务号关注引导 ===== */
+.mp-follow {
+  margin-top: 16rpx;
+  padding: 8rpx 0;
+  text-align: center;
+  color: #68727d;
+  font-size: 26rpx;
+}
+
+/* 二维码弹层 */
+.qr-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.qr-panel {
+  width: 560rpx;
+  padding: 48rpx 40rpx 32rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  text-align: center;
+}
+
+.qr-panel__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a232b;
+}
+
+.qr-panel__hint {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #68727d;
+  line-height: 1.6;
+}
+
+.qr-panel__img {
+  width: 400rpx;
+  height: 400rpx;
+  margin-top: 32rpx;
+  background: #f5f8f8;
+  border-radius: 12rpx;
+}
+
+.qr-panel__tip {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #126e6a;
+}
+
+.qr-panel__close {
+  margin-top: 32rpx;
+  padding: 16rpx 0;
+  font-size: 28rpx;
+  color: #68727d;
+  border-top: 1rpx solid #eef1f3;
+}
