@@ -648,7 +648,7 @@
                     <el-divider content-position="left">{{ translateText("服务号用户运营（关注与强触达）") }}</el-divider>
                     <el-form-item :label="translateText('启用服务号推送')">
                       <el-switch v-model="settingsForm.mp_notify_enabled" />
-                      <span class="form-inline-tip">{{ translateText("用户关注服务号后，任务完成优先走服务号模板消息（免逐次授权）") }}</span>
+                      <span class="form-inline-tip">{{ translateText("用户关注服务号后，任务结束（完成或异常）优先走服务号模板消息（免逐次授权）") }}</span>
                     </el-form-item>
                     <el-form-item :label="translateText('服务号 AppID')">
                       <el-input
@@ -677,12 +677,12 @@
                       </div>
                     </el-form-item>
                     <el-form-item :label="translateText('服务号模板 ID')">
-                      <el-input
-                        v-model="settingsForm.mp_notify_template_id"
-                        :placeholder="translateText('服务号后台 - 功能 - 模板消息中添加后获取')"
-                      />
-                      <div class="form-tip">{{ translateText("模板需含两个关键词：服务编号、服务结果；点击通知可跳转小程序结果页") }}</div>
-                    </el-form-item>
+                        <el-input
+                          v-model="settingsForm.mp_notify_template_id"
+                          :placeholder="translateText('服务号后台 - 广告与服务 - 模板消息 - 我的模板中添加后获取')"
+                        />
+                        <div class="form-tip">{{ translateText("使用「工单处理结果通知」类目模板：任务名称枚举值=标书查重、当前状态枚举值=查重完成/查重异常；点击通知可跳转小程序结果页") }}</div>
+                      </el-form-item>
 
                     <el-form-item>
                       <el-button type="primary" @click="saveSettings" :loading="savingSettings">{{ translateText("保存配置") }}</el-button>

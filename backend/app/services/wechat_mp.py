@@ -3,6 +3,7 @@ import logging
 import threading
 import time
 import xml.etree.ElementTree as ET
+from datetime import datetime
 from typing import Any
 
 import httpx
@@ -140,13 +141,35 @@ def _follower_openid_by_union(union_id: str) -> str:
     return row["mp_openid"] if row else ""
 
 
+# 服务号「工单处理结果通知」类目模板（模板编号 53500）字段映射：
+# const1=任务名称(枚举值只有"标书查重") time2=开始时间 time3=结束时间
+# character_string6=工单编号 const8=当前状态(枚举值"查重完成"/"查重异常")
+TASK_NAME_TEXT = "标书查重"
+MP_STATUS_TEXT = {
+    "completed": "查重完成",
+    "awaiting_payment": "查重完成",
+    "failed": "查重异常",
+}
+
+
+def _format_time(iso: str) -> str:
+    if not iso:
+        return ""
+    try:
+        return datetime.fromisoformat(iso).strftime("%Y-%m-%d %H:%M")
+    except ValueError:
+        return iso[:16].replace("T", " ")
+
+
 def send_mp_template_message(
     app_id: str,
     app_secret: str,
     template_id: str,
     mp_openid: str,
-    service_no: str,
-    service_result: str,
+    task_no: str,
+    start_time: str,
+    end_time: str,
+    status: str,
     mini_app_id: str = "",
     page: str = "pages/results/index",
 ) -> bool:
@@ -155,10 +178,11 @@ def send_mp_template_message(
         "touser": mp_openid,
         "template_id": template_id,
         "data": {
-            "first": {"value": "您的查重任务已完成", "color": "#126e6a"},
-            "keyword1": {"value": service_no},
-            "keyword2": {"value": service_result},
-            "remark": {"value": "点击查看详细查重结果"},
+            "const1": {"value": TASK_NAME_TEXT},
+            "time2": {"value": start_time},
+            "time3": {"value": end_time},
+            "character_string6": {"value": task_no},
+            "const8": {"value": status},
         },
     }
     if mini_app_id:
@@ -171,7 +195,7 @@ def send_mp_template_message(
     if result.get("errcode") not in (None, 0):
         logger.warning(
             "mp template send failed task=%s errcode=%s errmsg=%s",
-            service_no,
+            task_no,
             result.get("errcode"),
             result.get("errmsg"),
         )
@@ -179,14 +203,14 @@ def send_mp_template_message(
     return True
 
 
-def mp_notify_task_finished(task_no: str, result_text: str) -> bool:
+def mp_notify_task_finished(task_no: str, status_key: str) -> bool:
     """服务号模板消息推送（用户已关注且配置完整时生效，强通知无需逐次授权）。"""
     config = get_mp_config()
     if not config["enabled"]:
         return False
     with db_session() as conn:
         row = conn.execute(
-            "SELECT notify_unionid FROM tasks WHERE task_no = ?",
+            "SELECT notify_unionid, created_at, completed_at FROM tasks WHERE task_no = ?",
             (task_no,),
         ).fetchone()
     if not row or not row["notify_unionid"]:
@@ -201,7 +225,9 @@ def mp_notify_task_finished(task_no: str, result_text: str) -> bool:
             config["template_id"],
             mp_openid,
             task_no,
-            result_text,
+            _format_time(row["created_at"]),
+            _format_time(row["completed_at"]) or _format_time(now_iso()),
+            MP_STATUS_TEXT.get(status_key, "查重完成"),
             mini_app_id=config["mini_app_id"],
             page=f"pages/results/index?taskNo={task_no}",
         )

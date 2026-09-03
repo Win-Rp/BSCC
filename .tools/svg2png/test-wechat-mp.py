@@ -72,8 +72,8 @@ class FakeConn:
                 if item["union_id"] == params[0] and item["is_active"] == 1:
                     return FakeResult([dict(item)])
             return FakeResult([])
-        if "notify_unionid FROM tasks" in sql:
-            return FakeResult([{"notify_unionid": state.get("task_unionid")}])
+        if "FROM tasks" in sql:
+            return FakeResult([dict(state.get("task_row") or {"notify_unionid": state.get("task_unionid")})])
         if "FROM settings" in sql:
             rows = [
                 {"key": "mp_notify_enabled", "value": state.get("mp_notify_enabled", "true")},
@@ -166,17 +166,34 @@ state["mp_notify_enabled"] = "false"
 check(mp.get_mp_config()["enabled"] is False, "get_mp_config 开关关闭时停用")
 state["mp_notify_enabled"] = "true"
 
+# ---------- _format_time ----------
+check(mp._format_time("2026-09-03T10:25:00+08:00") == "2026-09-03 10:25", "_format_time ISO 带时区转分钟精度")
+check(mp._format_time("2026-09-03T10:25:00") == "2026-09-03 10:25", "_format_time ISO 无时区转换")
+check(mp._format_time("") == "", "_format_time 空值返回空串")
+check(mp._format_time("not-a-time") == "not-a-time"[:16].replace("T", " "), "_format_time 非法值降级截断")
+
+# ---------- 状态映射 ----------
+check(mp.MP_STATUS_TEXT["completed"] == "查重完成", "状态映射 completed")
+check(mp.MP_STATUS_TEXT["awaiting_payment"] == "查重完成", "状态映射 awaiting_payment 也为查重完成")
+check(mp.MP_STATUS_TEXT["failed"] == "查重异常", "状态映射 failed")
+check(mp.TASK_NAME_TEXT == "标书查重", "任务名称常量为模板枚举值")
+
 # ---------- mp_notify_task_finished ----------
 state["task_unionid"] = "union_123"
+state["task_row"] = {
+    "notify_unionid": "union_123",
+    "created_at": "2026-09-03T10:00:00+08:00",
+    "completed_at": "2026-09-03T10:25:00+08:00",
+}
 
 sent = {}
 
 
-def fake_send(app_id, app_secret, template_id, mp_openid, service_no, service_result, mini_app_id="", page=""):
+def fake_send(app_id, app_secret, template_id, mp_openid, task_no, start_time, end_time, status, mini_app_id="", page=""):
     sent.update(
         app_id=app_id, template_id=template_id, mp_openid=mp_openid,
-        service_no=service_no, service_result=service_result,
-        mini_app_id=mini_app_id, page=page,
+        task_no=task_no, start_time=start_time, end_time=end_time,
+        status=status, mini_app_id=mini_app_id, page=page,
     )
     return True
 
@@ -185,23 +202,35 @@ orig_send = mp.send_mp_template_message
 mp.send_mp_template_message = fake_send
 
 # 当前粉丝为取关状态，按 union 查不到活跃记录
-check(mp.mp_notify_task_finished("T1", "查重完成") is False, "mp_notify 未关注（不活跃）时不发送")
+check(mp.mp_notify_task_finished("T1", "completed") is False, "mp_notify 未关注（不活跃）时不发送")
 
 # 重新关注后可发送
 mp.upsert_follower("union_123", "oMP_openid_1", active=True)
-check(mp.mp_notify_task_finished("T1", "查重完成") is True, "mp_notify 已关注用户成功发送")
-check(sent["service_no"] == "T1" and sent["service_result"] == "查重完成", "mp_notify 携带任务号与结果")
+check(mp.mp_notify_task_finished("T1", "completed") is True, "mp_notify 已关注用户成功发送")
+check(sent["task_no"] == "T1" and sent["status"] == "查重完成", "mp_notify 携带工单编号与状态枚举")
+check(sent["start_time"] == "2026-09-03 10:00" and sent["end_time"] == "2026-09-03 10:25", "mp_notify 开始/结束时间取任务字段")
 check(sent["mini_app_id"] == "wxmini1", "mp_notify 跳转小程序 AppID 正确")
 check(sent["page"] == "pages/results/index?taskNo=T1", "mp_notify 跳转页面携带任务号")
 
+# 失败状态映射为「查重异常」
+check(mp.mp_notify_task_finished("T5", "failed") is True, "mp_notify 失败任务发送成功")
+check(sent["status"] == "查重异常", "mp_notify 失败任务状态为查重异常")
+
+# 结束时间为空时回退当前时间（非空字符串）
+state["task_row"] = {"notify_unionid": "union_123", "created_at": "2026-09-03T10:00:00+08:00", "completed_at": None}
+check(mp.mp_notify_task_finished("T6", "completed") is True, "mp_notify 结束时间缺失时仍发送")
+check(len(sent["end_time"]) == len("2026-09-03 10:25"), "mp_notify 结束时间回退为当前时间")
+
 # 任务无 unionid
 state["task_unionid"] = None
-check(mp.mp_notify_task_finished("T2", "查重完成") is False, "mp_notify 任务无 unionid 时不发送")
+state["task_row"] = None
+check(mp.mp_notify_task_finished("T2", "completed") is False, "mp_notify 任务无 unionid 时不发送")
 state["task_unionid"] = "union_404"
-check(mp.mp_notify_task_finished("T3", "查重完成") is False, "mp_notify 用户从未关注时不发送")
+check(mp.mp_notify_task_finished("T3", "completed") is False, "mp_notify 用户从未关注时不发送")
 
 # 发送抛异常时静默失败
 state["task_unionid"] = "union_123"
+state["task_row"] = {"notify_unionid": "union_123", "created_at": "2026-09-03T10:00:00+08:00", "completed_at": "2026-09-03T10:25:00+08:00"}
 
 
 def raise_send(*a, **k):
@@ -209,7 +238,7 @@ def raise_send(*a, **k):
 
 
 mp.send_mp_template_message = raise_send
-check(mp.mp_notify_task_finished("T4", "查重完成") is False, "mp_notify 发送异常时返回 False 不抛出")
+check(mp.mp_notify_task_finished("T4", "completed") is False, "mp_notify 发送异常时返回 False 不抛出")
 mp.send_mp_template_message = orig_send
 
 print(f"\n{passed} passed, {failed} failed")

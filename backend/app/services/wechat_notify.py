@@ -183,12 +183,21 @@ def _clip(text: str, limit: int) -> str:
     return clipped or value[:limit]
 
 
-def notify_task_finished(task_no: str, result_text: str) -> bool:
-    # 优先服务号模板消息（已关注用户强触达），失败回退小程序订阅消息
+# 小程序订阅消息兜底文案（phrase 服务结果关键词限 5 字）
+_RESULT_TEXT = {
+    "completed": "查重完成",
+    "awaiting_payment": "完成待解锁",
+    "failed": "查重异常",
+}
+
+
+def notify_task_finished(task_no: str, status_key: str) -> bool:
+    """status_key: completed / awaiting_payment / failed。
+    优先服务号模板消息（已关注用户强触达），失败回退小程序订阅消息。"""
     from app.services import wechat_mp
 
     try:
-        if wechat_mp.mp_notify_task_finished(task_no, result_text):
+        if wechat_mp.mp_notify_task_finished(task_no, status_key):
             return True
     except Exception as exc:
         logger.warning("mp notify fallback to subscribe task=%s err=%s", task_no, exc)
@@ -210,7 +219,7 @@ def notify_task_finished(task_no: str, result_text: str) -> bool:
             config["template_id"],
             row["notify_openid"],
             task_no,
-            result_text,
+            _RESULT_TEXT.get(status_key, "查重完成"),
             page=f"pages/results/index?taskNo={task_no}",
         )
     except Exception as exc:

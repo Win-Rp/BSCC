@@ -92,6 +92,8 @@ def process_task_safely(task_no: str) -> None:
         process_task(task_no)
     except Exception as exc:
         _mark_task_failed(task_no, str(exc))
+        # 后台处理失败时用户大概率已离开，补发「查重异常」通知
+        _notify_finished(task_no, "failed")
 
 
 def process_task(task_no: str) -> None:
@@ -145,10 +147,14 @@ def process_task(task_no: str) -> None:
 
         target_status = "awaiting_payment" if task["unlock_status"] == "locked" else "completed"
         _update_task(conn, task["id"], status=target_status, progress=100, completed_at=now_iso())
-        notify_result = "查重完成" if target_status == "completed" else "完成待解锁"
 
+    _notify_finished(task_no, target_status)
+
+
+def _notify_finished(task_no: str, status_key: str) -> None:
+    """查重结束通知（含失败）：MP/订阅消息二选一，成功后记录发送时间，异常不外抛。"""
     try:
-        if notify_task_finished(task_no, notify_result):
+        if notify_task_finished(task_no, status_key):
             with db_session() as conn:
                 conn.execute(
                     "UPDATE tasks SET notify_sent_at = ?, updated_at = ? WHERE task_no = ?",
@@ -569,12 +575,14 @@ def _mark_task_failed(task_no: str, message: str) -> None:
     with db_session() as conn:
         task = _task_by_no(conn, task_no)
         if task:
+            # completed_at 作为任务结束时间，失败任务也落值以供通知模板「结束时间」字段使用
             _update_task(
                 conn,
                 task["id"],
                 status="failed",
                 progress=100,
                 error_message=_human_message(message) or message,
+                completed_at=now_iso(),
             )
 
 

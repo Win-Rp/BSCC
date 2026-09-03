@@ -117,6 +117,11 @@ wn.db_session = fake_db_session(rows_partial)
 check(wn.get_notify_config()["enabled"] is False, "缺少 app_secret 时自动禁用")
 
 # ---------- notify_task_finished：无 openid / 未启用 时不发送 ----------
+# 屏蔽服务号优先链路，专注验证小程序订阅消息兜底
+import app.services.wechat_mp as wmp_module
+
+wmp_module.mp_notify_task_finished = lambda task_no, status_key: False
+
 wn.db_session = fake_db_session(rows)
 sent_calls = []
 
@@ -134,16 +139,21 @@ def fake_send(*args, **kwargs):
 wn.send_subscribe_message = fake_send
 task_with_openid = [FakeRow({"notify_openid": "oABC", "notify_authorized_at": "2026-01-01"})]
 wn.db_session = fake_db_session(rows, task_rows=task_with_openid)
-check(wn.notify_task_finished("T1", "查重完成") is True, "有 openid 时调用推送")
+check(wn.notify_task_finished("T1", "completed") is True, "有 openid 时调用推送")
 check(len(sent_calls) == 1 and sent_calls[0]["openid"] == "oABC", "推送使用任务绑定的 openid")
 check(sent_calls[0]["service_no"] == "T1" and sent_calls[0]["service_result"] == "查重完成", "推送内容正确")
 check(sent_calls[0]["page"] == "pages/results/index?taskNo=T1", "通知跳转直达结果页并携带任务号")
 
+check(wn.notify_task_finished("T5", "failed") is True, "失败任务同样触发兜底推送")
+check(sent_calls[-1]["service_result"] == "查重异常", "失败状态映射为查重异常")
+check(wn.notify_task_finished("T6", "awaiting_payment") is True, "待解锁任务触发兜底推送")
+check(sent_calls[-1]["service_result"] == "完成待解锁", "待解锁状态映射为完成待解锁")
+
 wn.db_session = fake_db_session(rows, task_rows=[FakeRow({"notify_openid": None, "notify_authorized_at": None})])
-check(wn.notify_task_finished("T2", "查重完成") is False, "任务未绑定 openid 时不推送")
+check(wn.notify_task_finished("T2", "completed") is False, "任务未绑定 openid 时不推送")
 
 wn.db_session = fake_db_session(rows_disabled, task_rows=task_with_openid)
-check(wn.notify_task_finished("T3", "查重完成") is False, "功能未启用时不推送")
+check(wn.notify_task_finished("T3", "completed") is False, "功能未启用时不推送")
 
 # 推送抛异常不影响主流程
 def bad_send(**kwargs):
@@ -152,7 +162,7 @@ def bad_send(**kwargs):
 
 wn.send_subscribe_message = bad_send
 wn.db_session = fake_db_session(rows, task_rows=task_with_openid)
-check(wn.notify_task_finished("T4", "查重完成") is False, "推送异常时静默返回 False")
+check(wn.notify_task_finished("T4", "completed") is False, "推送异常时静默返回 False")
 
 # ---------- send_subscribe_message：报文格式 ----------
 class FakeResp:
