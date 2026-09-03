@@ -20,7 +20,8 @@ function inferFailedStepKey(errorMessage) {
   return /解析|parse/i.test(errorMessage || "") ? "parsing" : "checking";
 }
 
-function buildStepItems(status, errorMessage) {
+// uploadState: null-不展示上传节点（任务号直达场景）；current/done/error-上传阶段状态
+function buildStepItems(status, errorMessage, uploadState) {
   const steps = [
     { key: "queued", label: "排队" },
     { key: "parsing", label: "解析" },
@@ -28,9 +29,10 @@ function buildStepItems(status, errorMessage) {
     { key: "awaiting_payment", label: "待解锁" },
     { key: "completed", label: "完成" }
   ];
-  const currentIndex = Math.max(STATUS_ORDER.indexOf(status), 0);
+  const hasStatus = Boolean(status);
+  const currentIndex = hasStatus ? Math.max(STATUS_ORDER.indexOf(status), 0) : -1;
   const failedIndex = status === "failed" ? STATUS_ORDER.indexOf(inferFailedStepKey(errorMessage)) : -1;
-  return steps.map((item, index) => {
+  const mapped = steps.map((item) => {
     const stepIndex = STATUS_ORDER.indexOf(item.key);
     let state = "pending";
     if (status === "completed") {
@@ -48,6 +50,10 @@ function buildStepItems(status, errorMessage) {
       state
     };
   });
+  if (uploadState) {
+    mapped.unshift({ key: "upload", label: "上传", state: uploadState });
+  }
+  return mapped;
 }
 
 function buildViewStatus(status, errorMessage) {
@@ -63,6 +69,8 @@ function buildViewStatus(status, errorMessage) {
 Page({
   data: {
     taskNo: "",
+    uploading: false,
+    uploadFailed: false,
     progress: 0,
     status: "",
     statusText: "任务初始化中",
@@ -77,10 +85,26 @@ Page({
   onLoad(options) {
     const taskNo = options.taskNo || storage.getTaskNo();
     this.setData({ taskNo: taskNo || "" });
+
+    // 上传页直达：预置上传态，避免任务号生成前闪现“未找到任务”
+    if (options.from === "upload") {
+      this.setData({
+        uploading: true,
+        statusText: "准备上传文件",
+        statusHint: "正在接收文件列表，请稍候…",
+        steps: buildStepItems("", "", "current")
+      });
+    }
+
+    // 由上传页 navigateTo 直达时接收待上传文件，进入「上传阶段」
+    const channel = this.getOpenerEventChannel && this.getOpenerEventChannel();
+    if (channel && typeof channel.on === "function") {
+      channel.on("pendingUpload", (payload) => this.beginUpload(payload || {}));
+    }
   },
 
   onShow() {
-    if (!this.data.taskNo) {
+    if (!this.data.taskNo || this.data.uploading) {
       return;
     }
     this.startStatusPolling();
@@ -91,7 +115,92 @@ Page({
   },
 
   onUnload() {
+    this._destroyed = true;
+    this._stopUploadTimer();
     this.stopStatusPolling();
+  },
+
+  beginUpload(payload) {
+    this._enteredViaUpload = true;
+    this.stopStatusPolling();
+    const fileCount = 1 + (payload.bFiles || []).length;
+    this.setData({
+      uploading: true,
+      uploadFailed: false,
+      isFailed: false,
+      progress: 4,
+      statusText: "正在上传文件",
+      statusHint: `共 ${fileCount} 个文件，上传完成后自动开始查重`,
+      steps: buildStepItems("", "", "current")
+    });
+    this._startUploadTimer();
+
+    api.createTask({
+      aFile: payload.aFile,
+      bFiles: payload.bFiles || [],
+      keywords: payload.keywords || "",
+      notifyOpenid: payload.notifyOpenid || "",
+      notifyUnionid: payload.notifyUnionid || ""
+    }).then((response) => {
+      this._stopUploadTimer();
+      if (!response.success) {
+        if (this._destroyed) {
+          return;
+        }
+        this.setData({
+          uploading: false,
+          uploadFailed: true,
+          isFailed: true,
+          statusText: "文件上传失败",
+          statusHint: "",
+          errorMessage: (response.error && response.error.message) || "上传失败，请返回重试",
+          steps: buildStepItems("", "", "error")
+        });
+        return;
+      }
+
+      const taskNo = (response.data && response.data.task_no) || "";
+      // 页面已退出也要保存任务号：任务实际已创建，可通过恢复功能找回
+      storage.setTaskContext({
+        taskNo,
+        orderNo: "",
+        contact: payload.contact || storage.getRecoveryInfo().contact || ""
+      });
+      if (this._destroyed) {
+        return;
+      }
+      this.setData({
+        uploading: false,
+        uploadFailed: false,
+        taskNo,
+        progress: 100,
+        statusText: "文件上传完成",
+        statusHint: "已进入处理队列，正在同步任务状态…",
+        isFailed: false,
+        steps: buildStepItems("queued", "", "done")
+      });
+      this.startStatusPolling();
+    });
+  },
+
+  // wx.request 无传输进度回调，用渐进逼近 90% 的平滑动画表达上传进行中
+  _startUploadTimer() {
+    this._stopUploadTimer();
+    this._uploadTimer = setInterval(() => {
+      const shown = Math.floor(this.data.progress);
+      if (shown >= 90) {
+        return;
+      }
+      const next = Math.min(90, shown + Math.max(1, Math.round((90 - shown) * 0.08)));
+      this.setData({ progress: next });
+    }, 600);
+  },
+
+  _stopUploadTimer() {
+    if (this._uploadTimer) {
+      clearInterval(this._uploadTimer);
+      this._uploadTimer = null;
+    }
   },
 
   startStatusPolling() {
@@ -119,7 +228,7 @@ Page({
             status,
             statusText: data.message || getStatusText(status),
             errorMessage,
-            steps: buildStepItems(status, errorMessage)
+            steps: buildStepItems(status, errorMessage, this._enteredViaUpload ? "done" : null)
           }, viewStatus));
 
           if (status === "awaiting_payment" || status === "completed") {
@@ -148,6 +257,13 @@ Page({
   },
 
   gotoResults() {
+    if (this.data.uploading) {
+      wx.showToast({
+        title: "文件上传中，请稍候",
+        icon: "none"
+      });
+      return;
+    }
     if (!this.data.taskNo) {
       return;
     }
@@ -164,6 +280,12 @@ Page({
   },
 
   gotoUpload() {
+    // 优先返回：上传页仍在栈中，已选文件可保留直接重试
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      wx.navigateBack();
+      return;
+    }
     wx.reLaunch({
       url: "/pages/upload/index"
     });

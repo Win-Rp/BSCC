@@ -1,4 +1,3 @@
-const api = require("../../services/api");
 const storage = require("../../utils/storage");
 const { joinKeywords } = require("../../utils/format");
 const { ensureNotifyReady } = require("../../utils/notify");
@@ -181,6 +180,9 @@ Page({
   },
 
   async submitTask() {
+    if (this.data.loading) {
+      return;
+    }
     if (!this.data.aFile) {
       this.setData({ errorText: "请先选择主标书 A 文件" });
       return;
@@ -193,43 +195,36 @@ Page({
     this.setData({
       loading: true,
       errorText: "",
-      submitText: "任务提交中..."
+      submitText: "准备提交..."
     });
 
-    // 查重是分钟级异步任务：先尝试取得订阅通知授权（弹一次授权弹窗，拒绝不影响提交）
+    // 订阅授权必须在用户点击链路内完成（requestSubscribeMessage 依赖点击事件）
     const notify = await ensureNotifyReady();
-
-    const response = await api.createTask({
-      aFile: this.data.aFile,
-      bFiles: this.data.bFiles,
-      keywords: joinKeywords(this.data.keywords),
-      notifyOpenid: notify.openid,
-      notifyUnionid: notify.unionid
-    });
-
-    if (!response.success) {
-      this.setData({
-        loading: false,
-        submitText: "开始查重",
-        errorText: response.error ? response.error.message : "提交失败，请稍后重试"
-      });
-      return;
-    }
-
-    const taskNo = response.data.task_no;
-    storage.setTaskContext({
-      taskNo,
-      orderNo: "",
-      contact: storage.getRecoveryInfo().contact || ""
-    });
 
     this.setData({
       loading: false,
       submitText: "开始查重"
     });
 
+    // 清空上一任务的本地任务号，避免进度页轮询到旧任务
+    storage.setTaskNo("");
+
+    // 立即进入等待页，文件上传在进度页内展示，避免原地转圈的“假死”感
     wx.navigateTo({
-      url: `/pages/progress/index?taskNo=${taskNo}`
+      url: "/pages/progress/index?from=upload",
+      success: (res) => {
+        res.eventChannel.emit("pendingUpload", {
+          aFile: this.data.aFile,
+          bFiles: this.data.bFiles,
+          keywords: joinKeywords(this.data.keywords),
+          notifyOpenid: notify.openid,
+          notifyUnionid: notify.unionid,
+          contact: storage.getRecoveryInfo().contact || ""
+        });
+      },
+      fail: () => {
+        this.setData({ errorText: "页面跳转失败，请重试" });
+      }
     });
   }
 });

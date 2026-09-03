@@ -1,8 +1,8 @@
 <view class="page progress-page">
   <nav-bar title="查重进度" showBack />
 
-  <!-- 无任务号兜底 -->
-  <view class="card" wx:if="{{!taskNo}}">
+  <!-- 无任务号兜底（上传阶段任务号尚未生成，不显示） -->
+  <view class="card" wx:if="{{!taskNo && !uploading}}">
     <view class="section-title">未找到任务</view>
     <view class="muted">当前会话中没有可查询的任务号，请重新发起查重或通过历史任务恢复。</view>
     <view class="actions">
@@ -54,8 +54,8 @@
       <view class="danger error-box" wx:if="{{errorMessage && !isFailed}}">{{errorMessage}}</view>
     </view>
 
-    <!-- 任务号找回提示 -->
-    <view class="card">
+    <!-- 任务号找回提示（上传阶段任务号尚未生成，暂不显示） -->
+    <view class="card" wx:if="{{taskNo}}">
       <view class="section-title">保存任务号，随时找回</view>
       <view class="notice-strip notice-strip--info">查重耗时较长时可离开页面，结果保留 7 天，凭任务号随时找回。</view>
       <view class="task-id-box" bindtap="copyTaskNo">
@@ -66,9 +66,9 @@
     </view>
 
     <view class="actions">
-      <button class="btn-secondary" bindtap="gotoUpload">{{isFailed ? '返回重新上传' : '返回上传页'}}</button>
+      <button class="btn-secondary" bindtap="gotoUpload">{{isFailed ? '返回重新上传' : uploading ? '返回重选文件' : '返回上传页'}}</button>
       <button class="{{isFinished || isFailed ? 'btn-primary' : 'btn-primary progress-cta--waiting'}}" bindtap="gotoResults">
-        {{isFailed ? '查看任务详情' : isFinished ? '查看结果页' : '查重中 ' + progress + '%'}}
+        {{isFailed ? '查看任务详情' : isFinished ? '查看结果页' : uploading ? '上传中 ' + progress + '%' : '查重中 ' + progress + '%'}}
       </button>
     </view>
   </block>
