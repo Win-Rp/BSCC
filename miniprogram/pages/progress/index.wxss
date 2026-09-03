@@ -258,14 +258,50 @@
   background: rgba(214, 69, 69, 0.08);
 }
 
-.recover-link {
-  width: 100%;
-  margin-top: 20rpx;
+/* ===== 任务号找回卡片（本地覆盖全局 task-id-box 样式）===== */
+.task-hint {
+  color: #68727d;
+  font-size: 24rpx;
+  line-height: 1.7;
+  margin-bottom: 16rpx;
 }
 
-/* 未完成时的主按钮（弱化 + 动态进度文案） */
-.progress-cta--waiting {
-  background: linear-gradient(135deg, #9dc4c1 0%, #86b3b0 100%);
-  box-shadow: none;
+.task-id-box {
+  padding: 20rpx 24rpx;
+  border-radius: 14rpx;
+  background: #f5f8f8;
+  border: 1rpx solid #d6e8e5;
+}
+
+.task-id-box__text {
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 0.5rpx;
+}
+
+/* 复制按钮弱化为描边文字按钮，避免与顶部进度区争夺视觉重心 */
+.task-id-box__copy {
+  padding: 6rpx 24rpx;
+  border-radius: 8rpx;
+  background: #ffffff;
+  color: #126e6a;
+  border: 1rpx solid #c9e3df;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.task-id-box__copy--done {
+  background: #126e6a;
   color: #ffffff;
+  border-color: #126e6a;
+}
+
+/* 恢复历史任务：降级为次要文字链接 */
+.recover-link {
+  margin-top: 20rpx;
+  padding: 8rpx 0;
+  text-align: center;
+  color: #126e6a;
+  font-size: 26rpx;
+  font-weight: 600;
 }

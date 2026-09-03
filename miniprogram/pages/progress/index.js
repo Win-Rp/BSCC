@@ -69,6 +69,7 @@ function buildViewStatus(status, errorMessage) {
 Page({
   data: {
     taskNo: "",
+    copied: false,
     uploading: false,
     uploadFailed: false,
     progress: 0,
@@ -118,6 +119,10 @@ Page({
     this._destroyed = true;
     this._stopUploadTimer();
     this.stopStatusPolling();
+    if (this._copyResetTimer) {
+      clearTimeout(this._copyResetTimer);
+      this._copyResetTimer = null;
+    }
   },
 
   beginUpload(payload) {
@@ -309,10 +314,15 @@ Page({
     wx.setClipboardData({
       data: taskNo,
       success: () => {
-        wx.showToast({
-          title: "任务号已复制",
-          icon: "success"
-        });
+        // 按钮文案切换为“已复制”作为即时反馈，短暂保留后自动复位
+        this.setData({ copied: true });
+        if (this._copyResetTimer) {
+          clearTimeout(this._copyResetTimer);
+        }
+        this._copyResetTimer = setTimeout(() => {
+          this.setData({ copied: false });
+          this._copyResetTimer = null;
+        }, 1600);
       }
     });
   },

@@ -57,19 +57,26 @@
     <!-- 任务号找回提示（上传阶段任务号尚未生成，暂不显示） -->
     <view class="card" wx:if="{{taskNo}}">
       <view class="section-title">保存任务号，随时找回</view>
-      <view class="notice-strip notice-strip--info">查重耗时较长时可离开页面，结果保留 7 天，凭任务号随时找回。</view>
+      <view class="task-hint">查重耗时较长时可离开页面，结果保留 7 天，凭任务号随时找回。</view>
       <view class="task-id-box" bindtap="copyTaskNo">
         <text class="task-id-box__text">{{taskNo}}</text>
-        <text class="task-id-box__copy">复制任务号</text>
+        <text class="task-id-box__copy {{copied ? 'task-id-box__copy--done' : ''}}">{{copied ? '已复制' : '复制'}}</text>
       </view>
-      <button class="btn-secondary recover-link" bindtap="gotoRecovery">前往恢复历史任务</button>
+      <view class="recover-link" bindtap="gotoRecovery">前往恢复历史任务 ›</view>
     </view>
 
-    <view class="actions">
-      <button class="btn-secondary" bindtap="gotoUpload">{{isFailed ? '返回重新上传' : uploading ? '返回重选文件' : '返回上传页'}}</button>
-      <button class="{{isFinished || isFailed ? 'btn-primary' : 'btn-primary progress-cta--waiting'}}" bindtap="gotoResults">
-        {{isFailed ? '查看任务详情' : isFinished ? '查看结果页' : uploading ? '上传中 ' + progress + '%' : '查重中 ' + progress + '%'}}
-      </button>
+    <!-- 进行中：进度已在上方进度区呈现，底部仅保留返回入口，避免状态重复展示 -->
+    <view class="actions" wx:if="{{!isFinished && !isFailed}}">
+      <button class="btn-secondary" bindtap="gotoUpload">{{uploading ? '返回重选文件' : '返回上传页'}}</button>
+    </view>
+    <!-- 失败：重新上传为主操作，可查看任务详情定位失败原因 -->
+    <view class="actions" wx:elif="{{isFailed}}">
+      <button class="btn-secondary" bindtap="gotoUpload">返回重新上传</button>
+      <button class="btn-primary" bindtap="gotoResults">查看任务详情</button>
+    </view>
+    <!-- 完成：页面会自动跳转结果页，此处为手动备用入口 -->
+    <view class="actions" wx:else>
+      <button class="btn-primary" bindtap="gotoResults">查看结果页</button>
     </view>
   </block>
 </view>
