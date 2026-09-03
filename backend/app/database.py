@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 CREATE TABLE IF NOT EXISTS mp_followers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   union_id TEXT,
+  mini_openid TEXT,
   mp_openid TEXT NOT NULL UNIQUE,
   is_active INTEGER NOT NULL DEFAULT 1,
   subscribed_at TEXT NOT NULL,
@@ -309,6 +310,8 @@ def init_db() -> None:
         _ensure_column(conn, "tasks", "notify_authorized_at", "TEXT")
         _ensure_column(conn, "tasks", "notify_sent_at", "TEXT")
         _ensure_column(conn, "tasks", "notify_unionid", "TEXT")
+        # 扫码绑定：不带 unionid（微信开放平台）时，用小程序 openid 直连服务号 openid
+        _ensure_column(conn, "mp_followers", "mini_openid", "TEXT")
         for key, value in DEFAULT_SETTINGS.items():
             if DATABASE_URL.startswith("mysql"):
                 conn.execute("INSERT IGNORE INTO settings (key, value, description, updated_at) VALUES (?, ?, ?, ?)",

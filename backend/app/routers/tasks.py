@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, BackgroundTasks, File, Form, Query, Request, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse
 from app.database import db_session
@@ -9,6 +11,8 @@ from app.services import wechat_notify, wechat_mp
 from app.services.parser import ERROR_MESSAGES
 from app.utils.api import fail, ok
 
+
+logger = logging.getLogger("bscc.tasks")
 
 router = APIRouter(tags=["tasks"])
 
@@ -50,7 +54,9 @@ def wechat_mp_verify(
 ):
     config = wechat_mp.get_mp_config()
     if not wechat_mp.verify_signature(config["verify_token"], signature, timestamp, nonce):
+        logger.warning("mp verify rejected: signature mismatch (check mp_verify_token)")
         return PlainTextResponse("forbidden", status_code=403)
+    logger.info("mp verify ok: 服务号服务器配置校验通过")
     return PlainTextResponse(echostr)
 
 
@@ -62,14 +68,62 @@ async def wechat_mp_callback(request: Request):
     timestamp = params.get("timestamp", "")
     nonce = params.get("nonce", "")
     if not wechat_mp.verify_signature(config["verify_token"], signature, timestamp, nonce):
+        logger.warning("mp callback rejected: signature verify failed (check mp_verify_token)")
         return PlainTextResponse("forbidden", status_code=403)
     body = (await request.body()).decode("utf-8", errors="ignore")
+    logger.info("mp callback received len=%s body=%s", len(body), body[:300])
     try:
         event = wechat_mp.parse_event_xml(body)
-        return PlainTextResponse(wechat_mp.handle_callback_event(event))
-    except Exception:
+    except Exception as exc:
+        logger.warning("mp callback parse failed err=%s body=%s", exc, body[:300])
         # 明文模式异常也按 success 应答，避免微信重复推送
         return PlainTextResponse("success")
+    msg_type = event.get("MsgType", "")
+    logger.info(
+        "mp callback parsed msgtype=%s event=%s from=%s unionid=%s",
+        msg_type,
+        event.get("Event", ""),
+        event.get("FromUserName", ""),
+        event.get("UnionID", ""),
+    )
+    if not msg_type:
+        logger.warning(
+            "mp callback msgtype empty: 若 body 含 Encrypt 节点，说明服务号后台"
+            "「消息加解密方式」未选明文模式，后端无解密逻辑，事件将被丢弃"
+        )
+    try:
+        return PlainTextResponse(wechat_mp.handle_callback_event(event))
+    except Exception as exc:
+        logger.warning("mp callback handle failed err=%s", exc)
+        return PlainTextResponse("success")
+
+
+@router.get("/wechat/mp/qrcode")
+def wechat_mp_qrcode(openid: str = Query(""), task_no: str = Query("")):
+    """生成带场景值的服务号关注二维码。
+
+    场景值携带小程序 openid，用户扫码关注后回调事件的 EventKey 会把该值带回，
+    后端据此直接建立 (小程序 openid, 服务号 openid) 绑定，无需依赖微信开放平台的
+    unionid。返回 base64 data URL，小程序无需额外配置 downloadFile 合法域名。
+
+    场景值来源优先级：显式 openid > 任务号对应的任务 notify_openid。
+    """
+    config = wechat_mp.get_mp_config()
+    if not config["enabled"]:
+        return ok({"data_url": "", "bound": False, "reason": "mp_disabled"})
+    if not openid and task_no:
+        with db_session() as conn:
+            row = conn.execute(
+                "SELECT notify_openid FROM tasks WHERE task_no = ?", (task_no,)
+            ).fetchone()
+        openid = (row["notify_openid"] or "") if row else ""
+    if not openid:
+        return ok({"data_url": "", "bound": False, "reason": "no_openid"})
+    bound = wechat_mp.is_mini_bound(openid)
+    data_url = wechat_mp.get_mp_qrcode_data_url(openid)
+    if not data_url:
+        return ok({"data_url": "", "bound": bound, "reason": "generate_failed"})
+    return ok({"data_url": data_url, "bound": bound, "reason": ""})
 
 
 @router.get("/tasks/{task_no}/status")
