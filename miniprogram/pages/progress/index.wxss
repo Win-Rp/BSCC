@@ -394,6 +394,31 @@
   color: #126e6a;
 }
 
+.qr-panel__bound {
+  margin-top: 32rpx;
+  padding: 36rpx 24rpx;
+  width: 400rpx;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 28rpx;
+  color: #126e6a;
+  font-weight: 600;
+  background: rgba(18, 110, 106, 0.08);
+  border-radius: 12rpx;
+}
+
+.qr-panel__loading {
+  margin-top: 32rpx;
+  padding: 36rpx 24rpx;
+  width: 400rpx;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 26rpx;
+  color: #68727d;
+  background: #f5f8f8;
+  border-radius: 12rpx;
+}
+
 .qr-panel__close {
   margin-top: 32rpx;
   padding: 16rpx 0;

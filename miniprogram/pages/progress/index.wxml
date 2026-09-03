@@ -86,13 +86,25 @@
     </view>
   </block>
 
-  <!-- 服务号二维码弹层：长按识别关注 -->
+  <!-- 服务号二维码弹层：长按识别关注，扫码即建立小程序-服务号绑定 -->
   <view class="qr-mask" wx:if="{{showQr}}" bindtap="hideMpQr">
     <view class="qr-panel" catchtap="noop">
       <view class="qr-panel__title">关注服务号</view>
       <view class="qr-panel__hint">查重完成后通过服务号第一时间通知您</view>
-      <image class="qr-panel__img" src="/assets/images/mp-qr.jpg" mode="aspectFit" show-menu-by-longpress="{{true}}" />
-      <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
+      <block wx:if="{{mpBound}}">
+        <view class="qr-panel__bound">已关注并绑定，无需重复扫码</view>
+        <view class="qr-panel__tip">任务完成后将收到服务号通知</view>
+      </block>
+      <block wx:elif="{{mpQrUrl}}">
+        <image class="qr-panel__img" src="{{mpQrUrl}}" mode="aspectFit" show-menu-by-longpress="{{true}}" />
+        <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
+      </block>
+      <block wx:elif="{{mpQrLoading}}">
+        <view class="qr-panel__loading">二维码生成中…</view>
+      </block>
+      <block wx:else>
+        <view class="qr-panel__loading">暂无可用的服务号二维码</view>
+      </block>
       <view class="qr-panel__close" bindtap="hideMpQr">关闭</view>
     </view>
   </view>
