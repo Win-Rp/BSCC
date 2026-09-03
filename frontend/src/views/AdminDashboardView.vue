@@ -558,7 +558,12 @@
                       <div class="form-tip">{{ translateText("必须显式填写支付宝网关，沙箱或正式环境均以这里的网关地址为准。") }}</div>
                     </el-form-item>
                     <el-form-item :label="translateText('应用 App ID')">
-                      <el-input v-model="settingsForm.alipay_app_id" :placeholder="translateText('请输入支付宝应用 APP_ID')" />
+                      <el-input
+                        v-model="settingsForm.alipay_app_id"
+                        name="alipay-app-id"
+                        autocomplete="off"
+                        :placeholder="translateText('请输入支付宝应用 APP_ID')"
+                      />
                     </el-form-item>
                     <el-form-item :label="translateText('异步通知地址')">
                       <el-input
@@ -572,6 +577,8 @@
                     <el-form-item :label="translateText('应用私钥')">
                       <el-input
                         v-model="settingsForm.alipay_private_key"
+                        name="alipay-private-key"
+                        autocomplete="off"
                         type="textarea"
                         :rows="5"
                         :placeholder="translateText('请输入 RSA2 应用私钥，支持直接粘贴多行文本')"
@@ -580,6 +587,8 @@
                     <el-form-item :label="translateText('支付宝公钥')">
                       <el-input
                         v-model="settingsForm.alipay_public_key"
+                        name="alipay-public-key"
+                        autocomplete="off"
                         type="textarea"
                         :rows="5"
                         :placeholder="translateText('请输入支付宝公钥，支持直接粘贴多行文本')"
@@ -592,7 +601,12 @@
                       <span class="form-inline-tip">{{ translateText("开启后前台可选择微信 Native 扫码支付") }}</span>
                     </el-form-item>
                     <el-form-item :label="translateText('微信 AppID')">
-                      <el-input v-model="settingsForm.wechat_app_id" :placeholder="translateText('请输入微信支付 AppID')" />
+                      <el-input
+                        v-model="settingsForm.wechat_app_id"
+                        name="wechat-pay-appid"
+                        autocomplete="off"
+                        :placeholder="translateText('请输入微信支付 AppID')"
+                      />
                     </el-form-item>
                     <el-form-item :label="translateText('微信商户号')">
                       <el-input v-model="settingsForm.wechat_mch_id" :placeholder="translateText('请输入微信支付商户号 MCH_ID')" />
@@ -600,6 +614,8 @@
                     <el-form-item :label="translateText('APIv2 Key')">
                       <el-input
                         v-model="settingsForm.wechat_api_v2_key"
+                        name="wechat-pay-apiv2-key"
+                        autocomplete="off"
                         type="textarea"
                         :rows="3"
                         :placeholder="translateText('请输入微信支付 APIv2 Key')"
@@ -624,6 +640,8 @@
                     <el-form-item :label="translateText('订阅消息模板 ID')">
                       <el-input
                         v-model="settingsForm.notify_template_id"
+                        name="wechat-mini-notify-template-id"
+                        autocomplete="off"
                         :placeholder="translateText('小程序后台 - 功能 - 订阅消息 - 我的模板中的模板 ID')"
                       />
                       <div class="form-tip">{{ translateText("关键词需包含：服务编号、服务结果") }}</div>
@@ -631,6 +649,8 @@
                     <el-form-item :label="translateText('小程序 AppID')">
                       <el-input
                         v-model="settingsForm.wechat_mini_app_id"
+                        name="wechat-mini-appid"
+                        autocomplete="off"
                         :placeholder="translateText('留空则使用上方微信支付的 AppID')"
                       />
                       <div class="form-tip">{{ translateText("订阅消息推送必须使用小程序自身的 AppID，与服务号/支付 AppID 不同") }}</div>
@@ -638,8 +658,8 @@
                     <el-form-item :label="translateText('小程序 AppSecret')">
                       <el-input
                         v-model="settingsForm.wechat_app_secret"
-                        type="password"
-                        show-password
+                        name="wechat-mini-appsecret"
+                        autocomplete="off"
                         :placeholder="translateText('请输入小程序 AppSecret（设置与开发 - 开发管理 中获取）')"
                       />
                       <div class="form-tip">{{ translateText("用于 wx.login 换取 openid 和获取接口调用凭据") }}</div>
@@ -653,6 +673,8 @@
                     <el-form-item :label="translateText('服务号 AppID')">
                       <el-input
                         v-model="settingsForm.mp_app_id"
+                        name="wechat-mp-appid"
+                        autocomplete="off"
                         :placeholder="translateText('服务号后台 - 设置与开发 - 基本配置中的 AppID')"
                       />
                       <div class="form-tip">{{ translateText("需与小程序同主体或关联主体，并在小程序后台“设置-关注公众号”中选中") }}</div>
@@ -660,8 +682,8 @@
                     <el-form-item :label="translateText('服务号 AppSecret')">
                       <el-input
                         v-model="settingsForm.mp_app_secret"
-                        type="password"
-                        show-password
+                        name="wechat-mp-appsecret"
+                        autocomplete="off"
                         :placeholder="translateText('请输入服务号 AppSecret')"
                       />
                       <div class="form-tip">{{ translateText("用于获取服务号接口调用凭据") }}</div>
@@ -669,6 +691,8 @@
                     <el-form-item :label="translateText('服务器 Token')">
                       <el-input
                         v-model="settingsForm.mp_verify_token"
+                        name="wechat-mp-verify-token"
+                        autocomplete="off"
                         :placeholder="translateText('自定义 Token，与服务号服务器配置中填写的保持一致')"
                       />
                       <div class="form-tip">
@@ -677,12 +701,14 @@
                       </div>
                     </el-form-item>
                     <el-form-item :label="translateText('服务号模板 ID')">
-                        <el-input
-                          v-model="settingsForm.mp_notify_template_id"
-                          :placeholder="translateText('服务号后台 - 广告与服务 - 模板消息 - 我的模板中添加后获取')"
-                        />
-                        <div class="form-tip">{{ translateText("使用「工单处理结果通知」类目模板：任务名称枚举值=标书查重、当前状态枚举值=查重完成/查重异常；点击通知可跳转小程序结果页") }}</div>
-                      </el-form-item>
+                      <el-input
+                        v-model="settingsForm.mp_notify_template_id"
+                        name="wechat-mp-notify-template-id"
+                        autocomplete="off"
+                        :placeholder="translateText('服务号后台 - 广告与服务 - 模板消息 - 我的模板中添加后获取')"
+                      />
+                      <div class="form-tip">{{ translateText("使用「工单处理结果通知」类目模板：任务名称枚举值=标书查重、当前状态枚举值=查重完成/查重异常；点击通知可跳转小程序结果页") }}</div>
+                    </el-form-item>
 
                     <el-form-item>
                       <el-button type="primary" @click="saveSettings" :loading="savingSettings">{{ translateText("保存配置") }}</el-button>
