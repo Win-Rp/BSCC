@@ -305,13 +305,44 @@
   font-size: 26rpx;
   font-weight: 600;
 }
-/* ===== 服务号关注引导 ===== */
+/* ===== 服务号关注引导：小药丸（轻品牌色背景）=====
+   与上方恢复历史任务的"纯文字链"区分开，避免两行相邻的弱权重文本链接"看不见"问题 */
 .mp-follow {
-  margin-top: 16rpx;
-  padding: 8rpx 0;
-  text-align: center;
-  color: #68727d;
+  margin: 24rpx auto 0;
+  padding: 10rpx 28rpx;
+  width: max-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999rpx;
+  background: rgba(18, 110, 106, 0.08);
+  color: #126e6a;
   font-size: 26rpx;
+  font-weight: 500;
+}
+
+.mp-follow__icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+  line-height: 1;
+}
+
+.mp-follow__text {
+  /* 长文案不换行；超过一行宽时整个药丸在小屏（小程序 rpx 单位下较少触发）保持居中 */
+  white-space: nowrap;
+}
+
+.mp-follow__arrow {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+/* 在 .card 内居中显示：外层 element 默认 block 加 margin:auto，配合 inline-flex 也兼容 */
+.card .mp-follow {
+  display: flex;
+  justify-content: center;
 }
 
 /* 二维码弹层 */

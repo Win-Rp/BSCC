@@ -46,15 +46,19 @@ function requestSubscribe() {
   return new Promise((resolve) => {
     const templateId = resolveTemplateId();
     if (!templateId) {
+      console.warn("[notify] siteConfig 未下发 notify_template_id，跳过授权弹窗");
       resolve(false);
       return;
     }
     wx.requestSubscribeMessage({
       tmplIds: [templateId],
       success: (res) => {
-        resolve(res[templateId] === "accept");
+        const accepted = res[templateId] === "accept";
+        console.log("[notify] 授权弹窗结果:", accepted ? "accept" : "reject", JSON.stringify(res));
+        resolve(accepted);
       },
-      fail: () => {
+      fail: (err) => {
+        console.warn("[notify] requestSubscribeMessage 调用失败:", err && err.errMsg);
         resolve(false);
       }
     });
@@ -83,18 +87,22 @@ async function ensureNotifyReady() {
 
   let openid = getCachedOpenid();
   if (openid) {
+    console.log("[notify] openid 命中本地缓存");
     return { openid, unionid: getCachedUnionid(), subscribed: true };
   }
 
   const code = await login();
   if (!code) {
+    console.warn("[notify] wx.login 获取 code 失败");
     return { openid: "", unionid: "", subscribed: false };
   }
 
   const response = await api.wxLogin(code);
   if (!response.success || !response.data || !response.data.openid) {
+    console.warn("[notify] wxLogin 未换到 openid:", JSON.stringify(response));
     return { openid: "", unionid: "", subscribed: false };
   }
+  console.log("[notify] openid 获取成功");
 
   openid = response.data.openid;
   cacheUser(openid, response.data.unionid);

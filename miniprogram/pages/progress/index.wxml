@@ -64,7 +64,11 @@
       </view>
       <view class="recover-link" bindtap="gotoRecovery">前往恢复历史任务 ›</view>
       <!-- 关注服务号引导：二维码由后台 site-config 的 mp_qrcode_url 下发，未配置不显示 -->
-      <view class="mp-follow" wx:if="{{!isFinished && !isFailed}}" bindtap="showMpQr">关注服务号，查重完成即时提醒 ›</view>
+      <view class="mp-follow" wx:if="{{!isFinished && !isFailed}}" bindtap="showMpQr">
+  <text class="mp-follow__icon">🔔</text>
+  <text class="mp-follow__text">关注服务号，查重完成即时提醒</text>
+  <text class="mp-follow__arrow">›</text>
+</view>
     </view>
 
     <!-- 进行中：进度已在上方进度区呈现，底部仅保留返回入口，避免状态重复展示 -->
