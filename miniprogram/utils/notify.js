@@ -1,20 +1,18 @@
 const api = require("../services/api");
 
-const DEFAULT_TEMPLATE_ID = "0EWR6EdE5PZwTy3op4CIwxMH950vcLvBdPT5tBD1jkA";
 const OPENID_CACHE_KEY = "bscc_openid";
 const UNIONID_CACHE_KEY = "bscc_unionid";
 
 function resolveTemplateId() {
+  // 模板 ID 只认后台 siteConfig 下发：为空则不弹授权窗，
+  // 避免前端授权模板与后端发送模板不一致导致 43101（额度恒为 0）
   try {
     const app = getApp();
     const id = app && app.globalData && app.globalData.siteConfig && app.globalData.siteConfig.notify_template_id;
-    if (id) {
-      return id;
-    }
+    return id || "";
   } catch (e) {
-    // getApp 不可用时使用默认模板
+    return "";
   }
-  return DEFAULT_TEMPLATE_ID;
 }
 
 function getCachedOpenid() {
