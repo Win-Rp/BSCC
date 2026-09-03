@@ -204,6 +204,11 @@ def notify_task_finished(task_no: str, status_key: str) -> bool:
 
     config = get_notify_config()
     if not config["enabled"]:
+        logger.warning(
+            "notify skipped: config disabled task=%s "
+            "(check notify_enabled / wechat_mini_app_id / wechat_app_secret / notify_template_id)",
+            task_no,
+        )
         return False
     with db_session() as conn:
         row = conn.execute(
@@ -211,6 +216,7 @@ def notify_task_finished(task_no: str, status_key: str) -> bool:
             (task_no,),
         ).fetchone()
     if not row or not row["notify_openid"]:
+        logger.warning("notify skipped: task has no notify_openid task=%s", task_no)
         return False
     try:
         return send_subscribe_message(
