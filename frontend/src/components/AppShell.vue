@@ -1,8 +1,27 @@
 <template>
   <div class="page-shell">
-    <div v-if="systemNotice" class="shell-notice-float">
-      <span class="shell-notice-float__label">{{ t("shell.systemNotice") }}</span>
-      <span class="shell-notice-float__text">{{ systemNotice }}</span>
+    <div v-if="showNotice" class="shell-notice-float">
+      <div class="shell-notice-float__bar">
+        <button
+          type="button"
+          class="shell-notice-float__trigger"
+          :title="translateText('点击查看完整公告')"
+          @click="noticeExpanded = !noticeExpanded"
+        >
+          <span class="shell-notice-float__label">{{ t("shell.systemNotice") }}</span>
+          <span class="shell-notice-float__text">{{ systemNotice }}</span>
+          <el-icon class="shell-notice-float__arrow" :class="{ 'is-open': noticeExpanded }"><ArrowDown /></el-icon>
+        </button>
+        <button
+          type="button"
+          class="shell-notice-float__close"
+          :title="translateText('关闭公告')"
+          @click="noticeDismissed = true"
+        >
+          <el-icon><Close /></el-icon>
+        </button>
+      </div>
+      <div v-if="noticeExpanded" class="shell-notice-float__panel">{{ systemNotice }}</div>
     </div>
 
     <nav class="shell-topbar">
@@ -142,7 +161,7 @@
 import { computed, ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import StepperNav from "./StepperNav.vue";
-import { Loading } from "@element-plus/icons-vue";
+import { ArrowDown, Close, Loading } from "@element-plus/icons-vue";
 import { isTaskProcessing } from "@/composables/useTaskState";
 import { useAppI18n, type AppLocale } from "@/composables/useAppI18n";
 import { BUILD_META } from "@/generated/buildMeta";
@@ -171,6 +190,9 @@ const localizedHomeTags = computed(() => {
   return rawHomeTags.value.map((tag) => translateText(tag));
 });
 const systemNotice = computed(() => translateText(rawSystemNotice.value));
+const noticeExpanded = ref(false);
+const noticeDismissed = ref(false);
+const showNotice = computed(() => !!systemNotice.value && !noticeDismissed.value);
 const menuItems = computed(() => [
   { label: t("shell.menu.home"), to: "/" },
   { label: t("shell.menu.upload"), to: "/upload" },

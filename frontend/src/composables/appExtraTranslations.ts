@@ -337,6 +337,8 @@ export const extraExactTextTranslations: Partial<Record<SupportedLocale, Record<
     "文件在微信里？": "Files stuck in WeChat?",
     "扫码用小程序版，直接从聊天记录选文件，查重完成微信即时通知。": "Scan to use the mini program: pick files straight from your chat history and get notified in WeChat when done.",
     "微信扫码": "Scan in WeChat",
+    "点击查看完整公告": "Click to view the full notice",
+    "关闭公告": "Close notice",
   },
   "zh-TW": {
     "标书查重结果页_{siteTitle}": "標書查重結果頁_{siteTitle}",
@@ -356,6 +358,8 @@ export const extraExactTextTranslations: Partial<Record<SupportedLocale, Record<
     "文件在微信里？": "文件在微信裡？",
     "扫码用小程序版，直接从聊天记录选文件，查重完成微信即时通知。": "掃碼用小程式版，直接從聊天記錄選文件，查重完成微信即時通知。",
     "微信扫码": "微信掃碼",
+    "点击查看完整公告": "點擊查看完整公告",
+    "关闭公告": "關閉公告",
     "当前任务的标书查重结果页，仅用于查看任务相似度排行、摘要和复核详情。": "目前任務的標書查重結果頁，僅用於查看任務相似度排行、摘要與複核詳情。",
     "标书原文对比页_{siteTitle}": "標書原文對比頁_{siteTitle}",
     "当前任务的原文对比页面，仅用于查看命中片段证据与文档上下文。": "目前任務的原文對比頁面，僅用於查看命中片段證據與文件上下文。",
