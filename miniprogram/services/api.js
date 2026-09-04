@@ -74,12 +74,6 @@ function getSiteConfig() {
   return request("/api/public/site-config");
 }
 
-function getMpQrcode(taskNo, openid) {
-  return request("/api/wechat/mp/qrcode", {
-    data: { task_no: taskNo || "", openid: openid || "" }
-  });
-}
-
 function getAFileURL(taskNo) {
   return buildURL(`/api/tasks/${encodeURIComponent(taskNo)}/file/a`);
 }
@@ -100,7 +94,6 @@ module.exports = {
   recoverTask,
   getSupport,
   getSiteConfig,
-  getMpQrcode,
   getAFileURL,
   getBFileURL
 };

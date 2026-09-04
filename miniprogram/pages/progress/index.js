@@ -71,9 +71,6 @@ Page({
     taskNo: "",
     copied: false,
     showQr: false,
-    mpQrUrl: "",
-    mpBound: false,
-    mpQrLoading: false,
     uploading: false,
     uploadFailed: false,
     progress: 0,
@@ -131,29 +128,6 @@ Page({
 
   showMpQr() {
     this.setData({ showQr: true });
-    if (this.data.mpQrUrl || this.data.mpBound) {
-      return;
-    }
-    this.setData({ mpQrLoading: true });
-    api.getMpQrcode(this.data.taskNo)
-      .then((res) => {
-        if (!res.success) {
-          wx.showToast({ title: "二维码加载失败，请稍后重试", icon: "none" });
-          return;
-        }
-        this.setData({
-          mpQrUrl: res.data.data_url || "",
-          mpBound: res.data.bound || false,
-          mpQrLoading: false
-        });
-        if (!res.data.data_url && !res.data.bound) {
-          wx.showToast({ title: "服务号未启用，暂不支持关注提醒", icon: "none" });
-        }
-      })
-      .catch(() => {
-        this.setData({ mpQrLoading: false });
-        wx.showToast({ title: "二维码加载失败，请检查网络", icon: "none" });
-      });
   },
 
   hideMpQr() {

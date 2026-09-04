@@ -78,35 +78,38 @@ function login() {
   });
 }
 
-async function ensureNotifyReady() {
-  // 一次性订阅消息：每次授权只能推送一条，因此每次提交都要请求授权累积额度
-  const accepted = await requestSubscribe();
-  if (!accepted) {
-    return { openid: "", unionid: "", subscribed: false };
-  }
-
+async function ensureOpenid() {
   let openid = getCachedOpenid();
   if (openid) {
-    console.log("[notify] openid 命中本地缓存");
-    return { openid, unionid: getCachedUnionid(), subscribed: true };
+    return openid;
   }
-
   const code = await login();
   if (!code) {
     console.warn("[notify] wx.login 获取 code 失败");
-    return { openid: "", unionid: "", subscribed: false };
+    return "";
   }
-
   const response = await api.wxLogin(code);
   if (!response.success || !response.data || !response.data.openid) {
     console.warn("[notify] wxLogin 未换到 openid:", JSON.stringify(response));
-    return { openid: "", unionid: "", subscribed: false };
+    return "";
   }
-  console.log("[notify] openid 获取成功");
+  cacheUser(response.data.openid, response.data.unionid);
+  return response.data.openid;
+}
 
-  openid = response.data.openid;
-  cacheUser(openid, response.data.unionid);
-  return { openid, unionid: response.data.unionid || "", subscribed: true };
+async function ensureNotifyReady() {
+  // 一次性订阅消息：每次授权只能推送一条，因此每次提交都要请求授权累积额度。
+  // 注意：requestSubscribeMessage 必须在用户点击链路内最先调用，
+  // 之后的 wx.login 网络请求不能插在弹窗之前。
+  const accepted = await requestSubscribe();
+
+  // openid 与订阅授权解耦：用户拒绝弹窗时仍要获取 openid，
+  // 服务号扫码绑定（二维码场景值）依赖它，不授权订阅也不影响关注通知
+  const openid = await ensureOpenid();
+  if (!openid) {
+    return { openid: "", unionid: "", subscribed: accepted };
+  }
+  return { openid, unionid: getCachedUnionid(), subscribed: accepted };
 }
 
 module.exports = {

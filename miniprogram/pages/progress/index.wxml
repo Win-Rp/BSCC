@@ -63,12 +63,12 @@
         <text class="task-id-box__copy {{copied ? 'task-id-box__copy--done' : ''}}">{{copied ? '已复制' : '复制'}}</text>
       </view>
       <view class="recover-link" bindtap="gotoRecovery">前往恢复历史任务 ›</view>
-      <!-- 关注服务号引导：二维码由后台 site-config 的 mp_qrcode_url 下发，未配置不显示 -->
+      <!-- 关注服务号引导：二维码为本地静态资源，长按识别关注 -->
       <view class="mp-follow" wx:if="{{!isFinished && !isFailed}}" bindtap="showMpQr">
-  <text class="mp-follow__icon">🔔</text>
-  <text class="mp-follow__text">关注服务号，查重完成即时提醒</text>
-  <text class="mp-follow__arrow">›</text>
-</view>
+        <text class="mp-follow__icon">🔔</text>
+        <text class="mp-follow__text">关注服务号，查重完成即时提醒</text>
+        <text class="mp-follow__arrow">›</text>
+      </view>
     </view>
 
     <!-- 进行中：进度已在上方进度区呈现，底部仅保留返回入口，避免状态重复展示 -->
@@ -86,25 +86,13 @@
     </view>
   </block>
 
-  <!-- 服务号二维码弹层：长按识别关注，扫码即建立小程序-服务号绑定 -->
+  <!-- 服务号二维码弹层：本地静态二维码，长按识别关注 -->
   <view class="qr-mask" wx:if="{{showQr}}" bindtap="hideMpQr">
     <view class="qr-panel" catchtap="noop">
       <view class="qr-panel__title">关注服务号</view>
       <view class="qr-panel__hint">查重完成后通过服务号第一时间通知您</view>
-      <block wx:if="{{mpBound}}">
-        <view class="qr-panel__bound">已关注并绑定，无需重复扫码</view>
-        <view class="qr-panel__tip">任务完成后将收到服务号通知</view>
-      </block>
-      <block wx:elif="{{mpQrUrl}}">
-        <image class="qr-panel__img" src="{{mpQrUrl}}" mode="aspectFit" show-menu-by-longpress="{{true}}" />
-        <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
-      </block>
-      <block wx:elif="{{mpQrLoading}}">
-        <view class="qr-panel__loading">二维码生成中…</view>
-      </block>
-      <block wx:else>
-        <view class="qr-panel__loading">暂无可用的服务号二维码</view>
-      </block>
+      <image class="qr-panel__img" src="/assets/images/mp-qr.jpg" mode="aspectFit" show-menu-by-longpress="{{true}}" />
+      <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
       <view class="qr-panel__close" bindtap="hideMpQr">关闭</view>
     </view>
   </view>
