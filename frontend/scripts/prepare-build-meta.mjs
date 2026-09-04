@@ -1,90 +1,30 @@
-import crypto from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const packageJsonPath = path.join(projectRoot, "package.json");
-const metaPath = path.join(projectRoot, ".build-meta.json");
 const generatedDir = path.join(projectRoot, "src", "generated");
 const generatedFilePath = path.join(generatedDir, "buildMeta.ts");
 
-const trackedEntries = [
-  "index.html",
-  "manifest.json",
-  "package.json",
-  "vite.config.ts",
-  "vite.crx.config.ts",
-  "src",
-  "public"
-];
-
-const ignoredDirectories = new Set([
-  "node_modules",
-  "dist",
-  "dist-crx",
-  ".vite-ssg-temp"
-]);
-
-const ignoredFiles = new Set([
-  ".build-meta.json",
-  path.join("src", "generated", "buildMeta.ts").replaceAll("\\", "/")
-]);
-
-async function pathExists(targetPath) {
-  try {
-    await fs.access(targetPath);
-    return true;
-  } catch {
-    return false;
+// Docker 构建是一次性环境，自增 buildNumber 的状态文件无法写回仓库，
+// 导致每次部署都从同一基数 +1（版本号永远不变）。
+// 因此 patch 段改为构建日期 + 时间（东八区），任何环境每次构建必然变化且单调递增。
+function shanghaiParts(date) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  });
+  const parts = {};
+  for (const part of formatter.formatToParts(date)) {
+    parts[part.type] = part.value;
   }
-}
-
-async function collectFiles(entryPath, relativePath, files) {
-  const stat = await fs.stat(entryPath);
-  if (stat.isDirectory()) {
-    const baseName = path.basename(entryPath);
-    if (ignoredDirectories.has(baseName)) {
-      return;
-    }
-
-    const children = await fs.readdir(entryPath);
-    for (const child of children.sort()) {
-      const nextPath = path.join(entryPath, child);
-      const nextRelative = path.join(relativePath, child);
-      await collectFiles(nextPath, nextRelative, files);
-    }
-    return;
-  }
-
-  const normalizedRelative = relativePath.replaceAll("\\", "/");
-  if (ignoredFiles.has(normalizedRelative)) {
-    return;
-  }
-  files.push({ absolute: entryPath, relative: normalizedRelative });
-}
-
-async function computeSourceHash() {
-  const files = [];
-
-  for (const entry of trackedEntries) {
-    const absoluteEntry = path.join(projectRoot, entry);
-    if (await pathExists(absoluteEntry)) {
-      await collectFiles(absoluteEntry, entry, files);
-    }
-  }
-
-  files.sort((left, right) => left.relative.localeCompare(right.relative));
-
-  const hash = crypto.createHash("sha256");
-  for (const file of files) {
-    hash.update(file.relative);
-    hash.update("\n");
-    hash.update(await fs.readFile(file.absolute));
-    hash.update("\n");
-  }
-
-  return hash.digest("hex");
+  return parts;
 }
 
 async function readJson(filePath, fallbackValue) {
@@ -97,45 +37,25 @@ async function readJson(filePath, fallbackValue) {
 
 async function main() {
   const packageJson = await readJson(packageJsonPath, { version: "0.1.0" });
-  const previousMeta = await readJson(metaPath, {
-    baseVersion: packageJson.version,
-    buildNumber: 0,
-    sourceHash: ""
-  });
-
-  const sourceHash = await computeSourceHash();
-  const sourceChanged =
-    previousMeta.baseVersion !== packageJson.version ||
-    previousMeta.sourceHash !== sourceHash;
-
-  const buildNumber = sourceChanged
-    ? Number(previousMeta.buildNumber || 0) + 1
-    : Number(previousMeta.buildNumber || 0);
-
-  const meta = {
-    baseVersion: packageJson.version,
-    buildNumber,
-    sourceHash,
-    updatedAt: new Date().toISOString()
-  };
+  const now = new Date();
+  const parts = shanghaiParts(now);
+  const dateStamp = `${parts.year.slice(2)}${parts.month}${parts.day}`;
+  const timeStamp = `${parts.hour}${parts.minute}`;
 
   const [major, minor] = packageJson.version.split(".");
-  const displayVersion = `${major}.${minor}.${buildNumber}`;
+  const buildStamp = `${dateStamp}-${timeStamp}`;
+  const displayVersion = `${major}.${minor}.${buildStamp}`;
+  const updatedAt = now.toISOString();
 
   await fs.mkdir(generatedDir, { recursive: true });
-  await fs.writeFile(
-    metaPath,
-    `${JSON.stringify(meta, null, 2)}\n`,
-    "utf8"
-  );
   await fs.writeFile(
     generatedFilePath,
     [
       "export const BUILD_META = {",
       `  baseVersion: ${JSON.stringify(packageJson.version)},`,
-      `  buildNumber: ${buildNumber},`,
+      `  buildStamp: ${JSON.stringify(buildStamp)},`,
       `  displayVersion: ${JSON.stringify(displayVersion)},`,
-      `  updatedAt: ${JSON.stringify(meta.updatedAt)}`,
+      `  updatedAt: ${JSON.stringify(updatedAt)}`,
       "} as const;",
       ""
     ].join("\n"),
