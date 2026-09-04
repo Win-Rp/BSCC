@@ -268,6 +268,7 @@ export interface PublicSiteConfig {
   system_notice: string;
   alipay_enabled: boolean;
   wechat_enabled: boolean;
+  mp_qrcode_url?: string;
   promo: PromoPricingConfig;
 }
 

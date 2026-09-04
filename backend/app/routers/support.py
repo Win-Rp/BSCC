@@ -45,7 +45,8 @@ def public_site_config(locale: str | None = None):
                 'promo_badge',
                 'promo_countdown_enabled',
                 'promo_loss_aversion_text',
-                'notify_template_id'
+                'notify_template_id',
+                'mp_qrcode_url'
             )
             """
         ).fetchall()
@@ -58,6 +59,7 @@ def public_site_config(locale: str | None = None):
             "alipay_enabled": str(settings.get("alipay_enabled", "false")).lower() == "true",
             "wechat_enabled": str(settings.get("wechat_enabled", "false")).lower() == "true",
             "notify_template_id": settings.get("notify_template_id", ""),
+            "mp_qrcode_url": settings.get("mp_qrcode_url", ""),
             "promo": build_public_pricing_payload(settings, locale=locale),
         }
     )

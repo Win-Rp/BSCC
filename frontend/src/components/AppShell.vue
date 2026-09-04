@@ -59,6 +59,33 @@
 
     <div class="floating-contact">
       <el-popover
+        v-if="mpQrcodeUrl"
+        placement="left"
+        trigger="hover"
+        :width="240"
+        popper-class="floating-contact-popover"
+      >
+        <template #reference>
+          <div class="floating-btn floating-btn--mp">
+            <svg viewBox="0 0 1024 1024" width="24" height="24"><path d="M512 128c-211.2 0-384 153.6-384 345.6 0 108.8 57.6 204.8 147.2 268.8l-19.2 89.6c-4.266667 17.066667 12.8 29.866667 29.866667 21.333333l108.8-51.2c38.4 12.8 76.8 17.066667 119.466666 17.066667 211.2 0 384-153.6 384-345.6S723.2 128 512 128z m-128 358.4c-21.333333 0-42.666667-17.066667-42.666667-42.666667s21.333333-42.666667 42.666667-42.666666 42.666667 17.066667 42.666667 42.666666-21.333333 42.666667-42.666667 42.666667z m256 0c-21.333333 0-42.666667-17.066667-42.666667-42.666667s21.333333-42.666667 42.666667-42.666666 42.666667 17.066667 42.666667 42.666666-21.333333 42.666667-42.666667 42.666667z" fill="currentColor"/></svg>
+          </div>
+        </template>
+        <div class="floating-popover-content">
+          <span class="floating-popover__text">{{ translateText("关注服务号") }}</span>
+          <div class="floating-popover__qr">
+            <img
+              v-if="mpQrVisible"
+              :src="mpQrcodeUrl"
+              :alt="translateText('微信服务号二维码')"
+              @error="mpQrVisible = false"
+            />
+            <span v-else class="floating-popover__fallback">{{ translateText("二维码图片加载失败") }}</span>
+          </div>
+          <span class="floating-popover__desc">{{ translateText("查重完成后通过服务号第一时间通知您") }}</span>
+        </div>
+      </el-popover>
+
+      <el-popover
         placement="left"
         trigger="hover"
         :width="260"
@@ -133,6 +160,8 @@ const supportWechat = ref("");
 const supportEmail = ref("");
 const supportWechatQrSrc = "/support-wechat-qr.png";
 const supportWechatQrVisible = ref(true);
+const mpQrcodeUrl = ref("");
+const mpQrVisible = ref(true);
 const buildVersion = BUILD_META.displayVersion;
 const localizedSiteTitle = computed(() => translateText(rawSiteTitle.value || t("app.defaultSiteTitle")));
 const localizedHomeTags = computed(() => {
@@ -165,6 +194,7 @@ onMounted(async () => {
       rawHomeTags.value = localizeDeep(siteConfig.home_tags);
     }
     rawSystemNotice.value = siteConfig?.system_notice?.trim() ?? "";
+    mpQrcodeUrl.value = siteConfig?.mp_qrcode_url?.trim() ?? "";
     supportWechat.value = supportInfo?.wechat?.trim() ?? "";
     supportEmail.value = supportInfo?.email?.trim() ?? "";
   } catch {

@@ -74,6 +74,7 @@ class SettingsUpdate(BaseModel):
     mp_app_secret: str | None = None
     mp_verify_token: str | None = None
     mp_notify_template_id: str | None = None
+    mp_qrcode_url: str | None = None
 
     @field_validator("free_b_file_limit")
     @classmethod

@@ -581,6 +581,7 @@ def _format_settings(raw: dict[str, str]) -> dict[str, Any]:
         "mp_app_secret": raw.get("mp_app_secret", ""),
         "mp_verify_token": raw.get("mp_verify_token", ""),
         "mp_notify_template_id": raw.get("mp_notify_template_id", ""),
+        "mp_qrcode_url": raw.get("mp_qrcode_url", ""),
     }
 
 

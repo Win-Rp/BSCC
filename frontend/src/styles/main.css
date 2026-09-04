@@ -247,6 +247,11 @@ a {
   border-color: rgba(7, 193, 96, 0.2);
 }
 
+.floating-btn--mp:hover {
+  color: #126e6a;
+  border-color: rgba(18, 110, 106, 0.2);
+}
+
 .floating-btn--email:hover {
   color: #1677ff;
   border-color: rgba(22, 119, 255, 0.2);

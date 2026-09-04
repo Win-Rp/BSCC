@@ -49,4 +49,5 @@ DEFAULT_SETTINGS = {
     "mp_app_secret": "",
     "mp_verify_token": "",
     "mp_notify_template_id": "",
+    "mp_qrcode_url": "",
 }

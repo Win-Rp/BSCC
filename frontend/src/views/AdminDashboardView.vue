@@ -709,6 +709,15 @@
                       />
                       <div class="form-tip">{{ translateText("使用「工单处理结果通知」类目模板：任务名称枚举值=标书查重、当前状态枚举值=查重完成/查重异常；点击通知可跳转小程序结果页") }}</div>
                     </el-form-item>
+                    <el-form-item :label="translateText('服务号二维码链接')">
+                      <el-input
+                        v-model="settingsForm.mp_qrcode_url"
+                        name="wechat-mp-qrcode-url"
+                        autocomplete="off"
+                        :placeholder="translateText('粘贴服务号二维码图片的 URL 链接')"
+                      />
+                      <div class="form-tip">{{ translateText("填写后官网展示服务号关注二维码，留空则不展示；建议使用 HTTPS 图片直链") }}</div>
+                    </el-form-item>
 
                     <el-form-item>
                       <el-button type="primary" @click="saveSettings" :loading="savingSettings">{{ translateText("保存配置") }}</el-button>
@@ -861,7 +870,8 @@ const createDefaultSettingsForm = () => ({
   mp_app_id: '',
   mp_app_secret: '',
   mp_verify_token: '',
-  mp_notify_template_id: ''
+  mp_notify_template_id: '',
+  mp_qrcode_url: ''
 });
 
 const settingsForm = reactive(createDefaultSettingsForm());
