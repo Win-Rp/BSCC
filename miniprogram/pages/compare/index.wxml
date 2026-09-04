@@ -130,29 +130,6 @@
       </view>
     </view>
 
-    <view class="doc-grid">
-      <view class="card doc-panel">
-        <view class="section-title">A 文档</view>
-        <view class="muted doc-name">{{detailData.a_document.name}}</view>
-        <scroll-view scroll-y class="doc-scroll">
-          <view class="doc-block {{item.highlight}}" wx:for="{{aBlocks}}" wx:key="id">
-            <view class="doc-block__meta">P{{item.page}} / 段{{item.paragraph}} / 句{{item.sentence}}</view>
-            <view>{{item.text}}</view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <view class="card doc-panel">
-        <view class="section-title">B 文档</view>
-        <view class="muted doc-name">{{detailData.b_document.name}}</view>
-        <scroll-view scroll-y class="doc-scroll">
-          <view class="doc-block {{item.highlight}}" wx:for="{{bBlocks}}" wx:key="id">
-            <view class="doc-block__meta">P{{item.page}} / 段{{item.paragraph}} / 句{{item.sentence}}</view>
-            <view>{{item.text}}</view>
-          </view>
-        </scroll-view>
-      </view>
-    </view>
   </block>
 
   <view class="actions">

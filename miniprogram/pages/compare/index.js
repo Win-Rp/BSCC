@@ -33,8 +33,6 @@ function buildMatchItems(detail) {
     title: `${getMatchTypeText(item.match_type)} · ${formatPercent(item.similarity)}`,
     aText: item.a_text || "",
     bText: item.b_text || "",
-    aBlockId: item.a_position ? item.a_position.block_id : "",
-    bBlockId: item.b_position ? item.b_position.block_id : "",
     positionText: `A 第${item.a_position ? item.a_position.page : "-"}页 / B 第${item.b_position ? item.b_position.page : "-"}页`
   }));
 
@@ -48,8 +46,6 @@ function buildMatchItems(detail) {
       title: `关键字 · ${item.keyword}`,
       aText: isAFile ? item.hit_text : "",
       bText: isAFile ? "" : item.hit_text,
-      aBlockId: isAFile ? item.position.block_id : "",
-      bBlockId: isAFile ? "" : item.position.block_id,
       positionText: `${isAFile ? "A" : "B"} 第${item.position.page}页`,
       keyword: item.keyword,
       contextBefore: item.context_before || "",
@@ -65,26 +61,6 @@ function filterItems(items, filterKey) {
     return items;
   }
   return items.filter((item) => item.matchType === filterKey);
-}
-
-function buildDocBlocks(blocks, filteredItems, activeItem, side) {
-  const activeKey = side === "a" ? "aBlockId" : "bBlockId";
-  const relatedIds = {};
-  filteredItems.forEach((item) => {
-    if (item[activeKey]) {
-      relatedIds[item[activeKey]] = true;
-    }
-  });
-  const activeId = activeItem && activeItem[activeKey] ? activeItem[activeKey] : "";
-
-  return (blocks || []).map((item) => ({
-    id: item.block_id,
-    text: item.text,
-    page: item.page,
-    paragraph: item.paragraph,
-    sentence: item.sentence,
-    highlight: item.block_id === activeId ? "block--active" : (relatedIds[item.block_id] ? "block--hit" : "")
-  }));
 }
 
 function buildHitSummary(filteredItems, activeMatch, activeFilter) {
@@ -159,8 +135,6 @@ Page({
     activeMatchIndex: 0,
     activeMatch: null,
     hitSummary: null,
-    aBlocks: [],
-    bBlocks: [],
     formatItems: [],
     metadataItems: []
   },
@@ -241,8 +215,6 @@ Page({
           activeMatch: null,
           activeMatchIndex: 0,
           hitSummary: null,
-          aBlocks: [],
-          bBlocks: [],
           formatItems: [],
           metadataItems: [],
           previewList: previewRes.success ? buildPreviewList(previewRes.data) : [],
@@ -293,16 +265,13 @@ Page({
     const filteredItems = filterItems(this.data.matchItems, filterKey);
     const safeIndex = filteredItems.length ? Math.min(activeMatchIndex, filteredItems.length - 1) : 0;
     const activeMatch = filteredItems[safeIndex] || null;
-    const detail = this.data.detailData || {};
 
     this.setData({
       activeFilter: filterKey,
       filteredItems,
       activeMatchIndex: safeIndex,
       activeMatch,
-      hitSummary: buildHitSummary(filteredItems, activeMatch, filterKey),
-      aBlocks: buildDocBlocks(detail.a_document ? detail.a_document.blocks : [], filteredItems, activeMatch, "a"),
-      bBlocks: buildDocBlocks(detail.b_document ? detail.b_document.blocks : [], filteredItems, activeMatch, "b")
+      hitSummary: buildHitSummary(filteredItems, activeMatch, filterKey)
     });
   },
 

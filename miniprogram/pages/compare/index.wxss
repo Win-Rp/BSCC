@@ -105,11 +105,9 @@
 }
 
 .preview-item__label,
-.doc-block__meta,
 .detail-label,
 .detail-meta,
-.match-item__pos,
-.doc-name {
+.match-item__pos {
   color: #68727d;
   font-size: 22rpx;
 }
@@ -152,35 +150,6 @@
 
 .detail-text {
   margin-top: 8rpx;
-}
-
-.doc-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-}
-
-.doc-scroll {
-  max-height: 480rpx;
-}
-
-.doc-block {
-  padding: 18rpx;
-  border-radius: 16rpx;
-  background: #f9fbfc;
-}
-
-.doc-block + .doc-block {
-  margin-top: 14rpx;
-}
-
-.block--hit {
-  background: rgba(37, 99, 235, 0.08);
-}
-
-.block--active {
-  background: rgba(18, 110, 106, 0.16);
-  border: 1rpx solid rgba(18, 110, 106, 0.28);
 }
 
 /* 格式相似项 */
