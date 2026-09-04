@@ -86,12 +86,12 @@
     </view>
   </block>
 
-  <!-- 服务号二维码弹层：本地静态二维码，长按识别关注 -->
+  <!-- 服务号二维码弹层：来源为后台配置或远程直链，加载失败自动退回本地图，长按识别关注 -->
   <view class="qr-mask" wx:if="{{showQr}}" bindtap="hideMpQr">
     <view class="qr-panel" catchtap="noop">
       <view class="qr-panel__title">关注服务号</view>
       <view class="qr-panel__hint">查重完成后通过服务号第一时间通知您</view>
-      <image class="qr-panel__img" src="/assets/images/mp-qr.jpg" mode="aspectFit" show-menu-by-longpress="{{true}}" />
+      <image class="qr-panel__img" src="{{mpQrSrc}}" mode="aspectFit" show-menu-by-longpress="{{true}}" binderror="onMpQrError" />
       <view class="qr-panel__tip">长按识别二维码，关注服务号</view>
       <view class="qr-panel__close" bindtap="hideMpQr">关闭</view>
     </view>

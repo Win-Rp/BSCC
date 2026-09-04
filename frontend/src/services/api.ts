@@ -491,6 +491,17 @@ export function getSupport() {
   return request<SupportInfo>("/api/support");
 }
 
+export interface MiniTaskQrcode {
+  data_url: string;
+  reason: string;
+}
+
+export function getMiniTaskQrcode(taskNo: string, page: "progress" | "results") {
+  return request<MiniTaskQrcode>(
+    `/api/wechat/mini/qrcode?task_no=${encodeURIComponent(taskNo)}&page=${page}`
+  );
+}
+
 export function getPublicSiteConfig(locale?: string) {
   const query = locale ? `?locale=${encodeURIComponent(locale)}` : "";
   return request<PublicSiteConfig>(`/api/public/site-config${query}`);

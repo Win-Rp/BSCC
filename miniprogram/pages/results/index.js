@@ -118,8 +118,10 @@ Page({
   onLoad(options) {
     const recovery = storage.getRecoveryInfo();
     const siteConfig = getApp().globalData.siteConfig || {};
+    // scene 为小程序码场景值（BS 端跨端接力码），内容即任务号
+    const sceneTaskNo = options.scene ? decodeURIComponent(options.scene) : "";
     this.setData({
-      taskNo: options.taskNo || recovery.taskNo || storage.getTaskNo(),
+      taskNo: options.taskNo || sceneTaskNo || recovery.taskNo || storage.getTaskNo(),
       orderNo: recovery.orderNo || storage.getOrderNo(),
       promoConfig: siteConfig.promo || null
     });

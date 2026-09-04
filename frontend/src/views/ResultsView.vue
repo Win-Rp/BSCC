@@ -30,6 +30,19 @@
               <el-button size="small" type="primary" plain @click="copyTaskLink">{{ translateText("复制任务ID") }}</el-button>
             </div>
           </el-alert>
+
+          <!-- 接力到手机：内联小程序码，扫码在手机上继续跟踪本任务 -->
+          <div class="relay-inline">
+            <div class="relay-inline__text">
+              <strong>{{ translateText("接力到手机") }}</strong>
+              <span>{{ translateText("扫码后在手机上跟踪任务进度，查重完成微信即时通知") }}</span>
+            </div>
+            <div class="relay-inline__qr">
+              <img v-if="relayQrUrl" :src="relayQrUrl" :alt="translateText('小程序码')" />
+              <span v-else class="relay-inline__status">{{ relayLoading ? translateText("正在生成小程序码...") : translateText("小程序码暂不可用") }}</span>
+              <span v-if="relayQrUrl" class="relay-inline__hint">{{ translateText("微信扫码") }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,9 +61,9 @@
                 </el-tag>
               </el-tooltip>
             </div>
-            <el-tag :type="summary?.payment_required ? 'warning' : 'success'">
-              {{ summary?.payment_required ? translateText("待支付解锁") : translateText("完整详情可用") }}
-            </el-tag>
+              <el-tag :type="summary?.payment_required ? 'warning' : 'success'">
+                {{ summary?.payment_required ? translateText("待支付解锁") : translateText("完整详情可用") }}
+              </el-tag>
           </div>
         </template>
 
@@ -381,9 +394,24 @@
             </div>
           </template>
         </el-card>
+
+        <!-- 接力到手机：内联小程序码，扫码在手机查看结果并可转发 -->
+        <el-card shadow="never" class="glass-card relay-card">
+          <div class="relay-card__content">
+            <div class="relay-card__text">
+              <h4>{{ translateText("接力到手机") }}</h4>
+              <p>{{ translateText("扫码在手机上查看本任务结果，可一键转发给同事") }}</p>
+            </div>
+            <div class="relay-card__qr">
+              <img v-if="relayQrUrl" :src="relayQrUrl" :alt="translateText('小程序码')" />
+              <span v-else class="relay-card__status">{{ relayLoading ? translateText("正在生成小程序码...") : translateText("小程序码暂不可用") }}</span>
+              <span v-if="relayQrUrl" class="relay-card__hint">{{ translateText("微信扫码") }}</span>
+            </div>
+          </div>
+        </el-card>
       </aside>
     </div>
-    
+
       <PaymentDialog v-model="paymentVisible" :task-no="taskNo" :b-file-count="summary?.b_file_count || 1" @paid="handlePaid" />
     </el-card>
     </template>
@@ -410,6 +438,7 @@ import {
   getPreview,
   getPublicSiteConfig,
   getDetail,
+  getMiniTaskQrcode,
   getTaskSummary,
   getTaskStatus,
   type CompareDetail,
@@ -447,6 +476,9 @@ const selectedDetail = ref<CompareDetail | null>(null);
 const previewMatches = ref<MatchSegment[]>([]);
 const paymentVisible = ref(false);
 const loadingDetail = ref(false);
+const relayLoading = ref(false);
+const relayQrUrl = ref("");
+const relayQrCache: Record<string, string> = {};
 isProcessing.value = true;
 const processingMessage = ref(translateText("正在查询任务状态..."));
 const detailError = ref("");
@@ -728,6 +760,26 @@ function copyTaskLink() {
   });
 }
 
+async function loadRelayQr(page: "progress" | "results") {
+  if (relayQrCache[page]) {
+    relayQrUrl.value = relayQrCache[page];
+    return;
+  }
+  relayLoading.value = true;
+  relayQrUrl.value = "";
+  try {
+    const res = await getMiniTaskQrcode(taskNo.value, page);
+    relayQrUrl.value = res.data_url || "";
+    if (relayQrUrl.value) {
+      relayQrCache[page] = relayQrUrl.value;
+    }
+  } catch {
+    relayQrUrl.value = "";
+  } finally {
+    relayLoading.value = false;
+  }
+}
+
 function goCompare() {
   if (!selectedResultId.value) return;
   void router.push({
@@ -830,6 +882,7 @@ onMounted(async () => {
     }, 1000);
     // 开始轮询，替代原有的 Progress 逻辑
     await pollTaskStatus();
+    void loadRelayQr(isProcessing.value ? "progress" : "results");
     if (isProcessing.value && processingMessage.value !== translateText("任务执行失败，请检查文件内容后重新发起。")) {
       pollTimer = window.setInterval(() => {
         void pollTaskStatus();
@@ -850,6 +903,12 @@ watch(locale, () => {
   void loadPublicSiteConfig().catch(() => {
     publicSiteConfig.value = null;
   });
+});
+
+watch(isProcessing, (processing) => {
+  if (!processing) {
+    void loadRelayQr("results");
+  }
 });
 </script>
 
@@ -918,6 +977,130 @@ watch(locale, () => {
   padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid var(--line);
+}
+
+.relay-inline {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
+}
+
+.relay-inline__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relay-inline__text strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.relay-inline__text span {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.relay-inline__qr {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.relay-inline__qr img {
+  width: 88px;
+  height: 88px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.relay-inline__hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.relay-inline__status {
+  width: 88px;
+  height: 88px;
+  padding: 8px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+  border-radius: 8px;
+  background: rgba(17, 17, 17, 0.04);
+}
+
+.relay-card__content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.relay-card__text {
+  flex: 1;
+}
+
+.relay-card__text h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.relay-card__text p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.relay-card__qr {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.relay-card__qr img {
+  width: 96px;
+  height: 96px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+.relay-card__hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.relay-card__status {
+  width: 96px;
+  height: 96px;
+  padding: 8px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+  border-radius: 10px;
+  background: rgba(17, 17, 17, 0.04);
 }
 
 .task-id-text {

@@ -1,3 +1,4 @@
+import base64
 import logging
 import re
 import threading
@@ -14,6 +15,7 @@ CODE2SESSION_URL = "https://api.weixin.qq.com/sns/jscode2session"
 ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 SUBSCRIBE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={token}"
 TEMPLATE_LIST_URL = "https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate?access_token={token}"
+WXACODE_UNLIMIT_URL = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={token}"
 
 # 探测失败时的兜底字段（服务编号=character_string1，服务结果=phrase2）
 DEFAULT_TEMPLATE_FIELDS = ("character_string1", "phrase2")
@@ -33,6 +35,15 @@ _token_cache: dict[str, Any] = {"access_token": "", "expires_at": 0.0}
 _token_lock = threading.Lock()
 _fields_cache: dict[str, dict[str, Any]] = {}
 _fields_lock = threading.Lock()
+
+# 任务小程序码缓存：{ "page:task_no": (data_url, expire_at) }，码本身永久有效，缓存仅为省接口配额
+_mini_qr_cache: dict[str, tuple[str, float]] = {}
+_mini_qr_lock = threading.Lock()
+MINI_QR_CACHE_SECONDS = 3600.0
+MINI_QR_PAGES = {
+    "progress": "pages/progress/index",
+    "results": "pages/results/index",
+}
 
 
 def get_notify_config() -> dict[str, Any]:
@@ -231,3 +242,46 @@ def notify_task_finished(task_no: str, status_key: str) -> bool:
     except Exception as exc:
         logger.warning("notify_task_finished error task=%s err=%s", task_no, exc)
         return False
+
+
+def get_mini_task_qrcode_data_url(task_no: str, page: str = "results") -> str:
+    """生成指向小程序指定页面、scene 为任务号的不限量小程序码，返回 data URL。
+
+    供 BS 端跨端接力使用：微信扫码直达该任务的进度页或结果页。
+    scene 上限 32 字符，任务号固定 19 字符，直接放入无需压缩。
+    """
+    config = get_notify_config()
+    if not config["app_id"] or not config["app_secret"] or not task_no:
+        return ""
+    page_path = MINI_QR_PAGES.get(page, MINI_QR_PAGES["results"])
+    cache_key = f"{page}:{task_no}"
+
+    now_ts = time.time()
+    with _mini_qr_lock:
+        cached = _mini_qr_cache.get(cache_key)
+        if cached and now_ts < cached[1]:
+            return cached[0]
+
+    payload = {
+        "page": page_path,
+        "scene": task_no,
+        "check_path": False,
+        "env_version": "release",
+        "width": 430,
+    }
+    try:
+        token = _fetch_access_token(config["app_id"], config["app_secret"])
+        with httpx.Client(timeout=15) as client:
+            resp = client.post(WXACODE_UNLIMIT_URL.format(token=token), json=payload)
+            resp.raise_for_status()
+            content = resp.content
+        # 成功返回图片二进制（JPEG），失败返回 JSON
+        if content[:1] == b"{":
+            raise ValueError(f"MINI_QRCODE_API_ERROR:{content[:120]!r}")
+        data_url = "data:image/jpeg;base64," + base64.b64encode(content).decode("ascii")
+        with _mini_qr_lock:
+            _mini_qr_cache[cache_key] = (data_url, now_ts + MINI_QR_CACHE_SECONDS)
+        return data_url
+    except Exception as exc:
+        logger.warning("mini qrcode generate failed task=%s page=%s err=%s", task_no, page, exc)
+        return ""

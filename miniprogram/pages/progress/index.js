@@ -3,6 +3,10 @@ const storage = require("../../utils/storage");
 const { startPolling, isTaskTerminal } = require("../../services/task");
 const { getStatusText } = require("../../utils/format");
 
+// 服务号二维码兜底直链：site-config 未下发 mp_qrcode_url 时使用
+const MP_QR_FALLBACK_URL = "https://mic.mxitx.com/qrcode_srv.jpg";
+const MP_QR_LOCAL = "/assets/images/mp-qr.jpg";
+
 const STATUS_ORDER = ["uploaded", "queued", "parsing", "checking", "awaiting_payment", "completed"];
 
 const STATUS_HINTS = {
@@ -71,6 +75,7 @@ Page({
     taskNo: "",
     copied: false,
     showQr: false,
+    mpQrSrc: MP_QR_FALLBACK_URL,
     uploading: false,
     uploadFailed: false,
     progress: 0,
@@ -85,8 +90,11 @@ Page({
   },
 
   onLoad(options) {
-    const taskNo = options.taskNo || storage.getTaskNo();
+    // scene 为小程序码场景值（BS 端跨端接力码），内容即任务号
+    const sceneTaskNo = options.scene ? decodeURIComponent(options.scene) : "";
+    const taskNo = options.taskNo || sceneTaskNo || storage.getTaskNo();
     this.setData({ taskNo: taskNo || "" });
+    this.resolveMpQrSrc();
 
     // 上传页直达：预置上传态，避免任务号生成前闪现“未找到任务”
     if (options.from === "upload") {
@@ -128,6 +136,31 @@ Page({
 
   showMpQr() {
     this.setData({ showQr: true });
+  },
+
+  // 二维码源优先级：后台 site-config 下发 > 兜底直链
+  resolveMpQrSrc() {
+    const app = getApp();
+    const apply = () => {
+      const configured = app.globalData.siteConfig && app.globalData.siteConfig.mp_qrcode_url;
+      if (configured) {
+        this.setData({ mpQrSrc: configured });
+      }
+    };
+    if (app.globalData.siteConfig) {
+      apply();
+      return;
+    }
+    if (app.configReady) {
+      app.configReady.then(apply).catch(() => {});
+    }
+  },
+
+  // 远程图加载失败时退回本地静态二维码，保证弹层始终有码可扫
+  onMpQrError() {
+    if (this.data.mpQrSrc !== MP_QR_LOCAL) {
+      this.setData({ mpQrSrc: MP_QR_LOCAL });
+    }
   },
 
   hideMpQr() {

@@ -32,6 +32,18 @@
           />
         </div>
 
+        <!-- 文件在微信里引导：小程序可从聊天记录直接选文件 -->
+        <div class="wechat-file-guide">
+          <div class="wechat-file-guide__text">
+            <strong>{{ translateText("文件在微信里？") }}</strong>
+            <span>{{ translateText("扫码用小程序版，直接从聊天记录选文件，查重完成微信即时通知。") }}</span>
+          </div>
+          <div class="wechat-file-guide__qr-wrap">
+            <img class="wechat-file-guide__qr" src="/mini-program-qr.png" :alt="translateText('小程序码')" />
+            <span class="wechat-file-guide__hint">{{ translateText("微信扫码") }}</span>
+          </div>
+        </div>
+
         <el-form label-position="top" class="keyword-form">
           <el-form-item :label="t('upload.keywordLabel')">
             <el-select
@@ -106,7 +118,7 @@ import { saveTaskNo } from "@/services/session";
 import { createHeadConfig, resolveRouteSeo } from "@/utils/seo";
 
 const router = useRouter();
-const { localizeDeep, t } = useAppI18n();
+const { localizeDeep, t, translateText } = useAppI18n();
 useHead(
   createHeadConfig(
     localizeDeep(resolveRouteSeo(
@@ -235,5 +247,62 @@ function isSupportedFile(file: File) {
 .queue-tip {
   margin-top: 8px;
   border-radius: 14px;
+}
+
+.wechat-file-guide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px dashed rgba(18, 110, 106, 0.35);
+  background: linear-gradient(90deg, rgba(18, 110, 106, 0.06), rgba(255, 255, 255, 0.5));
+}
+
+.wechat-file-guide__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wechat-file-guide__text strong {
+  font-size: 14px;
+  color: #126e6a;
+}
+
+.wechat-file-guide__text span {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.wechat-file-guide__qr-wrap {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wechat-file-guide__qr {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid rgba(18, 110, 106, 0.25);
+}
+
+.wechat-file-guide__hint {
+  font-size: 12px;
+  color: #126e6a;
+}
+
+@media (max-width: 640px) {
+  .wechat-file-guide {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>

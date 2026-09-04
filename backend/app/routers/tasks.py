@@ -126,6 +126,25 @@ def wechat_mp_qrcode(openid: str = Query(""), task_no: str = Query("")):
     return ok({"data_url": data_url, "bound": bound, "reason": ""})
 
 
+@router.get("/wechat/mini/qrcode")
+def wechat_mini_qrcode(task_no: str = Query(""), page: str = Query("results")):
+    """生成带任务号场景值的小程序码（跨端接力）。
+
+    BS 端展示该码，微信扫码直达该任务的进度页/结果页。
+    page 取 progress | results，分别对应任务进行中与已完成场景。
+    """
+    if not task_no:
+        return ok({"data_url": "", "reason": "no_task"})
+    with db_session() as conn:
+        row = conn.execute("SELECT task_no FROM tasks WHERE task_no = ?", (task_no,)).fetchone()
+    if not row:
+        return ok({"data_url": "", "reason": "task_not_found"})
+    data_url = wechat_notify.get_mini_task_qrcode_data_url(task_no, page)
+    if not data_url:
+        return ok({"data_url": "", "reason": "generate_failed"})
+    return ok({"data_url": data_url, "reason": ""})
+
+
 @router.get("/tasks/{task_no}/status")
 def task_status(task_no: str):
     try:
