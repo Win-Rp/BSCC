@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Document, Back, Menu } from "@element-plus/icons
 import { useAppI18n } from "@/composables/useAppI18n";
 import {
   getDetail,
+  getMiniTaskQrcode,
   getOriginalFileAUrl,
   getOriginalFileBUrl,
   getTaskSummary,
@@ -25,6 +26,9 @@ const detail = ref<CompareDetail | null>(null);
 const activeResultId = ref(Number(route.query.result || 0));
 const activeMatchIndex = ref(0);
 const drawerVisible = ref(false);
+const relayOpen = ref(true);
+const relayLoading = ref(false);
+const relayQrUrl = ref("");
 
 const resultOptions = computed(() =>
   (summary.value?.results ?? []).map((row) => ({
@@ -105,6 +109,19 @@ watch(activeResultId, () => {
   }
 });
 
+async function loadRelayQr() {
+  if (!taskNo.value) return;
+  relayLoading.value = true;
+  try {
+    const res = await getMiniTaskQrcode(taskNo.value, "results");
+    relayQrUrl.value = res.data_url || "";
+  } catch {
+    relayQrUrl.value = "";
+  } finally {
+    relayLoading.value = false;
+  }
+}
+
 onMounted(async () => {
   try {
     await loadSummary();
@@ -112,6 +129,7 @@ onMounted(async () => {
   } catch (error) {
     ElMessage.error(error instanceof Error ? error.message : translateText("加载对比数据失败"));
   }
+  void loadRelayQr();
 });
 </script>
 
@@ -257,6 +275,24 @@ onMounted(async () => {
         </el-table>
       </div>
     </el-drawer>
+    <!-- 接力到手机：右侧边缘悬浮卡片，默认展开，可点击收起为侧边小签 -->
+    <div class="relay-side" :class="{ 'relay-side--collapsed': !relayOpen }">
+      <button type="button" class="relay-side__toggle" @click="relayOpen = !relayOpen">
+        <span class="relay-side__toggle-text">{{ translateText("接力到手机") }}</span>
+        <span class="relay-side__toggle-arrow" aria-hidden="true">‹</span>
+      </button>
+      <div class="relay-side__panel">
+        <div class="relay-side__text">
+          <h4>{{ translateText("接力到手机") }}</h4>
+          <p>{{ translateText("扫码在手机上查看本任务结果，可一键转发给同事") }}</p>
+        </div>
+        <div class="relay-side__qr">
+          <img v-if="relayQrUrl" :src="relayQrUrl" :alt="translateText('小程序码')" />
+          <span v-else class="relay-side__status">{{ relayLoading ? translateText("正在生成小程序码...") : translateText("小程序码暂不可用") }}</span>
+          <span v-if="relayQrUrl" class="relay-side__hint">{{ translateText("微信扫码") }}</span>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -529,5 +565,135 @@ onMounted(async () => {
   color: var(--risk);
 }
 
+/* 接力到手机：右侧边缘悬浮卡片 */
+.relay-side {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: stretch;
+  z-index: 90;
+  transition: transform 0.3s ease;
+}
 
+.relay-side__toggle {
+  flex: none;
+  width: 32px;
+  border: 1px solid rgba(18, 110, 106, 0.4);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  background: #126e6a;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.relay-side__toggle-text {
+  writing-mode: vertical-rl;
+  letter-spacing: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.relay-side__toggle-arrow {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.relay-side--collapsed .relay-side__toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.relay-side__panel {
+  width: 236px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 14px 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(18, 110, 106, 0.35);
+  border-right: none;
+  border-radius: 14px 0 0 14px;
+  box-shadow: -6px 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.relay-side--collapsed .relay-side__panel {
+  display: none;
+}
+
+.relay-side__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.relay-side__text h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.relay-side__text p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.relay-side__qr {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.relay-side__qr img {
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.relay-side__hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.relay-side__status {
+  width: 84px;
+  height: 84px;
+  padding: 8px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+  border-radius: 8px;
+  background: rgba(17, 17, 17, 0.04);
+}
+
+@media (max-width: 640px) {
+  .relay-side__panel {
+    width: 200px;
+    padding: 10px 10px 10px 14px;
+  }
+
+  .relay-side__qr img,
+  .relay-side__status {
+    width: 72px;
+    height: 72px;
+  }
+}
 </style>

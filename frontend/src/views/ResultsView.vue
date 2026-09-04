@@ -350,6 +350,21 @@
           </div>
         </section>
 
+        <!-- 接力到手机：内联小程序码，扫码在手机查看结果并可转发 -->
+        <el-card shadow="never" class="glass-card relay-card">
+          <div class="relay-card__content">
+            <div class="relay-card__text">
+              <h4>{{ translateText("接力到手机") }}</h4>
+              <p>{{ translateText("扫码在手机上查看本任务结果，可一键转发给同事") }}</p>
+            </div>
+            <div class="relay-card__qr">
+              <img v-if="relayQrUrl" :src="relayQrUrl" :alt="translateText('小程序码')" />
+              <span v-else class="relay-card__status">{{ relayLoading ? translateText("正在生成小程序码...") : translateText("小程序码暂不可用") }}</span>
+              <span v-if="relayQrUrl" class="relay-card__hint">{{ translateText("微信扫码") }}</span>
+            </div>
+          </div>
+        </el-card>
+
         <el-card shadow="never" class="glass-card side-stack__chart-card">
           <div class="detail-section__head side-stack__head">
             <div>
@@ -393,21 +408,6 @@
               </div>
             </div>
           </template>
-        </el-card>
-
-        <!-- 接力到手机：内联小程序码，扫码在手机查看结果并可转发 -->
-        <el-card shadow="never" class="glass-card relay-card">
-          <div class="relay-card__content">
-            <div class="relay-card__text">
-              <h4>{{ translateText("接力到手机") }}</h4>
-              <p>{{ translateText("扫码在手机上查看本任务结果，可一键转发给同事") }}</p>
-            </div>
-            <div class="relay-card__qr">
-              <img v-if="relayQrUrl" :src="relayQrUrl" :alt="translateText('小程序码')" />
-              <span v-else class="relay-card__status">{{ relayLoading ? translateText("正在生成小程序码...") : translateText("小程序码暂不可用") }}</span>
-              <span v-if="relayQrUrl" class="relay-card__hint">{{ translateText("微信扫码") }}</span>
-            </div>
-          </div>
         </el-card>
       </aside>
     </div>
