@@ -20,7 +20,7 @@ export const routes: RouteRecordRaw[] = [
         seo: {
           title: "标书查重工具入口_上传投标文件开始检查_{siteTitle}",
           description:
-            "上传主标书 A 与对比标书 B，开始标书查重、标书检查和围标风险排查，支持 DOCX 与可复制文本 PDF。",
+            "上传主标书 A 与对比标书 B，开始标书查重、标书检查和围标风险排查，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT。",
           keywords: ["标书查重入口", "投标文件查重", "标书检查工具", "围标风险排查"]
         }
       }

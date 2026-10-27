@@ -104,7 +104,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "用户端文档中心",
       description:
         "这份文档只讲如何使用系统完成标书查重，不涉及安装、部署或后台配置。你可以按“上传文件 -> 等待处理 -> 查看结果 -> 进入对比 -> 按需解锁详情 -> 凭任务号找回结果”的顺序完成整套操作。",
-      chips: ["无需登录", "支持 DOCX / PDF", "B 文件支持 1-10 份", "结果保留 7 天"]
+      chips: ["无需登录", "支持 DOCX / PDF / TXT", "B 文件支持 1-10 份", "结果保留 7 天"]
     },
     anchors: [
       { id: "quick-start", label: "快速上手" },
@@ -121,7 +121,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       cards: [
         {
           title: "1. 准备文件",
-          text: "上传 1 份主标书 A，再上传 1-10 份对比标书 B。当前支持 DOCX 与可复制文本的 PDF。"
+          text: "上传 1 份主标书 A，再上传 1-10 份对比标书 B。当前支持 DOCX、可复制文本的 PDF 和 UTF-8 编码 TXT。"
         },
         {
           title: "2. 可选填关键字",
@@ -151,7 +151,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
         {
           title: "文件与关键字要求",
           lines: [
-            "系统当前支持 DOCX 和可复制文本的 PDF。如果 PDF 本身无法选中文本，可能无法得到理想结果。",
+            "系统当前支持 DOCX、可复制文本的 PDF 和 UTF-8 编码 TXT。如果 PDF 本身无法选中文本，可能无法得到理想结果。",
             "关键字不是必填项；如果你有重点排查对象，建议按词逐个输入并回车保存。"
           ]
         },
@@ -325,7 +325,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
         },
         {
           question: "为什么上传后提示文件暂不支持？",
-          answer: "当前只支持 DOCX 和可复制文本的 PDF。如果 PDF 无法选中文本，系统可能无法正常解析。"
+          answer: "当前支持 DOCX、可复制文本的 PDF 和 UTF-8 编码 TXT。如果 PDF 无法选中文本，系统可能无法正常解析。"
         },
         {
           question: "任务处理中可以关闭页面吗？",
@@ -388,7 +388,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "User Documentation Center",
       description:
         "This guide focuses on using the system for bid similarity checks. It does not cover installation, deployment, or admin setup. Follow the flow of upload, wait, review results, compare evidence, unlock details when needed, and recover results with the task ID.",
-      chips: ["No login required", "Supports DOCX / PDF", "1-10 comparison files", "Results kept for 7 days"]
+      chips: ["No login required", "Supports DOCX / PDF / TXT", "1-10 comparison files", "Results kept for 7 days"]
     },
     anchors: [
       { id: "quick-start", label: "Quick Start" },
@@ -405,7 +405,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       cards: [
         {
           title: "1. Prepare Files",
-          text: "Upload one master bid A and then upload 1 to 10 comparison bids B. The system currently supports DOCX and selectable-text PDF files."
+          text: "Upload one master bid A and then upload 1 to 10 comparison bids B. The system currently supports DOCX, selectable-text PDF, and UTF-8 TXT files."
         },
         {
           title: "2. Add Keywords If Needed",
@@ -435,7 +435,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
         {
           title: "File And Keyword Requirements",
           lines: [
-            "The system currently supports DOCX and selectable-text PDF files. If a PDF cannot be selected as text, the result may be limited.",
+            "The system currently supports DOCX, selectable-text PDF, and UTF-8 TXT files. If a PDF cannot be selected as text, the result may be limited.",
             "Keywords are optional. If you have specific risk points to screen, enter them one by one and press Enter to save."
           ]
         },
@@ -606,7 +606,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
         },
         {
           question: "Why does upload say the file is not supported?",
-          answer: "The system currently supports DOCX and selectable-text PDF files only. If text cannot be selected in the PDF, parsing may fail."
+          answer: "The system currently supports DOCX, selectable-text PDF, and UTF-8 TXT files. If text cannot be selected in the PDF, parsing may fail."
         },
         {
           question: "Can I close the page while the task is processing?",
@@ -645,7 +645,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "使用說明",
       title: "使用者端文件中心",
       description: "這份文件只講如何使用系統完成標書查重，不涉及安裝、部署或後台設定。你可以依照「上傳文件 -> 等待處理 -> 查看結果 -> 進入對比 -> 按需解鎖詳情 -> 憑任務號找回結果」的順序完成整套操作。",
-      chips: ["無需登入", "支援 DOCX / PDF", "B 文件支援 1-10 份", "結果保留 7 天"]
+      chips: ["無需登入", "支援 DOCX / PDF / TXT", "B 文件支援 1-10 份", "結果保留 7 天"]
     },
     anchors: [
       { id: "quick-start", label: "快速上手" },
@@ -660,7 +660,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "快速上手",
       title: "三分鐘快速上手",
       cards: [
-        { title: "1. 準備文件", text: "上傳 1 份主標書 A，再上傳 1-10 份對比標書 B。當前支援 DOCX 與可複製文字的 PDF。" },
+        { title: "1. 準備文件", text: "上傳 1 份主標書 A，再上傳 1-10 份對比標書 B。當前支援 DOCX、可複製文字的 PDF 和 UTF-8 編碼 TXT。" },
         { title: "2. 選填關鍵字", text: "在關鍵字輸入框中輸入詞語後按 Enter 新增，適合排查圍標詞、獨家授權詞和敏感表述。" },
         { title: "3. 發起查重", text: "點擊「開始智慧查重」後系統會自動進入處理流程，請保存任務號，方便稍後找回結果。" },
         { title: "4. 查看與複核", text: "先在結果頁看排行與風險摘要，再進入對比頁逐段核驗；多份 B 文件可按需支付解鎖完整詳情。" }
@@ -671,7 +671,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "使用前需要知道什麼",
       cards: [
         { title: "A 文件與 B 文件的含義", lines: ["A 是你的主標書，也就是需要自查風險的那一份文件。", "B 是用於比對的參考標書。上傳 1 份時屬於單份對比；上傳 2-10 份時屬於 1 對多查重。"] },
-        { title: "文件與關鍵字要求", lines: ["系統目前支援 DOCX 和可複製文字的 PDF。如果 PDF 本身無法選中文字，可能無法得到理想結果。", "關鍵字不是必填項；如果你有重點排查對象，建議按詞逐個輸入並按 Enter 儲存。"] },
+        { title: "文件與關鍵字要求", lines: ["系統目前支援 DOCX、可複製文字的 PDF 和 UTF-8 編碼 TXT。如果 PDF 本身無法選中文字，可能無法得到理想結果。", "關鍵字不是必填項；如果你有重點排查對象，建議按詞逐個輸入並按 Enter 儲存。"] },
         { title: "單份與多份的差異", lines: ["單份 B 文件查重完成後可以直接查看完整詳情。", "多份 B 文件會先返回排行、摘要和免費預覽；如需查看全部明細，需要按當前任務生成訂單後解鎖。"] },
         { title: "任務號很重要", lines: ["每次查重都會生成一個以 T 開頭的任務號。系統會在處理頁和結果頁展示它。", "請及時複製保存，結果保留 7 天，後續找回歷史結果時會直接用到。"] }
       ]
@@ -751,7 +751,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "常見問題",
       items: [
         { question: "為什麼我只能看到預覽，看不到完整詳情？", answer: "通常是因為目前任務上傳了 2-10 份 B 文件，系統按照 1 對多模式先展示免費預覽。完成解鎖後即可查看完整詳情。" },
-        { question: "為什麼上傳後提示文件暫不支援？", answer: "目前只支援 DOCX 和可複製文字的 PDF。如果 PDF 無法選中文字，系統可能無法正常解析。" },
+        { question: "為什麼上傳後提示文件暫不支援？", answer: "目前支援 DOCX、可複製文字的 PDF 和 UTF-8 編碼 TXT。如果 PDF 無法選中文字，系統可能無法正常解析。" },
         { question: "任務處理中可以關閉頁面嗎？", answer: "可以。請先複製保存任務號，之後透過「找回歷史任務結果」重新進入即可。" },
         { question: "關鍵字一定要填嗎？", answer: "不是必填。只有你需要額外排查某些詞語、條款或敏感表述時，才建議填寫。" },
         { question: "結果會保留多久？", answer: "系統預設保留 7 天。保留期內可憑任務號找回結果；若已完成解鎖，完整詳情也會繼續保留。" }
@@ -780,7 +780,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "ガイド",
       title: "ユーザー向けドキュメントセンター",
       description: "このドキュメントでは、システムを使って入札書類の類似チェックを行う方法だけを説明します。インストール、デプロイ、管理設定は含みません。アップロード、処理待ち、結果確認、比較、必要時の詳細解放、タスク ID による復元という流れで使えます。",
-      chips: ["ログイン不要", "DOCX / PDF 対応", "比較ファイル 1-10 件", "結果は 7 日保持"]
+      chips: ["ログイン不要", "DOCX / PDF / TXT 対応", "比較ファイル 1-10 件", "結果は 7 日保持"]
     },
     anchors: [
       { id: "quick-start", label: "クイックスタート" },
@@ -795,7 +795,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "クイックスタート",
       title: "3 分で使い始める",
       cards: [
-        { title: "1. ファイルを準備", text: "主文書 A を 1 件アップロードし、比較文書 B を 1 から 10 件アップロードします。現在は DOCX とテキスト選択可能な PDF をサポートします。" },
+        { title: "1. ファイルを準備", text: "主文書 A を 1 件アップロードし、比較文書 B を 1 から 10 件アップロードします。現在は DOCX、テキスト選択可能な PDF、UTF-8 TXT に対応しています。" },
         { title: "2. 必要ならキーワード追加", text: "入力欄にキーワードを入れて Enter で追加します。談合語句、独占許可表現、敏感表現の確認に向いています。" },
         { title: "3. チェック開始", text: "「AI チェックを開始」をクリックすると処理が始まります。後で結果を復元できるよう、タスク ID を保存してください。" },
         { title: "4. 確認と再検証", text: "まず結果ページで順位とリスク要約を確認し、その後比較ページで段落ごとに検証します。複数の B ファイルは必要時のみ詳細を解放します。" }
@@ -806,7 +806,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "事前に知っておきたいこと",
       cards: [
         { title: "A と B の意味", lines: ["A は自社側の主入札書類で、リスクを自己点検したいファイルです。", "B は比較用の参考入札書類です。1 件なら単一比較、2 から 10 件なら 1 対多チェックになります。"] },
-        { title: "ファイルとキーワード条件", lines: ["現在は DOCX とテキスト選択可能な PDF をサポートします。PDF の文字を選択できない場合、理想的な結果が得られないことがあります。", "キーワードは必須ではありません。重点確認したい項目がある場合のみ、語句ごとに Enter で追加してください。"] },
+        { title: "ファイルとキーワード条件", lines: ["現在は DOCX、テキスト選択可能な PDF、UTF-8 TXT に対応しています。PDF の文字を選択できない場合、理想的な結果が得られないことがあります。", "キーワードは必須ではありません。重点確認したい項目がある場合のみ、語句ごとに Enter で追加してください。"] },
         { title: "単一ファイルと複数ファイルの違い", lines: ["B が 1 件のタスクは、処理完了後すぐに完全詳細を確認できます。", "B が複数件のタスクは、まず順位、要約、無料プレビューが表示されます。全詳細が必要な場合のみ現在のタスクを解放します。"] },
         { title: "タスク ID は重要", lines: ["各チェックでは T で始まるタスク ID が生成されます。処理ページと結果ページの両方に表示されます。", "早めにコピーして保存してください。結果は 7 日保持され、復元時にこの ID が必要です。"] }
       ]
@@ -886,7 +886,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "よくある質問",
       items: [
         { question: "なぜプレビューしか見えず、完全詳細が見えないのですか？", answer: "現在のタスクで B ファイルが 2 から 10 件あるためです。1 対多モードではまず無料プレビューが表示され、解放後に完全詳細が閲覧可能になります。" },
-        { question: "なぜアップロード後に非対応ファイルと表示されるのですか？", answer: "現在は DOCX とテキスト選択可能な PDF のみ対応しています。PDF の文字を選択できない場合、正常に解析できないことがあります。" },
+        { question: "なぜアップロード後に非対応ファイルと表示されるのですか？", answer: "現在は DOCX、テキスト選択可能な PDF、UTF-8 TXT に対応しています。PDF の文字を選択できない場合、正常に解析できないことがあります。" },
         { question: "処理中にページを閉じても大丈夫ですか？", answer: "はい。先にタスク ID をコピーして保存し、「過去タスクを復元」から再度入れます。" },
         { question: "キーワードは必須ですか？", answer: "必須ではありません。特定の語句、条項、敏感表現を追加で確認したい場合だけ使ってください。" },
         { question: "結果はどれくらい保持されますか？", answer: "結果は通常 7 日保持されます。その間はタスク ID で復元でき、解放済みの完全詳細も引き続き閲覧できます。" }
@@ -915,7 +915,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "가이드",
       title: "사용자 문서 센터",
       description: "이 문서는 시스템으로 입찰 문서 유사도 검사를 수행하는 방법만 설명합니다. 설치, 배포, 관리자 설정은 다루지 않습니다. 업로드, 처리 대기, 결과 확인, 비교, 필요 시 상세 잠금 해제, 작업 번호로 결과 복구 순서로 사용할 수 있습니다.",
-      chips: ["로그인 불필요", "DOCX / PDF 지원", "비교 파일 1-10개", "결과 7일 보관"]
+      chips: ["로그인 불필요", "DOCX / PDF / TXT 지원", "비교 파일 1-10개", "결과 7일 보관"]
     },
     anchors: [
       { id: "quick-start", label: "빠른 시작" },
@@ -930,7 +930,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "빠른 시작",
       title: "3분 안에 시작하기",
       cards: [
-        { title: "1. 파일 준비", text: "원본 입찰서 A 1개를 업로드하고, 비교 입찰서 B를 1개에서 10개까지 업로드합니다. 현재 DOCX와 텍스트 선택이 가능한 PDF를 지원합니다." },
+        { title: "1. 파일 준비", text: "원본 입찰서 A 1개를 업로드하고, 비교 입찰서 B를 1개에서 10개까지 업로드합니다. 현재 DOCX, 텍스트 선택이 가능한 PDF, UTF-8 TXT를 지원합니다." },
         { title: "2. 필요 시 키워드 추가", text: "입력창에 키워드를 넣고 Enter를 눌러 추가합니다. 담합 문구, 독점 승인 표현, 민감 표현 점검에 적합합니다." },
         { title: "3. 검사 시작", text: "AI 검사 시작을 누르면 처리가 자동으로 시작됩니다. 나중에 결과를 찾을 수 있도록 작업 번호를 저장하세요." },
         { title: "4. 확인 및 재검토", text: "먼저 결과 페이지에서 순위와 위험 요약을 확인한 다음 비교 페이지에서 문단별로 검토합니다. 여러 B 파일은 필요할 때만 상세를 해제하면 됩니다." }
@@ -941,7 +941,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "사용 전에 알아둘 점",
       cards: [
         { title: "A와 B의 의미", lines: ["A는 위험을 자체 점검하려는 주 입찰 문서입니다.", "B는 비교용 참고 입찰 문서입니다. 1개면 단일 비교, 2-10개면 1대다 검사입니다."] },
-        { title: "파일과 키워드 조건", lines: ["현재 DOCX와 텍스트 선택이 가능한 PDF를 지원합니다. PDF에서 텍스트 선택이 되지 않으면 원하는 결과를 얻기 어려울 수 있습니다.", "키워드는 필수가 아닙니다. 특정 위험 포인트를 확인하려면 키워드를 하나씩 입력하고 Enter로 저장하세요."] },
+        { title: "파일과 키워드 조건", lines: ["현재 DOCX, 텍스트 선택이 가능한 PDF, UTF-8 TXT를 지원합니다. PDF에서 텍스트 선택이 되지 않으면 원하는 결과를 얻기 어려울 수 있습니다.", "키워드는 필수가 아닙니다. 특정 위험 포인트를 확인하려면 키워드를 하나씩 입력하고 Enter로 저장하세요."] },
         { title: "단일 파일과 다중 파일의 차이", lines: ["B 파일이 1개인 경우 처리 완료 후 전체 상세를 바로 볼 수 있습니다.", "B 파일이 여러 개인 경우 먼저 순위, 요약, 무료 미리보기가 제공되며 전체 상세가 필요하면 현재 작업을 해제해야 합니다."] },
         { title: "작업 번호는 중요합니다", lines: ["각 검사마다 T로 시작하는 작업 번호가 생성되며 처리 페이지와 결과 페이지에 표시됩니다.", "미리 복사해 저장하세요. 결과는 7일 동안 보관되며 복구 시 이 번호가 필요합니다."] }
       ]
@@ -1021,7 +1021,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "자주 묻는 질문",
       items: [
         { question: "왜 미리보기만 보이고 전체 상세는 보이지 않나요?", answer: "현재 작업에 B 파일이 2개에서 10개 포함되어 있기 때문입니다. 1대다 모드에서는 먼저 무료 미리보기를 보여 주고, 해제 후 전체 상세를 확인할 수 있습니다." },
-        { question: "왜 업로드 후 지원되지 않는 파일이라고 나오나요?", answer: "현재 DOCX와 텍스트 선택이 가능한 PDF만 지원합니다. PDF 텍스트를 선택할 수 없으면 정상적으로 분석되지 않을 수 있습니다." },
+        { question: "왜 업로드 후 지원되지 않는 파일이라고 나오나요?", answer: "현재 DOCX, 텍스트 선택이 가능한 PDF, UTF-8 TXT를 지원합니다. PDF 텍스트를 선택할 수 없으면 정상적으로 분석되지 않을 수 있습니다." },
         { question: "처리 중에 페이지를 닫아도 되나요?", answer: "네. 먼저 작업 번호를 복사해 저장한 다음 이전 작업 복구로 다시 들어오면 됩니다." },
         { question: "키워드는 꼭 입력해야 하나요?", answer: "필수는 아닙니다. 특정 단어, 조항, 민감 표현을 추가로 점검할 때만 사용하면 됩니다." },
         { question: "결과는 얼마나 보관되나요?", answer: "결과는 기본적으로 7일 동안 보관됩니다. 그 기간 안에는 작업 번호로 복구할 수 있고 해제된 전체 상세도 계속 확인할 수 있습니다." }
@@ -1050,7 +1050,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "Guide",
       title: "Centre De Documentation Utilisateur",
       description: "Ce document explique uniquement comment utiliser le système pour vérifier la similarité des dossiers d'appel d'offres. Il ne couvre pas l'installation, le déploiement ni la configuration d'administration. Suivez le flux : téléverser, attendre, consulter les résultats, comparer, déverrouiller si nécessaire, puis récupérer avec l'identifiant de tâche.",
-      chips: ["Sans connexion", "DOCX / PDF pris en charge", "1 à 10 fichiers comparés", "Résultats conservés 7 jours"]
+      chips: ["Sans connexion", "DOCX / PDF / TXT pris en charge", "1 à 10 fichiers comparés", "Résultats conservés 7 jours"]
     },
     anchors: [
       { id: "quick-start", label: "Démarrage Rapide" },
@@ -1065,7 +1065,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "Démarrage Rapide",
       title: "Commencer En Trois Minutes",
       cards: [
-        { title: "1. Préparer Les Fichiers", text: "Téléversez un dossier principal A puis de 1 à 10 dossiers de comparaison B. Le système prend actuellement en charge DOCX et les PDF avec texte sélectionnable." },
+        { title: "1. Préparer Les Fichiers", text: "Téléversez un dossier principal A puis de 1 à 10 dossiers de comparaison B. Le système prend actuellement en charge DOCX, les PDF avec texte sélectionnable et les fichiers TXT encodés en UTF-8." },
         { title: "2. Ajouter Des Mots-Clés Si Nécessaire", text: "Saisissez un mot-clé puis appuyez sur Entrée pour l'ajouter. C'est utile pour vérifier les termes de collusion, d'autorisation exclusive ou les formulations sensibles." },
         { title: "3. Lancer La Vérification", text: "Cliquez sur Lancer l'analyse IA pour démarrer le traitement. Enregistrez l'identifiant de tâche afin de pouvoir récupérer le résultat plus tard." },
         { title: "4. Vérifier Et Contrôler", text: "Commencez par le classement et le résumé de risque sur la page de résultats, puis ouvrez la page de comparaison pour une vérification segment par segment. Pour plusieurs fichiers B, déverrouillez les détails seulement si nécessaire." }
@@ -1076,7 +1076,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "Ce Qu'il Faut Savoir",
       cards: [
         { title: "Que Signifient A Et B", lines: ["A est votre dossier principal, celui que vous souhaitez auto-contrôler.", "B est le dossier de référence utilisé pour la comparaison. Un seul fichier B correspond à une comparaison simple ; 2 à 10 fichiers B correspondent à un contrôle un-vers-plusieurs."] },
-        { title: "Exigences Sur Les Fichiers Et Mots-Clés", lines: ["Le système prend actuellement en charge DOCX et les PDF avec texte sélectionnable. Si le texte du PDF n'est pas sélectionnable, le résultat peut être limité.", "Les mots-clés sont optionnels. Utilisez-les uniquement si vous avez des points de risque précis à contrôler."] },
+        { title: "Exigences Sur Les Fichiers Et Mots-Clés", lines: ["Le système prend actuellement en charge DOCX, les PDF avec texte sélectionnable et les fichiers TXT encodés en UTF-8. Si le texte du PDF n'est pas sélectionnable, le résultat peut être limité.", "Les mots-clés sont optionnels. Utilisez-les uniquement si vous avez des points de risque précis à contrôler."] },
         { title: "Différence Entre Un Et Plusieurs Fichiers", lines: ["Avec un seul fichier B, les détails complets sont visibles directement après le traitement.", "Avec plusieurs fichiers B, le système affiche d'abord le classement, le résumé et un aperçu gratuit. Déverrouillez la tâche seulement si vous avez besoin de tout le détail."] },
         { title: "L'identifiant De Tâche Est Essentiel", lines: ["Chaque contrôle génère un identifiant de tâche commençant par T, visible sur la page de traitement et sur la page de résultats.", "Copiez-le rapidement. Les résultats sont conservés 7 jours et cet identifiant est nécessaire pour les récupérer."] }
       ]
@@ -1156,7 +1156,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "Questions Fréquentes",
       items: [
         { question: "Pourquoi ne puis-je voir qu'un aperçu et non les détails complets ?", answer: "Cela arrive généralement lorsque la tâche contient 2 à 10 fichiers B. En mode un-vers-plusieurs, le système affiche d'abord un aperçu gratuit. Les détails complets deviennent disponibles après déverrouillage." },
-        { question: "Pourquoi le fichier est-il indiqué comme non pris en charge ?", answer: "Le système prend actuellement en charge DOCX et les PDF avec texte sélectionnable. Si le texte du PDF n'est pas sélectionnable, l'analyse peut échouer." },
+        { question: "Pourquoi le fichier est-il indiqué comme non pris en charge ?", answer: "Le système prend actuellement en charge DOCX, les PDF avec texte sélectionnable et les fichiers TXT encodés en UTF-8. Si le texte du PDF n'est pas sélectionnable, l'analyse peut échouer." },
         { question: "Puis-je fermer la page pendant le traitement ?", answer: "Oui. Copiez d'abord l'identifiant de tâche, puis revenez via la récupération de tâche." },
         { question: "Les mots-clés sont-ils obligatoires ?", answer: "Non. Utilisez-les seulement si vous devez contrôler des mots, clauses ou formulations sensibles spécifiques." },
         { question: "Combien de temps les résultats sont-ils conservés ?", answer: "Les résultats sont conservés 7 jours par défaut. Pendant cette période, vous pouvez les récupérer avec l'identifiant de tâche, et les détails déverrouillés restent aussi disponibles." }
@@ -1185,7 +1185,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "Leitfaden",
       title: "Dokumentationszentrum Für Nutzer",
       description: "Diese Anleitung erklärt nur, wie das System für Ausschreibungs-Similaritätsprüfungen verwendet wird. Installation, Deployment und Admin-Konfiguration werden nicht behandelt. Folgen Sie dem Ablauf Hochladen, Warten, Ergebnisse prüfen, Vergleichen, bei Bedarf entsperren und Ergebnisse per Aufgaben-ID wiederherstellen.",
-      chips: ["Ohne Login", "DOCX / PDF unterstützt", "1-10 Vergleichsdateien", "Ergebnisse 7 Tage verfügbar"]
+      chips: ["Ohne Login", "DOCX / PDF / TXT unterstützt", "1-10 Vergleichsdateien", "Ergebnisse 7 Tage verfügbar"]
     },
     anchors: [
       { id: "quick-start", label: "Schnellstart" },
@@ -1200,7 +1200,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       eyebrow: "Schnellstart",
       title: "In Drei Minuten Startklar",
       cards: [
-        { title: "1. Dateien Vorbereiten", text: "Laden Sie eine Hauptdatei A und anschließend 1 bis 10 Vergleichsdateien B hoch. Unterstützt werden derzeit DOCX und PDFs mit auswählbarem Text." },
+        { title: "1. Dateien Vorbereiten", text: "Laden Sie eine Hauptdatei A und anschließend 1 bis 10 Vergleichsdateien B hoch. Unterstützt werden derzeit DOCX, PDFs mit auswählbarem Text und UTF-8-TXT-Dateien." },
         { title: "2. Bei Bedarf Stichwörter Hinzufügen", text: "Geben Sie ein Stichwort ein und drücken Sie Enter, um es hinzuzufügen. Das eignet sich für kollusionsbezogene Begriffe, exklusive Freigaben oder sensible Formulierungen." },
         { title: "3. Prüfung Starten", text: "Klicken Sie auf KI-Prüfung starten, damit der Verarbeitungsprozess beginnt. Speichern Sie die Aufgaben-ID, um das Ergebnis später wiederzufinden." },
         { title: "4. Prüfen Und Nachkontrollieren", text: "Lesen Sie zuerst Ranking und Risikozusammenfassung auf der Ergebnisseite und wechseln Sie dann zur Vergleichsseite für die Prüfung Abschnitt für Abschnitt. Bei mehreren B-Dateien entsperren Sie die Details nur bei Bedarf." }
@@ -1211,7 +1211,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "Was Sie Vorher Wissen Sollten",
       cards: [
         { title: "Was A Und B Bedeutet", lines: ["A ist Ihr Hauptangebot, also die Datei, die Sie selbst auf Risiken prüfen möchten.", "B ist das Referenzangebot für den Vergleich. Eine B-Datei bedeutet Einzelvergleich, 2 bis 10 B-Dateien bedeuten Eins-zu-Viele-Prüfung."] },
-        { title: "Datei- Und Stichwortanforderungen", lines: ["Das System unterstützt derzeit DOCX und PDFs mit auswählbarem Text. Wenn Text im PDF nicht markierbar ist, kann das Ergebnis eingeschränkt sein.", "Stichwörter sind optional. Nutzen Sie sie nur, wenn Sie gezielt bestimmte Risikopunkte prüfen möchten."] },
+        { title: "Datei- Und Stichwortanforderungen", lines: ["Das System unterstützt derzeit DOCX, PDFs mit auswählbarem Text und UTF-8-TXT-Dateien. Wenn Text im PDF nicht markierbar ist, kann das Ergebnis eingeschränkt sein.", "Stichwörter sind optional. Nutzen Sie sie nur, wenn Sie gezielt bestimmte Risikopunkte prüfen möchten."] },
         { title: "Einzel- Gegen Mehrfachdatei", lines: ["Bei einer einzelnen B-Datei sind vollständige Details nach Abschluss direkt sichtbar.", "Bei mehreren B-Dateien zeigt das System zuerst Ranking, Zusammenfassung und kostenlose Vorschau. Entsperren Sie die aktuelle Aufgabe nur dann, wenn Sie alle Details benötigen."] },
         { title: "Die Aufgaben-ID Ist Wichtig", lines: ["Jede Prüfung erzeugt eine Aufgaben-ID, die mit T beginnt und auf der Verarbeitungs- sowie Ergebnisseite angezeigt wird.", "Kopieren Sie sie frühzeitig. Ergebnisse bleiben 7 Tage erhalten und für die Wiederherstellung ist diese ID erforderlich."] }
       ]
@@ -1291,7 +1291,7 @@ const docsPageContent: Record<AppLocale, DocsPageContent> = {
       title: "Häufige Fragen",
       items: [
         { question: "Warum sehe ich nur eine Vorschau und keine vollständigen Details?", answer: "Das passiert meistens, wenn die Aufgabe 2 bis 10 B-Dateien enthält. Im Eins-zu-Viele-Modus zeigt das System zuerst eine kostenlose Vorschau. Vollständige Details werden nach dem Entsperren sichtbar." },
-        { question: "Warum wird die Datei als nicht unterstützt angezeigt?", answer: "Derzeit werden nur DOCX und PDFs mit auswählbarem Text unterstützt. Wenn Text im PDF nicht markierbar ist, kann die Analyse fehlschlagen." },
+        { question: "Warum wird die Datei als nicht unterstützt angezeigt?", answer: "Derzeit werden DOCX, PDFs mit auswählbarem Text und UTF-8-TXT-Dateien unterstützt. Wenn Text im PDF nicht markierbar ist, kann die Analyse fehlschlagen." },
         { question: "Kann ich die Seite während der Verarbeitung schließen?", answer: "Ja. Kopieren Sie zuerst die Aufgaben-ID und kommen Sie später über die Wiederherstellung zurück." },
         { question: "Sind Stichwörter Pflicht?", answer: "Nein. Verwenden Sie sie nur, wenn Sie bestimmte Wörter, Klauseln oder sensible Formulierungen gezielt prüfen möchten." },
         { question: "Wie lange bleiben Ergebnisse erhalten?", answer: "Ergebnisse bleiben standardmäßig 7 Tage erhalten. Während dieses Zeitraums können sie mit der Aufgaben-ID wiederhergestellt werden, und entsperrte Details bleiben ebenfalls sichtbar." }

@@ -17,6 +17,7 @@ python scripts/migrate_sqlite_to_mysql.py
 - Local temporary file storage
 - `python-docx` for `.docx`
 - `pypdf` for text-based `.pdf`
+- UTF-8 text decoding (including `.txt` files with a BOM)
 
 ## Run
 

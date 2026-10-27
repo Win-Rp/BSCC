@@ -94,7 +94,7 @@ export function resolveRouteSeo(
   const title = resolveTemplate(seo?.title, siteTitle);
   const description =
     seo?.description ||
-    "提供标书查重、投标文件检查、围标风险排查、相似度比对与原文证据复核，支持 DOCX 与可复制文本 PDF。";
+    "提供标书查重、投标文件检查、围标风险排查、相似度比对与原文证据复核，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT。";
   const keywords = Array.isArray(seo?.keywords) ? seo?.keywords.join(",") : seo?.keywords;
   const robots = seo?.robots || "index,follow";
   const canonical = toAbsoluteUrl(seo?.canonicalPath || currentPath);

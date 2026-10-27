@@ -79,7 +79,7 @@ const emit = defineEmits<{
 }>();
 const { t } = useAppI18n();
 
-const accept = ".docx,.pdf";
+const accept = ".docx,.pdf,.txt";
 const emptyTitle = computed(() => props.multiple ? t("uploadCard.importBatch") : t("uploadCard.importPrimary"));
 const selectedText = computed(() => {
   if (!props.files.length) {

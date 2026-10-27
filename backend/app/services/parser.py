@@ -10,15 +10,17 @@ from pypdf import PdfReader
 
 SENTENCE_SPLIT_RE = re.compile(r"[^。！？!?；;]+[。！？!?；;]*")
 
-SCAN_PDF_MESSAGE = "该 PDF 为扫描件或图片型文件（无文字层），V1 版本暂不支持，请上传可复制文字的 PDF 或 Word 文档"
+SCAN_PDF_MESSAGE = "该 PDF 为扫描件或图片型文件（无文字层），V1 版本暂不支持，请上传可复制文字的 PDF、DOCX 或 UTF-8 编码 TXT 文本"
 PDF_INVALID_MESSAGE = "PDF 文件无法读取，可能已损坏或加密"
+TXT_ENCODING_INVALID_MESSAGE = "TXT 文件编码无法读取，请另存为 UTF-8 编码后上传"
 
 # 错误码 -> 用户可读中文说明。业务代码抛错统一采用 "CODE:说明" 格式。
 ERROR_MESSAGES = {
     "VALIDATION_ERROR": "请求参数错误",
-    "UNSUPPORTED_FILE_TYPE": "文件类型不支持，仅支持 Word（.docx）或 PDF 文档",
+    "UNSUPPORTED_FILE_TYPE": "文件类型不支持，仅支持 DOCX、UTF-8 编码 TXT 或 PDF 文档",
     "SCAN_PDF_NOT_SUPPORTED": SCAN_PDF_MESSAGE,
     "PDF_INVALID": PDF_INVALID_MESSAGE,
+    "TXT_ENCODING_INVALID": TXT_ENCODING_INVALID_MESSAGE,
     "PARSE_FILE_FAILED": "文件解析失败（文件可能已损坏、加密或格式异常）",
     "PARSE_FAILED": "文件解析失败",
 }
@@ -48,6 +50,8 @@ def parse_document(file_path: Path, file_ext: str) -> ParsedDocument:
         return _parse_docx(file_path)
     if ext == ".pdf":
         return _parse_pdf(file_path)
+    if ext == ".txt":
+        return _parse_txt(file_path)
     raise ValueError(f"UNSUPPORTED_FILE_TYPE:{ERROR_MESSAGES['UNSUPPORTED_FILE_TYPE']}")
 
 
@@ -153,6 +157,38 @@ def _parse_pdf(file_path: Path) -> ParsedDocument:
         blocks=blocks,
         metadata=metadata,
         page_count=len(reader.pages),
+        word_count=_count_chars(text),
+        sentence_count=len(blocks),
+        paragraph_count=len(paragraphs),
+    )
+
+
+def _parse_txt(file_path: Path) -> ParsedDocument:
+    try:
+        raw_text = file_path.read_text(encoding="utf-8-sig")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"TXT_ENCODING_INVALID:{TXT_ENCODING_INVALID_MESSAGE}") from exc
+
+    normalized_text = raw_text.replace("\r\n", "\n").replace("\r", "\n")
+    paragraphs = [
+        _normalize_space(paragraph.replace("\n", " "))
+        for paragraph in re.split(r"\n\s*\n", normalized_text)
+    ]
+    paragraphs = [paragraph for paragraph in paragraphs if paragraph]
+    text = "\n".join(paragraphs)
+    blocks = _build_blocks(paragraphs)
+    return ParsedDocument(
+        text=text,
+        blocks=blocks,
+        metadata={
+            "author": None,
+            "created": None,
+            "modified": None,
+            "software": None,
+            "template_source": None,
+            "last_modified_by": None,
+        },
+        page_count=None,
         word_count=_count_chars(text),
         sentence_count=len(blocks),
         paragraph_count=len(paragraphs),

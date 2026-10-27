@@ -91,7 +91,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "请先选择主标书 A",
         missingB: "请至少选择 1 份 B 标书",
         exceedB: "B 标书最多选择 10 份",
-        unsupported: "{name} 暂不支持，请上传 DOCX 或可复制文本 PDF",
+        unsupported: "{name} 暂不支持，请上传 DOCX、可复制文本 PDF 或 UTF-8 编码 TXT",
         createFailed: "创建任务失败"
       }
     },
@@ -100,7 +100,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "导入主文档",
       importBatch: "批量导入对比文件",
       replaceHint: "可继续拖入替换，系统不会自动上传。",
-      dropHint: "拖拽文件到此处，或点击选择文件。",
+      dropHint: "拖拽文件到此处，或点击选择。支持 DOCX、可复制文本 PDF、UTF-8 TXT。",
       empty: "尚未选择文件",
       selectedSingle: "{name}",
       selectedMulti: "已选择 {count} 份文件"
@@ -170,7 +170,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "Please select master bid A first.",
         missingB: "Please select at least one comparison bid B.",
         exceedB: "You can upload up to 10 B files.",
-        unsupported: "{name} is not supported. Please upload a DOCX file or a selectable-text PDF.",
+        unsupported: "{name} is not supported. Please upload a DOCX file, selectable-text PDF, or UTF-8 TXT file.",
         createFailed: "Failed to create task."
       }
     },
@@ -179,7 +179,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "Import main file",
       importBatch: "Import comparison files",
       replaceHint: "You can drag more files here to replace them. Nothing is uploaded automatically.",
-      dropHint: "Drag files here, or click to select files.",
+      dropHint: "Drag files here or click to select. Supports DOCX, selectable-text PDF, and UTF-8 TXT.",
       empty: "No file selected yet",
       selectedSingle: "{name}",
       selectedMulti: "{count} files selected"
@@ -249,7 +249,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "請先選擇主標書 A",
         missingB: "請至少選擇 1 份 B 標書",
         exceedB: "B 標書最多可選 10 份",
-        unsupported: "{name} 暫不支援，請上傳 DOCX 或可複製文字的 PDF",
+        unsupported: "{name} 暫不支援，請上傳 DOCX、可複製文字的 PDF 或 UTF-8 編碼 TXT",
         createFailed: "建立任務失敗"
       }
     },
@@ -258,7 +258,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "匯入主文件",
       importBatch: "批量匯入對比文件",
       replaceHint: "可繼續拖入替換，系統不會自動上傳。",
-      dropHint: "拖曳檔案到此處，或點擊選擇檔案。",
+      dropHint: "拖曳檔案到此處，或點擊選擇。支援 DOCX、可複製文字 PDF、UTF-8 TXT。",
       empty: "尚未選擇檔案",
       selectedSingle: "{name}",
       selectedMulti: "已選擇 {count} 份檔案"
@@ -328,7 +328,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "先に元文書 A を選択してください。",
         missingB: "少なくとも 1 件の比較文書 B を選択してください。",
         exceedB: "B 文書は最大 10 件までです。",
-        unsupported: "{name} は未対応です。DOCX またはテキスト選択可能な PDF をアップロードしてください。",
+        unsupported: "{name} は未対応です。DOCX、テキスト選択可能な PDF、または UTF-8 の TXT をアップロードしてください。",
         createFailed: "タスクの作成に失敗しました。"
       }
     },
@@ -337,7 +337,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "メイン文書を追加",
       importBatch: "比較文書を追加",
       replaceHint: "さらにドラッグして置き換えできます。自動アップロードは行われません。",
-      dropHint: "ここにファイルをドラッグするか、クリックして選択してください。",
+      dropHint: "ここにファイルをドラッグするか、クリックして選択してください。DOCX、テキスト選択可能な PDF、UTF-8 TXT に対応しています。",
       empty: "まだファイルが選択されていません",
       selectedSingle: "{name}",
       selectedMulti: "{count} 件のファイルを選択済み"
@@ -407,7 +407,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "먼저 원본 문서 A를 선택하세요.",
         missingB: "최소 1개의 비교 문서 B를 선택하세요.",
         exceedB: "B 문서는 최대 10개까지 선택할 수 있습니다.",
-        unsupported: "{name} 형식은 지원되지 않습니다. DOCX 또는 텍스트 선택이 가능한 PDF를 업로드하세요.",
+        unsupported: "{name} 형식은 지원되지 않습니다. DOCX, 텍스트 선택이 가능한 PDF 또는 UTF-8 TXT를 업로드하세요.",
         createFailed: "작업 생성에 실패했습니다."
       }
     },
@@ -416,7 +416,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "메인 문서 가져오기",
       importBatch: "비교 문서 가져오기",
       replaceHint: "다시 드래그해 교체할 수 있으며 자동 업로드되지는 않습니다.",
-      dropHint: "파일을 여기에 끌어오거나 클릭하여 선택하세요.",
+      dropHint: "파일을 여기에 끌어오거나 클릭하여 선택하세요. DOCX, 텍스트 선택 가능 PDF, UTF-8 TXT를 지원합니다.",
       empty: "선택된 파일이 없습니다",
       selectedSingle: "{name}",
       selectedMulti: "{count}개 파일 선택됨"
@@ -486,7 +486,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "Veuillez d'abord sélectionner l'offre principale A.",
         missingB: "Veuillez sélectionner au moins une offre B.",
         exceedB: "Vous pouvez sélectionner au maximum 10 fichiers B.",
-        unsupported: "{name} n'est pas pris en charge. Veuillez téléverser un DOCX ou un PDF avec texte sélectionnable.",
+        unsupported: "{name} n'est pas pris en charge. Veuillez téléverser un DOCX, un PDF avec texte sélectionnable ou un TXT encodé en UTF-8.",
         createFailed: "Échec de la création de la tâche."
       }
     },
@@ -495,7 +495,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "Importer le document principal",
       importBatch: "Importer les documents de comparaison",
       replaceHint: "Vous pouvez encore glisser des fichiers pour les remplacer. Aucun envoi automatique.",
-      dropHint: "Glissez les fichiers ici ou cliquez pour les sélectionner.",
+      dropHint: "Glissez les fichiers ici ou cliquez pour les sélectionner. DOCX, PDF avec texte sélectionnable et TXT UTF-8 acceptés.",
       empty: "Aucun fichier sélectionné",
       selectedSingle: "{name}",
       selectedMulti: "{count} fichiers sélectionnés"
@@ -565,7 +565,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
         missingA: "Bitte wählen Sie zuerst Hauptangebot A aus.",
         missingB: "Bitte wählen Sie mindestens ein Vergleichsangebot B aus.",
         exceedB: "Maximal 10 B-Dateien können ausgewählt werden.",
-        unsupported: "{name} wird nicht unterstützt. Bitte laden Sie DOCX oder ein PDF mit auswählbarem Text hoch.",
+        unsupported: "{name} wird nicht unterstützt. Bitte laden Sie DOCX, ein PDF mit auswählbarem Text oder eine UTF-8-TXT-Datei hoch.",
         createFailed: "Aufgabe konnte nicht erstellt werden."
       }
     },
@@ -574,7 +574,7 @@ const keyMessages: Record<AppLocale, MessageTree> = {
       importPrimary: "Hauptdokument importieren",
       importBatch: "Vergleichsdokumente importieren",
       replaceHint: "Sie können weitere Dateien hineinziehen, um sie zu ersetzen. Kein automatischer Upload.",
-      dropHint: "Dateien hierher ziehen oder klicken, um Dateien auszuwählen.",
+      dropHint: "Dateien hierher ziehen oder klicken. Unterstützt DOCX, PDFs mit auswählbarem Text und UTF-8-TXT.",
       empty: "Noch keine Datei ausgewählt",
       selectedSingle: "{name}",
       selectedMulti: "{count} Dateien ausgewählt"
@@ -604,7 +604,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "标书查重与投标文件风险检查平台": "Bid Similarity and Tender Risk Review Platform",
     "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。":
       "Designed for engineering firms and business teams, this site supports bid similarity checks, tender review, collusion-risk screening, keyword hits and original evidence review. Upload files first, preview the result, then unlock deeper comparison when needed.",
-    "支持 DOCX / PDF": "Supports DOCX / PDF",
+    "支持 DOCX / PDF / TXT": "Supports DOCX / PDF / TXT",
     "多文档 1 对多": "One-to-many comparison",
     "基础免费预览": "Free preview",
     "任务号 7 天找回": "7-day task recovery",
@@ -625,7 +625,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "不限大小": "不限大小",
     "开箱即用": "開箱即用",
     "标书查重与投标文件风险检查平台": "標書查重與投標文件風險檢查平台",
-    "支持 DOCX / PDF": "支援 DOCX / PDF",
+    "支持 DOCX / PDF / TXT": "支援 DOCX / PDF / TXT",
     "多文档 1 对多": "多文件 1 對多",
     "基础免费预览": "基礎免費預覽",
     "任务号 7 天找回": "任務號 7 天找回",
@@ -647,7 +647,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "开箱即用": "すぐ使える",
     "标书查重与投标文件风险检查平台": "入札書類重複チェックとリスク検査プラットフォーム",
     "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。": "建設企業や営業チーム向け。入札書類の重複チェック、リスク検査、キーワードヒットと原文証拠レビューをサポート。まず書類をアップロードして結果をプレビューし、その後必要に応じて詳細比較と支払いによる解除を進めます。",
-    "支持 DOCX / PDF": "DOCX / PDF 対応",
+    "支持 DOCX / PDF / TXT": "DOCX / PDF / TXT 対応",
     "多文档 1 对多": "複数文書の1対多比較",
     "基础免费预览": "基本無料プレビュー",
     "任务号 7 天找回": "タスクIDで7日間復元可能",
@@ -669,7 +669,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "开箱即用": "즉시 사용 가능",
     "标书查重与投标文件风险检查平台": "입찰 문서 유사도 검사 및 위험 검사 플랫폼",
     "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。": "엔지니어링 기업 및 영업/비즈니스 팀을 위한 플랫폼입니다. 입찰 문서 중복 검사, 위험 점검, 키워드 적중 및 원문 증거 검토를 지원합니다. 먼저 문서를 업로드하여 결과를 미리 본 후 필요에 따라 심층 비교 및 결제 잠금 해제를 진행하세요.",
-    "支持 DOCX / PDF": "DOCX / PDF 지원",
+    "支持 DOCX / PDF / TXT": "DOCX / PDF / TXT 지원",
     "多文档 1 对多": "다중 문서 1대다 비교",
     "基础免费预览": "무료 기본 미리보기",
     "任务号 7 天找回": "작업 ID로 7일 내 복구 가능",
@@ -691,7 +691,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "开箱即用": "Prêt à l'emploi",
     "标书查重与投标文件风险检查平台": "Plateforme de contrôle de similarité et de vérification des risques des dossiers d'appel d'offres",
     "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。": "Conçue pour les entreprises du BTP et les équipes commerciales, cette plateforme prend en charge la vérification de similarité, l'examen des offres, le dépistage des risques de collusion, les correspondances de mots-clés et la vérification des preuves originales. Téléchargez d'abord les documents pour prévisualiser les résultats, puis débloquez une comparaison approfondie selon vos besoins.",
-    "支持 DOCX / PDF": "Prend en charge DOCX / PDF",
+    "支持 DOCX / PDF / TXT": "Prend en charge DOCX / PDF / TXT",
     "多文档 1 对多": "Comparaison un-à-plusieurs",
     "基础免费预览": "Aperçu gratuit de base",
     "任务号 7 天找回": "Récupération par numéro de tâche pendant 7 jours",
@@ -713,7 +713,7 @@ const baseExactTextTranslations: Partial<Record<AppLocale, Record<string, string
     "开箱即用": "Sofort einsatzbereit",
     "标书查重与投标文件风险检查平台": "Plattform für Ausschreibungs-Similaritätsprüfung und Risikokontrolle",
     "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。": "Entwickelt für Bauunternehmen und Vertriebsteams. Unterstützt Similaritätsprüfung, Angebotskontrolle, Absprachen-Risikoscreening, Stichworttreffer und Prüfung der Originalbelege. Laden Sie zunächst Dokumente hoch, um eine Vorschau der Ergebnisse zu erhalten, und schalten Sie bei Bedarf einen detaillierten Vergleich und die Zahlungsfreischaltung frei.",
-    "支持 DOCX / PDF": "Unterstützt DOCX / PDF",
+    "支持 DOCX / PDF / TXT": "Unterstützt DOCX / PDF / TXT",
     "多文档 1 对多": "Eins-zu-Viele-Vergleich",
     "基础免费预览": "Kostenlose Basisvorschau",
     "任务号 7 天找回": "7-Tage-Wiederherstellung mit Aufgaben-ID",

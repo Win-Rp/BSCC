@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from app.config import STORAGE_DIR
 
 
-SUPPORTED_EXTENSIONS = {".docx", ".pdf"}
+SUPPORTED_EXTENSIONS = {".docx", ".pdf", ".txt"}
 
 
 def task_storage_dir(task_no: str) -> Path:

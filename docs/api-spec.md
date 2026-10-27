@@ -34,8 +34,10 @@
 - `VALIDATION_ERROR`：请求参数错误。
 - `UPLOAD_FAILED`：文件上传失败。
 - `UNSUPPORTED_FILE_TYPE`：文件类型不支持。
+- `TXT_ENCODING_INVALID`：TXT 文件编码无法读取，请另存为 UTF-8 后上传。
 - `PARSE_FAILED`：文件解析失败。
 - `SCAN_PDF_NOT_SUPPORTED`：扫描件 PDF 暂不支持。
+- `PDF_INVALID`：PDF 文件损坏、加密或无法读取。
 - `TASK_NOT_FOUND`：任务不存在。
 - `TASK_EXPIRED`：任务已过期。
 - `TASK_DELETED`：任务数据已删除。
@@ -48,6 +50,8 @@
 ## 3. 前台接口
 
 ### 3.1 创建查重任务
+
+上传文件支持 `.docx`、UTF-8 编码的 `.txt`（含 UTF-8 BOM）和可复制文本的 `.pdf`。
 
 ```http
 POST /api/tasks

@@ -20,7 +20,7 @@ const pages = [
     routePath: "/",
     title: `${DEFAULT_SITE_TITLE}_投标文件相似度检测_围标风险排查平台`,
     description:
-      "提供标书查重、投标文件检查、围标风险排查、改写相似识别与原文证据对比，支持 DOCX 与可复制文本 PDF，适合工程企业与乙方商务团队快速复核投标文件。",
+      "提供标书查重、投标文件检查、围标风险排查、改写相似识别与原文证据对比，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT，适合工程企业与乙方商务团队快速复核投标文件。",
     keywords: "标书查重,投标文件查重,标书检查,标书合规,围标风险排查,标书相似度检测",
     jsonLd: [
       {
@@ -50,15 +50,15 @@ const pages = [
     routePath: "/upload",
     title: `标书查重工具入口_上传投标文件开始检查_${DEFAULT_SITE_TITLE}`,
     description:
-      "上传主标书 A 与对比标书 B，开始标书查重、标书检查和围标风险排查，支持 DOCX 与可复制文本 PDF。",
+      "上传主标书 A 与对比标书 B，开始标书查重、标书检查和围标风险排查，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT。",
     keywords: "标书查重入口,投标文件查重,标书检查工具,围标风险排查"
   },
   {
     file: "free.html",
     routePath: "/free",
-    title: `免费标书查重入口_DOCX/PDF 标书检测与结果预览_${DEFAULT_SITE_TITLE}`,
+    title: `免费标书查重入口_DOCX/PDF/TXT 标书检测与结果预览_${DEFAULT_SITE_TITLE}`,
     description:
-      "免费标书查重入口，支持 DOCX 与可复制文本 PDF 上传，可先查看投标文件相似度排行、风险摘要与重复片段预览，适合工程企业和商务团队做首轮复核。",
+      "免费标书查重入口，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT 上传，可先查看投标文件相似度排行、风险摘要与重复片段预览，适合工程企业和商务团队做首轮复核。",
     keywords: "免费标书查重,免费投标文件查重,标书免费检测,投标文件相似度预览"
   },
   {

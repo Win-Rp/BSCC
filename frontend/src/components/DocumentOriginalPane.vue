@@ -25,23 +25,30 @@ const props = defineProps<{
 const { translateText } = useAppI18n();
 
 const docxHost = ref<HTMLElement | null>(null);
+const txtHost = ref<HTMLElement | null>(null);
 const isRenderingDocx = ref(false);
 const docxError = ref("");
+const isLoadingTxt = ref(false);
+const txtError = ref("");
+const txtContent = ref("");
 const isLoadingPdf = ref(false);
 const pdfError = ref("");
 const pdfRendered = ref(false);
 const pdfSource = ref("");
 let markInstance: Mark | null = null;
+let txtMarkInstance: Mark | null = null;
 
 const fileExt = computed(() => {
   const normalized = props.fileName.toLowerCase();
   if (normalized.endsWith(".pdf")) return ".pdf";
   if (normalized.endsWith(".docx")) return ".docx";
+  if (normalized.endsWith(".txt")) return ".txt";
   return "";
 });
 
 const isPdf = computed(() => fileExt.value === ".pdf");
 const isDocx = computed(() => fileExt.value === ".docx");
+const isTxt = computed(() => fileExt.value === ".txt");
 
 const { doc } = usePdfDocument({ source: pdfSource });
 const { clear, find, findController } = usePdfSearch(doc);
@@ -157,6 +164,33 @@ async function loadPdfFile() {
   }
 }
 
+async function loadTxtFile() {
+  if (!isTxt.value || !props.fileUrl) return;
+
+  isLoadingTxt.value = true;
+  txtError.value = "";
+  txtContent.value = "";
+  try {
+    const response = await fetchOriginalFile();
+    const rawText = (await response.text()).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+    txtContent.value = rawText
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.replace(/\n/g, " ").replace(/[ \t\f\v\u3000]+/g, " ").trim())
+      .filter(Boolean)
+      .join("\n");
+    isLoadingTxt.value = false;
+    await nextTick();
+    if (txtHost.value) {
+      txtMarkInstance = new Mark(txtHost.value);
+      await highlightTxt();
+    }
+  } catch (error) {
+    txtError.value = error instanceof Error ? error.message : translateText("加载原文档失败");
+  } finally {
+    isLoadingTxt.value = false;
+  }
+}
+
 function clearDocxHighlight() {
   return new Promise<void>((resolve) => {
     if (!markInstance) {
@@ -189,13 +223,41 @@ async function highlightDocx() {
   });
 }
 
+async function highlightTxt() {
+  if (!txtMarkInstance || !txtHost.value) return;
+
+  await new Promise<void>((resolve) => {
+    txtMarkInstance?.unmark({ done: () => resolve() });
+  });
+
+  const keyword = props.activeText.trim();
+  if (!keyword) return;
+
+  await new Promise<void>((resolve) => {
+    txtMarkInstance?.mark(keyword, {
+      separateWordSearch: false,
+      className: "doc-hit",
+      done: () => resolve()
+    });
+  });
+
+  await nextTick();
+  txtHost.value.querySelector<HTMLElement>("mark.doc-hit")?.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
 watch(
   [() => props.fileUrl, () => fileExt.value],
   async () => {
     pdfRendered.value = false;
     docxError.value = "";
+    txtError.value = "";
     pdfError.value = "";
     clearPdfSource();
+    txtContent.value = "";
+    txtMarkInstance = null;
 
     if (docxHost.value) {
       docxHost.value.innerHTML = "";
@@ -211,6 +273,12 @@ watch(
     if (isDocx.value && props.fileUrl) {
       await nextTick();
       await renderDocxFile();
+      return;
+    }
+
+    if (isTxt.value && props.fileUrl) {
+      await nextTick();
+      await loadTxtFile();
     }
   },
   { immediate: true }
@@ -227,6 +295,11 @@ watch(
 
     if (isDocx.value && docxHost.value) {
       await highlightDocx();
+      return;
+    }
+
+    if (isTxt.value && txtHost.value) {
+      await highlightTxt();
     }
   }
 );
@@ -237,6 +310,7 @@ onBeforeUnmount(() => {
   if (docxHost.value) {
     docxHost.value.innerHTML = "";
   }
+  txtMarkInstance = null;
 });
 </script>
 
@@ -264,6 +338,12 @@ onBeforeUnmount(() => {
       <div v-if="isRenderingDocx" class="original-pane__empty">{{ translateText("正在渲染 Word 原文档...") }}</div>
       <div v-else-if="docxError" class="original-pane__empty">{{ docxError }}</div>
       <div ref="docxHost" class="docx-host" :class="{ 'is-hidden': isRenderingDocx || Boolean(docxError) }" />
+    </div>
+
+    <div v-else-if="isTxt" class="original-pane__viewer original-pane__viewer--txt">
+      <div v-if="isLoadingTxt" class="original-pane__empty">{{ translateText("正在加载原文档...") }}</div>
+      <div v-else-if="txtError" class="original-pane__empty">{{ txtError }}</div>
+      <pre v-else ref="txtHost" class="txt-host">{{ txtContent }}</pre>
     </div>
 
     <div v-else class="original-pane__empty">

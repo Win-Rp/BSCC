@@ -415,7 +415,10 @@ def _preflight_uploads(task_no: str, task_id: int) -> None:
                 )
             label = "主标书" if file_row["role"] == "A" else "对比文件"
             reason = _human_message(str(exc)) or "不支持该 PDF 文件"
-            raise ValueError(f"PARSE_FAILED:{label}（{file_row['original_name']}）无法用于查重：{reason}") from exc
+            code = str(exc).partition(":")[0]
+            if code not in {"SCAN_PDF_NOT_SUPPORTED", "PDF_INVALID", "TXT_ENCODING_INVALID"}:
+                code = "PARSE_FAILED"
+            raise ValueError(f"{code}:{label}（{file_row['original_name']}）无法用于查重：{reason}") from exc
 
 
 def _parse_failure_error(label: str, failure: dict[str, str] | None) -> str:

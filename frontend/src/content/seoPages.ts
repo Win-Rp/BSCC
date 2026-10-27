@@ -73,7 +73,7 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
     seo: {
       title: "{siteTitle}_投标文件相似度检测_围标风险排查平台",
       description:
-        "提供标书查重、投标文件检查、围标风险排查、改写相似识别与原文证据对比，支持 DOCX 与可复制文本 PDF，适合工程企业与乙方商务团队快速复核投标文件。",
+        "提供标书查重、投标文件检查、围标风险排查、改写相似识别与原文证据对比，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT，适合工程企业与乙方商务团队快速复核投标文件。",
       keywords: [
         "标书查重",
         "投标文件查重",
@@ -96,7 +96,7 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
     h1: "标书查重与投标文件风险检查平台",
     intro:
       "面向工程企业和乙方销售/商务团队，支持标书查重、标书检查、围标风险排查、关键字命中与原文证据复核。先上传文档获得结果预览，再按需进入深度比对与支付解锁。",
-    chips: ["支持 DOCX / PDF", "多文档 1 对多", "基础免费预览", "任务号 7 天找回"],
+    chips: ["支持 DOCX / PDF / TXT", "多文档 1 对多", "基础免费预览", "任务号 7 天找回"],
     primaryCta: { label: "立即开始查重", to: "/upload" },
     secondaryCta: { label: "查看使用文档", to: "/docs" },
     cardSection: {
@@ -147,7 +147,7 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
         },
         {
           question: "哪些文件格式可以上传？",
-          answer: "支持 DOCX 与可复制文本 PDF。若 PDF 本身无法选中文本，解析效果可能会受到影响。"
+          answer: "支持 DOCX、可复制文本 PDF 与 UTF-8 TXT。若 PDF 本身无法选中文本，解析效果可能会受到影响。"
         }
       ]
     },
@@ -162,9 +162,9 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
   },
   "free-landing": {
     seo: {
-      title: "免费标书查重入口_DOCX/PDF 标书检测与结果预览_{siteTitle}",
+      title: "免费标书查重入口_DOCX/PDF/TXT 标书检测与结果预览_{siteTitle}",
       description:
-        "免费标书查重入口，支持 DOCX 与可复制文本 PDF 上传，可先查看投标文件相似度排行、风险摘要与重复片段预览，适合工程企业和商务团队做首轮复核。",
+        "免费标书查重入口，支持 DOCX、可复制文本 PDF 与 UTF-8 TXT 上传，可先查看投标文件相似度排行、风险摘要与重复片段预览，适合工程企业和商务团队做首轮复核。",
       keywords: ["免费标书查重", "免费投标文件查重", "标书免费检测", "投标文件相似度预览"],
       jsonLd: softwareSchema
     },
@@ -172,7 +172,7 @@ export const seoPages: Record<SeoPageKey, SeoPageDefinition> = {
     h1: "免费标书查重与结果预览",
     intro:
       "如果你当前处于首轮排查阶段，可以直接从免费标书查重入口开始。系统支持免费上传、免费分析和结果预览，先帮助你判断是否存在明显相似风险，再决定是否进入更细的复核流程。",
-    chips: ["免费上传分析", "支持 DOCX / PDF", "先看预览再决策", "适合首轮筛查"],
+    chips: ["免费上传分析", "支持 DOCX / PDF / TXT", "先看预览再决策", "适合首轮筛查"],
     primaryCta: { label: "进入免费查重", to: "/upload" },
     secondaryCta: { label: "查看结果说明", to: "/docs#results" },
     cardSection: {
