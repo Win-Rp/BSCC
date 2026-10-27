@@ -159,6 +159,10 @@ npm run dev
 - 后台入口：`http://127.0.0.1:5173/admin`
 - 使用说明页：`http://127.0.0.1:5173/docs`
 
+### MCP 接入
+
+仓库提供本地 stdio MCP 服务，可在支持 MCP 的客户端创建任务、查询进度和查看查重结果，并返回网页链接。安装、允许目录配置及 Codex 接入示例见 [MCP 服务说明](./mcp_server/README.md)。
+
 ## 支付与环境配置
 
 后端已提供配置模板：`backend/.env.example`

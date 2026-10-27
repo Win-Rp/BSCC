@@ -239,25 +239,51 @@ def get_preview(task_no: str, compare_result_id: int) -> dict[str, Any]:
         return {"compare_result_id": compare_result_id, "segments": payload["segments"]}
 
 
-def get_detail(task_no: str, compare_result_id: int) -> dict[str, Any]:
+def get_detail(
+    task_no: str,
+    compare_result_id: int,
+    *,
+    include_blocks: bool = True,
+    limit: int | None = None,
+    match_offset: int = 0,
+    keyword_offset: int = 0,
+) -> dict[str, Any]:
     with db_session() as conn:
         task, compare_row = _require_compare_in_task(conn, task_no, compare_result_id)
         if task["unlock_status"] == "locked":
             raise PermissionError("ORDER_NOT_PAID")
         a_file = conn.execute("SELECT * FROM task_files WHERE id = ?", (compare_row["a_file_id"],)).fetchone()
         b_file = conn.execute("SELECT * FROM task_files WHERE id = ?", (compare_row["b_file_id"],)).fetchone()
-        a_doc = load_parsed_json(a_file["parsed_json_path"])
-        b_doc = load_parsed_json(b_file["parsed_json_path"])
         detail = json.loads(Path(compare_row["detail_json_path"]).read_text(encoding="utf-8"))
-        return {
+        a_document = {"file_id": a_file["id"], "name": a_file["original_name"]}
+        b_document = {"file_id": b_file["id"], "name": b_file["original_name"]}
+        if include_blocks:
+            a_document["blocks"] = load_parsed_json(a_file["parsed_json_path"])["blocks"]
+            b_document["blocks"] = load_parsed_json(b_file["parsed_json_path"])["blocks"]
+        matches = detail["matches"]
+        keyword_hits = detail["keyword_hits"]
+        match_end = match_offset + limit if limit is not None else None
+        keyword_end = keyword_offset + limit if limit is not None else None
+        result = {
             "compare_result_id": compare_result_id,
-            "a_document": {"file_id": a_file["id"], "name": a_file["original_name"], "blocks": a_doc["blocks"]},
-            "b_document": {"file_id": b_file["id"], "name": b_file["original_name"], "blocks": b_doc["blocks"]},
-            "matches": detail["matches"],
+            "a_document": a_document,
+            "b_document": b_document,
+            "matches": matches[match_offset:match_end],
             "metadata_results": detail["metadata_results"],
             "format_results": detail["format_results"],
-            "keyword_hits": detail["keyword_hits"],
+            "keyword_hits": keyword_hits[keyword_offset:keyword_end],
         }
+        if limit is not None or match_offset or keyword_offset:
+            result["pagination"] = {
+                "matches": _page_info(len(matches), match_offset, limit),
+                "keyword_hits": _page_info(len(keyword_hits), keyword_offset, limit),
+            }
+        return result
+
+
+def _page_info(total: int, offset: int, limit: int | None) -> dict[str, int | None]:
+    next_offset = offset + limit if limit is not None and offset + limit < total else None
+    return {"offset": offset, "limit": limit, "total": total, "next_offset": next_offset}
 
 
 def recover(task_no: str | None, order_no: str | None, contact: str | None) -> dict[str, Any]:

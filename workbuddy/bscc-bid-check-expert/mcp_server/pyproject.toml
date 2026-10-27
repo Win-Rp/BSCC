@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bscc-mcp"
+version = "0.1.0"
+description = "Local MCP adapter for the BSCC document similarity service"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx==0.28.1",
+  "mcp==2.3.0",
+]
+
+[dependency-groups]
+dev = [
+  "python-docx==1.1.2",
+  "pytest>=8,<10",
+  "pytest-asyncio>=0.24,<2",
+  "reportlab>=4,<5",
+]
+
+[project.scripts]
+bscc-mcp = "bscc_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["bscc_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

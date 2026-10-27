@@ -200,6 +200,14 @@ GET /api/tasks/{task_no}/results/{compare_result_id}/detail
 - B 文件数不超过后台 `free_b_file_limit` 时免费访问。
 - 超过该上限的任务需支付成功后访问；该权限在创建任务时确定，后续修改配置不影响已有任务。
 
+可选查询参数：
+
+- `include_blocks`：是否返回两份文档的全部 blocks，默认 `true`；为 `false` 时文档对象仅包含 `file_id` 和 `name`。
+- `limit`：每页最多返回多少条匹配片段和关键字命中，范围 1–100；不传时返回全部。
+- `match_offset`、`keyword_offset`：两类数据分别从第几条开始，默认 0。
+
+传入分页参数时，响应增加 `pagination.matches` 和 `pagination.keyword_hits`，分别包含 `offset`、`limit`、`total` 和 `next_offset`。无下一页时 `next_offset` 为 `null`。省略上述参数时保持原有响应格式。
+
 返回：
 
 ```json

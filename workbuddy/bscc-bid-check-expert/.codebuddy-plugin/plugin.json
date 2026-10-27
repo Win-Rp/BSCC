@@ -1,0 +1,32 @@
+{
+  "name": "bscc-bid-check-expert",
+  "expertType": "agent",
+  "version": "1.0.0",
+  "description": "Compare bidding documents using the local BSCC similarity checking service.",
+  "author": {"name": "Mx-Rp", "email": "10350840+mx-rp@user.noreply.gitee.com"},
+  "agents": ["./agents/bid-check-expert.md"],
+  "agentName": "bid-check-expert",
+  "displayName": {"zh": "标书查重专家", "en": "Bid Similarity Expert"},
+  "profession": {"zh": "标书查重与相似内容分析", "en": "Bid similarity analysis"},
+  "displayDescription": {"zh": "帮助您对比多份标书，查看相似内容与关键词命中，快速定位疑似重复段落并打开查重结果页面。", "en": "Compare bids, review similar passages and keyword matches, and open the results page."},
+  "avatar": "avatars/expert.png",
+  "categoryId": "04-DataAI",
+  "defaultInitPrompt": {"zh": "帮我对比标书并查看查重结果。", "en": "Help me compare bidding documents and review the results."},
+  "plugin": "bscc-bid-check-expert",
+  "tags": [
+    {"zh": "标书查重", "en": "Bid checking"},
+    {"zh": "相似内容分析", "en": "Similarity analysis"},
+    {"zh": "关键词检测", "en": "Keyword detection"}
+  ],
+  "quickPrompts": [
+    {"zh": "帮我对比标书并查看查重结果。", "en": "Help me compare bidding documents and review the results."},
+    {"zh": "查询我的查重任务进度并打开结果页面。", "en": "Check my task progress and open its results page."},
+    {"zh": "帮我分析查重结果中的相似片段和关键词命中。", "en": "Analyze similar passages and keyword matches in my results."}
+  ],
+  "userConfig": {
+    "allowed_dirs": {
+      "description": "允许读取标书的本机绝对目录；Windows 多个目录用分号分隔，macOS/Linux 用冒号分隔。",
+      "sensitive": false
+    }
+  }
+}

@@ -170,9 +170,23 @@ def result_preview(task_no: str, compare_result_id: int):
 
 
 @router.get("/tasks/{task_no}/results/{compare_result_id}/detail")
-def result_detail(task_no: str, compare_result_id: int):
+def result_detail(
+    task_no: str,
+    compare_result_id: int,
+    include_blocks: bool = Query(True),
+    limit: int | None = Query(None, ge=1, le=100),
+    match_offset: int = Query(0, ge=0),
+    keyword_offset: int = Query(0, ge=0),
+):
     try:
-        return ok(task_service.get_detail(task_no, compare_result_id))
+        return ok(task_service.get_detail(
+            task_no,
+            compare_result_id,
+            include_blocks=include_blocks,
+            limit=limit,
+            match_offset=match_offset,
+            keyword_offset=keyword_offset,
+        ))
     except PermissionError:
         raise fail("ORDER_NOT_PAID", "订单未支付", 402)
     except ValueError:
