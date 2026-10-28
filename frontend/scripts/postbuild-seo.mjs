@@ -245,19 +245,14 @@ function escapeXml(value) {
     .replaceAll(">", "&gt;");
 }
 
-// sitemap.xml 由 pages 列表生成，新增 SEO 页只需在 pages 中登记，
-// lastmod 自动取构建当日（Asia/Shanghai），无需再手工维护
+// sitemap.xml 由 pages 列表生成；没有可靠的页面更新时间时不输出 lastmod。
 async function buildSitemap() {
-  const lastmod = new Date().toLocaleDateString("en-CA", {
-    timeZone: "Asia/Shanghai"
-  });
   const urls = pages
     .map((page) => {
       const loc = SITE_URL + (page.routePath === "/" ? "/" : page.routePath);
       return [
         "  <url>",
         `    <loc>${escapeXml(loc)}</loc>`,
-        `    <lastmod>${lastmod}</lastmod>`,
         "  </url>"
       ].join("\n");
     })

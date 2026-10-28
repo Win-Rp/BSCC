@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <div>
-            <h2>{{ t("upload.title") }}</h2>
+            <h1>{{ t("upload.title") }}</h1>
             <p>{{ t("upload.subtitle") }}</p>
           </div>
           <el-button link type="primary" @click="recoverDialogVisible = true">
