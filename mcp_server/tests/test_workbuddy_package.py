@@ -20,6 +20,9 @@ def test_expert_archive_manifest(tmp_path: Path):
         assert {".codebuddy-plugin/plugin.json", ".mcp.json", "agents/bid-check-expert.md", "avatars/expert.png", "README.md", "mcp_server/uv.lock"} <= names
         assert not any(".venv/" in name or "__pycache__/" in name for name in names)
         manifest = json.loads(archive.read(".codebuddy-plugin/plugin.json"))
+        server = json.loads(archive.read(".mcp.json"))["mcpServers"]["bscc"]
+        assert server["env"]["BSCC_API_BASE_URL"] == "https://biaoshu.mxitx.com"
+        assert server["env"]["BSCC_FRONTEND_BASE_URL"] == "https://biaoshu.mxitx.com"
         assert manifest["defaultInitPrompt"] == manifest["quickPrompts"][0]
         assert len(manifest["quickPrompts"]) == len(manifest["tags"]) == 3
         assert 40 <= len(manifest["displayDescription"]["zh"]) <= 50
@@ -63,7 +66,7 @@ async def test_packaged_stdio_with_backend(backend, tmp_path: Path):
         result = await client.call_tool("create_similarity_check", {"a_file_path": str(a_path), "b_file_paths": [str(b_path)]})
         assert not result.is_error, result.content
         created = result.structured_content
-        assert created["result_url"] == f"http://127.0.0.1:5173/results?task={created['task_no']}"
+        assert created["result_url"] == f"https://biaoshu.mxitx.com/results?task={created['task_no']}"
         for _ in range(100):
             result = await client.call_tool("get_check_status", {"task_no": created["task_no"]})
             assert not result.is_error, result.content

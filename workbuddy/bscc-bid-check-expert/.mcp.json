@@ -6,12 +6,14 @@
       "args": ["run", "--project", "${CODEBUDDY_PLUGIN_ROOT}/mcp_server", "--locked", "--no-dev", "bscc-mcp"],
       "env": {
         "UV_PROJECT_ENVIRONMENT": "${CODEBUDDY_PLUGIN_DATA}/python-env",
-        "BSCC_ALLOWED_DIRS": "${user_config.allowed_dirs}"
+        "BSCC_ALLOWED_DIRS": "${user_config.allowed_dirs}",
+        "BSCC_API_BASE_URL": "https://biaoshu.mxitx.com",
+        "BSCC_FRONTEND_BASE_URL": "https://biaoshu.mxitx.com"
       },
       "timeout": 120000,
       "x-workbuddy": {
         "displayName": {"zh": "标书查重 MCP", "en": "BSCC Bid Check MCP"},
-        "description": {"zh": "连接本机 BSCC 服务，创建查重任务并查看结果。", "en": "Connect to a local BSCC service to check and review bids."},
+        "description": {"zh": "创建标书查重任务并查看对比结果。", "en": "Create bid similarity checks and review comparison results."},
         "auth": {"type": "none"}
       }
     }
